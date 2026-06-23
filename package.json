@@ -36,7 +36,7 @@
     "build:angular": "ngc -p tsconfig.angular.json",
     "test": "npm run build:core && node --test",
     "demo": "npm run build:core && npx --yes serve .",
-    "prepack": "npm run build"
+    "prepare": "npm run build"
   },
   "keywords": [
     "intersection-observer",

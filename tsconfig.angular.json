@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "declaration": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false,
+    "useDefineForClassFields": false,
+    "forceConsistentCasingInFileNames": true
+  },
+  "angularCompilerOptions": {
+    "compilationMode": "partial",
+    "enableI18nLegacyMessageIdFormat": false
+  },
+  "files": ["src/angular/index.ts"]
+}

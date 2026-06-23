@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>canvas-watch — vanilla demo</title>
+		<style>
+			:root {
+				color-scheme: light dark;
+				font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+			}
+			* {
+				box-sizing: border-box;
+			}
+			body {
+				margin: 0;
+			}
+
+			.intro {
+				max-width: 42rem;
+				margin: 0 auto;
+				padding: 3rem 1.25rem 1rem;
+			}
+			.intro h1 {
+				margin: 0 0 0.5rem;
+				font-size: 1.5rem;
+			}
+			.intro p {
+				margin: 0.5rem 0;
+				line-height: 1.5;
+				opacity: 0.85;
+			}
+			code {
+				font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+				font-size: 0.875em;
+				background: color-mix(in oklab, currentColor 12%, transparent);
+				padding: 0.1em 0.35em;
+				border-radius: 0.35em;
+			}
+
+			/* Two layers share one grid cell: scrolling zones underneath, the
+			   sticky card floating above. The card is a SIBLING of the zones so the
+			   zones' overflow never becomes a sticky-breaking ancestor. */
+			.stage {
+				position: relative;
+				display: grid;
+				grid-template-columns: 1fr;
+				max-width: 42rem;
+				margin: 0 auto 6rem;
+				padding: 0 1.25rem;
+			}
+			.zones,
+			.rail {
+				grid-area: 1 / 1;
+			}
+			.zones {
+				border-radius: 16px;
+				overflow: hidden;
+				border: 1px solid color-mix(in oklab, currentColor 18%, transparent);
+			}
+
+			.zone {
+				min-height: 80vh;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 0.35rem;
+				color: #fff;
+				text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+			}
+			.zone b {
+				font-size: 1.5rem;
+			}
+			.zone span {
+				font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+				font-size: 0.8125rem;
+				opacity: 0.9;
+			}
+
+			/* Each zone is a trigger; strip `-trigger`, prefix `over-` for the
+			   class the card receives while it sits over this zone. */
+			.canvas-indigo-trigger {
+				background: linear-gradient(135deg, #4f46e5, #6366f1);
+			}
+			.canvas-rose-trigger {
+				background: linear-gradient(135deg, #e11d48, #f43f5e);
+			}
+			.canvas-emerald-trigger {
+				background: linear-gradient(135deg, #059669, #10b981);
+			}
+			.canvas-amber-trigger {
+				background: linear-gradient(135deg, #d97706, #f59e0b);
+			}
+
+			.rail {
+				pointer-events: none; /* let scroll pass through to the page */
+			}
+
+			.card {
+				position: sticky;
+				top: 38vh;
+				width: min(320px, 78%);
+				margin: 0 auto;
+				padding: 1.5rem;
+				border-radius: 16px;
+				background: Canvas;
+				color: CanvasText;
+				border: 1px solid color-mix(in oklab, currentColor 14%, transparent);
+				pointer-events: auto;
+
+				/* --shadow-color is the live, per-element knob the over-* classes flip. */
+				--shadow-color: 220 14% 20%;
+				box-shadow: 0 22px 48px -14px hsl(var(--shadow-color) / 0.6);
+				transition: box-shadow 350ms ease;
+			}
+			.card .title {
+				font-weight: 650;
+				font-size: 1.0625rem;
+			}
+			.card .readout {
+				margin-top: 0.35rem;
+				font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+				font-size: 0.8125rem;
+				opacity: 0.75;
+			}
+
+			/* The payoff: the shadow re-tints to match whatever zone is behind it. */
+			.card.over-canvas-indigo {
+				--shadow-color: 243 75% 59%;
+			}
+			.card.over-canvas-rose {
+				--shadow-color: 347 89% 53%;
+			}
+			.card.over-canvas-emerald {
+				--shadow-color: 160 84% 39%;
+			}
+			.card.over-canvas-amber {
+				--shadow-color: 38 92% 50%;
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				.card {
+					transition: none;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="intro">
+			<h1>canvas-watch</h1>
+			<p>
+				Scroll. The floating card measures how much of itself overlaps each
+				background zone and tags itself with the winning
+				<code>over-*</code> class, which re-tints its shadow. Pure core — no
+				framework.
+			</p>
+			<p>
+				Zones are marked with <code>*-trigger</code> classes; the card is marked
+				<code>watch-bg-canvas</code>.
+			</p>
+		</div>
+
+		<div class="stage">
+			<div class="zones">
+				<div class="zone canvas-indigo-trigger">
+					<b>Indigo</b><span>over-canvas-indigo</span>
+				</div>
+				<div class="zone canvas-rose-trigger">
+					<b>Rose</b><span>over-canvas-rose</span>
+				</div>
+				<div class="zone canvas-emerald-trigger">
+					<b>Emerald</b><span>over-canvas-emerald</span>
+				</div>
+				<div class="zone canvas-amber-trigger">
+					<b>Amber</b><span>over-canvas-amber</span>
+				</div>
+			</div>
+
+			<div class="rail">
+				<div class="card watch-bg-canvas" id="card">
+					<div class="title">Floating card</div>
+					<div class="readout" id="readout">no zone — default tint</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="module">
+			import { createCanvasWatcher } from '../dist/index.js';
+
+			const watcher = createCanvasWatcher();
+			watcher.refresh(); // scan for .watch-bg-canvas + *-trigger elements
+
+			const readout = document.getElementById('readout');
+			document
+				.getElementById('card')
+				.addEventListener('canvaschange', (e) => {
+					readout.textContent = e.detail.appliedClass ?? 'no zone — default tint';
+				});
+		</script>
+	</body>
+</html>

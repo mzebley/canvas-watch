@@ -1,0 +1,82 @@
+{
+  "name": "@mzebley/canvas-watch",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Detect which background zone a floating element sits over and reflect it as a class, so shadows or text can re-tint to match what's behind them. Framework-agnostic core with optional Svelte and Angular adapters.",
+  "author": "Mark Zebley",
+  "license": "ISC",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./svelte": {
+      "types": "./dist/svelte/index.d.ts",
+      "svelte": "./dist/svelte/index.js",
+      "import": "./dist/svelte/index.js",
+      "require": "./dist/svelte/index.cjs"
+    },
+    "./angular": {
+      "types": "./dist/angular/index.d.ts",
+      "import": "./dist/angular/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup && ngc -p tsconfig.angular.json",
+    "build:core": "tsup",
+    "build:angular": "ngc -p tsconfig.angular.json",
+    "test": "npm run build:core && node --test",
+    "demo": "npm run build:core && npx --yes serve .",
+    "prepack": "npm run build"
+  },
+  "keywords": [
+    "intersection-observer",
+    "scroll",
+    "background",
+    "shadow",
+    "contrast",
+    "svelte",
+    "svelte-action",
+    "angular",
+    "angular-directive",
+    "liquid-glass"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mzebley/canvas-watch.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mzebley/canvas-watch/issues"
+  },
+  "homepage": "https://github.com/mzebley/canvas-watch#readme",
+  "peerDependencies": {
+    "@angular/core": ">=16",
+    "svelte": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "@angular/core": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@angular/compiler": "^18.2.0",
+    "@angular/compiler-cli": "^18.2.0",
+    "@angular/core": "^18.2.0",
+    "rxjs": "^7.8.0",
+    "svelte": "^5.0.0",
+    "tsup": "^8.3.0",
+    "typescript": "~5.5.4"
+  }
+}

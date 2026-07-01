@@ -18,7 +18,9 @@
  * ```
  */
 import { Injectable } from '@angular/core';
-import { refreshCanvasWatch } from '../core/shared.js';
+// Package self-reference, not '../core/shared.js' — see the note in
+// canvas-watch.directive.ts about the singleton.
+import { refreshCanvasWatch } from '@mzebley/canvas-watch';
 
 @Injectable({ providedIn: 'root' })
 export class CanvasWatchService {

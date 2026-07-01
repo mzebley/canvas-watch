@@ -10,12 +10,20 @@ import {
 	ElementRef,
 	EventEmitter,
 	inject,
-	OnDestroy,
-	OnInit,
+	NgZone,
 	Output,
+	type OnDestroy,
+	type OnInit,
 } from '@angular/core';
-import { getSharedWatcher, scheduleRefresh } from '../core/shared.js';
-import type { CanvasChangeDetail } from '../core/canvas-watcher.js';
+// Import via the package self-reference, NOT a relative path into ../core.
+// tsup bundles the core into the root entry's chunk; a relative import here
+// would make ngc emit a second copy of shared.ts, giving Angular its own
+// singleton watcher that refreshCanvasWatch() from the root entry never sees.
+import {
+	getSharedWatcher,
+	scheduleRefresh,
+	type CanvasChangeDetail,
+} from '@mzebley/canvas-watch';
 
 /**
  * ```html
@@ -35,18 +43,27 @@ export class CanvasWatchDirective implements OnInit, OnDestroy {
 	@Output() canvasChange = new EventEmitter<CanvasChangeDetail>();
 
 	private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+	private readonly zone = inject(NgZone);
 	private unwatch?: () => void;
 
 	private readonly listener = (event: Event): void => {
-		this.canvasChange.emit((event as CustomEvent<CanvasChangeDetail>).detail);
+		const detail = (event as CustomEvent<CanvasChangeDetail>).detail;
+		// Re-enter the zone only when a change actually fires (rare), so change
+		// detection runs for consumers without paying for it on every scroll.
+		this.zone.run(() => this.canvasChange.emit(detail));
 	};
 
 	ngOnInit(): void {
 		const node = this.host.nativeElement;
-		this.unwatch = getSharedWatcher().watch(node);
-		// Pick up any trigger zones already in the DOM (coalesced across mounts).
-		scheduleRefresh();
-		node.addEventListener('canvaschange', this.listener);
+		// Register outside the zone: the shared watcher is lazily created on first
+		// use, and its window scroll listener + rAF loop must not be zone-patched —
+		// otherwise every scroll event app-wide triggers change detection.
+		this.zone.runOutsideAngular(() => {
+			this.unwatch = getSharedWatcher().watch(node);
+			// Pick up any trigger zones already in the DOM (coalesced across mounts).
+			scheduleRefresh();
+			node.addEventListener('canvaschange', this.listener);
+		});
 	}
 
 	ngOnDestroy(): void {

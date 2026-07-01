@@ -65,6 +65,14 @@ test('resolveAppliedClass: classMap can map a non-suffixed class', () => {
 	assert.equal(resolveAppliedClass('hero', opts), 'on-hero');
 });
 
+test('resolveAppliedClass: classMap ignores inherited Object.prototype keys', () => {
+	const opts = { ...convention, classMap: { 'hero-trigger': 'on-hero' } };
+	// `constructor`/`toString` exist on the prototype chain; they must not
+	// resolve as classMap hits (and are not triggers, so they resolve to null).
+	assert.equal(resolveAppliedClass('constructor', opts), null);
+	assert.equal(resolveAppliedClass('toString', opts), null);
+});
+
 test('resolveAppliedClass: custom suffix/prefix is honored', () => {
 	assert.equal(
 		resolveAppliedClass('hero-zone', { triggerSuffix: '-zone', appliedPrefix: 'on-' }),

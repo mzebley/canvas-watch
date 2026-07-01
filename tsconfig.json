@@ -3,6 +3,14 @@
     "target": "ES2022",
     "module": "ES2022",
     "moduleResolution": "bundler",
+    // Typecheck the self-referencing imports in src/angular against source, so
+    // `tsc --noEmit` works on a fresh clone with no dist. The angular tsconfig
+    // must NOT get this mapping: ngc would pull the core sources into its
+    // program and emit them over the tsup bundle — it resolves the package
+    // name to dist/index.d.ts instead (tsup runs first; see `build`).
+    "paths": {
+      "@mzebley/canvas-watch": ["./src/index.ts"]
+    },
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "declaration": true,
     "strict": true,

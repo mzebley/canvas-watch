@@ -92,7 +92,10 @@ export function resolveAppliedClass(
 	triggerClass: string,
 	opts: ClassResolveOptions,
 ): string | null {
-	if (opts.classMap && triggerClass in opts.classMap) return opts.classMap[triggerClass] ?? null;
+	// hasOwn, not `in`: a class like "constructor" must not hit Object.prototype.
+	if (opts.classMap && Object.hasOwn(opts.classMap, triggerClass)) {
+		return opts.classMap[triggerClass] ?? null;
+	}
 	if (!triggerClass.endsWith(opts.triggerSuffix)) return null;
 	const base = triggerClass.slice(0, -opts.triggerSuffix.length);
 	return base ? opts.appliedPrefix + base : null;
@@ -271,6 +274,13 @@ export function createCanvasWatcher(options: CanvasWatchOptions = {}): CanvasWat
 			const classes = appliedClassesFor(t);
 			if (classes.size === 0) continue;
 			triggers.set(t, classes);
+			// Seed as active until the observer's first delivery says otherwise.
+			// IO reports asynchronously, after the rAF that schedule() queues below —
+			// starting empty would give measure() one frame with no triggers, which
+			// strips every applied class and fires spurious canvaschange events on
+			// each refresh. The rootMargin gate is only a perf filter, so one frame
+			// of measuring far-away triggers is harmless.
+			activeTriggers.add(t);
 			triggerIo.observe(t);
 			ro.observe(t);
 		}

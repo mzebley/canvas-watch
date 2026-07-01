@@ -10,7 +10,10 @@ export default defineConfig({
 	},
 	format: ['esm', 'cjs'],
 	dts: true,
-	clean: true,
+	// No clean: ngc writes dist/angular after tsup, and `npm test`/`npm run demo`
+	// rerun tsup alone — cleaning here would silently delete the Angular build.
+	// The full `build` script clears dist up front instead.
+	clean: false,
 	sourcemap: true,
 	treeshake: true,
 	// Svelte is a peer dep; never bundle it (the action only imports a type).

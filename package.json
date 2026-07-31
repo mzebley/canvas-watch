@@ -33,6 +33,10 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
   "scripts": {
     "build": "rm -rf dist && tsup && ngc -p tsconfig.angular.json",
     "build:core": "tsup",
@@ -63,7 +67,7 @@
   "bugs": {
     "url": "https://github.com/mzebley/canvas-watch/issues"
   },
-  "homepage": "https://github.com/mzebley/canvas-watch#readme",
+  "homepage": "https://canvas-watch.markzebley.com",
   "peerDependencies": {
     "@angular/core": ">=16",
     "svelte": ">=5"

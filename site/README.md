@@ -22,7 +22,7 @@ npm run site:build   # → site/build
 | Design tokens | `tokens/` (base) and `themes/dark/` (overlay) → `zebkit build` → `static/zbk-canvas-watch.min.css` + `static/zbk-dark.css`. |
 | Component registration | `src/lib/zebkit/define.js`, called from `onMount` only — zebkit components are Lit custom elements and the site is prerendered. |
 | Code samples | `src/lib/data/snippets.js`, highlighted by Shiki at build time in `+page.server.js`. No highlighter ships to the browser. |
-| Zone → tint CSS | `src/app.css`. Trigger zones are zebkit canvas utilities (`canvas-brand-emphasis-trigger` → `over-canvas-brand-emphasis`). |
+| Zone → restyle CSS | `src/app.css`. Trigger zones are zebkit canvas utilities (`canvas-brand-emphasis-trigger` → `over-canvas-brand-emphasis`). The header tints shadow and border; the demo card inverts panel and text outright over the pale band, to show the library only swaps the class. |
 
 Generated files (`static/zbk-*.css`, `src/lib/zebkit/zebkit.runtime.*`) are
 gitignored and rebuilt by `prebuild`.

@@ -50,14 +50,24 @@ npm install @mzebley/canvas-watch`
 		lang: 'css',
 		label: 'styles.css',
 		code: `.card {
+	background: rgb(255 255 255);
+	color: rgb(15 15 20);
 	--shadow-color: rgb(0 0 0);
 	box-shadow: 0 10px 30px -8px color-mix(in srgb, var(--shadow-color) 40%, transparent);
-	transition: box-shadow 400ms ease;
+	transition: background 400ms ease, color 400ms ease, box-shadow 400ms ease;
 }
 
 /* canvas-brand-emphasis-trigger → over-canvas-brand-emphasis */
 .card.over-canvas-brand-emphasis {
 	--shadow-color: rgb(79 70 229);
+}
+
+/* Nothing says it has to be a shadow. Over a pale zone, invert the
+   whole card so it still reads. Check the contrast of what you flip. */
+.card.over-canvas-paper {
+	background: rgb(31 27 92);
+	color: rgb(226 224 250);
+	--shadow-color: rgb(31 27 92);
 }`
 	},
 

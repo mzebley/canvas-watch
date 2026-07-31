@@ -9,8 +9,11 @@
 	 * watchers, one page, no interference.
 	 */
 
+	// A pale band sits second so you scroll dark → light → dark and watch the
+	// card invert, not merely re-tint.
 	const zones = [
 		{ canvas: 'canvas-brand-emphasis', ink: 'ink-brand-inverse' },
+		{ canvas: 'canvas-brand-subtle', ink: 'ink-brand-emphasis' },
 		{ canvas: 'canvas-accent-primary', ink: 'ink-accent-primary-inverse' },
 		{ canvas: 'canvas-positive', ink: 'ink-positive-inverse' },
 		{ canvas: 'canvas-critical', ink: 'ink-critical-inverse' },
@@ -100,7 +103,7 @@
 
 	<div class="cw-stage__card cw-watched cw-demo-watch" {oncanvaschange}>
 		<p class="font-xs letter-spacing-wide text-uppercase ink-app-muted margin-0">Watched element</p>
-		<p class="font-md font-weight-semibold margin-0">Its shadow follows what's behind it.</p>
+		<p class="font-md font-weight-semibold margin-0">It restyles itself for whatever's behind it.</p>
 		<p class="cw-readout ink-app-muted margin-block-start-05 margin-block-end-0">
 			{applied ?? 'no class applied'}
 		</p>

@@ -79,8 +79,8 @@
 
 	const gotchas = [
 		{
-			title: 'Tinting a composed shadow token',
-			body: 'If your shadow is a variable that itself references the colour — declared on :root — overriding the colour from an over-* class does nothing. CSS bakes the nested var() once, where the composite is declared, and the result inherits down. Re-declare the composite on the watched element so it re-bakes.'
+			title: 'Overriding a composed token',
+			body: "If the property you're changing is a variable that itself references another one — a shadow composite, a gradient, a border shorthand — declared on :root, then overriding the inner variable from an over-* class does nothing. CSS bakes the nested var() once, where the composite is declared, and the result inherits down. Re-declare the composite on the watched element so it re-bakes against that element's value."
 		},
 		{
 			title: 'position: sticky and overflow',
@@ -98,17 +98,17 @@
 </script>
 
 <svelte:head>
-	<title>canvas-watch — tint a floating element to match what's behind it</title>
+	<title>canvas-watch — floating elements that know what they're over</title>
 	<meta
 		name="description"
-		content="Detect which background zone a floating element sits over and reflect it as a class, so shadows or text can re-tint to match what's behind them. Framework-agnostic core with Svelte and Angular adapters."
+		content="Detect which background zone a floating element sits over and reflect it as a class, so you can restyle it however you like — shadow, text colour, border, the whole panel. Framework-agnostic core with Svelte and Angular adapters."
 	/>
 	<meta property="og:title" content="canvas-watch" />
 	<meta property="og:type" content="website" />
 	<meta property="og:url" content="https://canvas-watch.markzebley.com" />
 	<meta
 		property="og:description"
-		content="Detect which background zone a floating element sits over and reflect it as a class."
+		content="Detect which background zone a floating element sits over and reflect it as a class. What you restyle with it is up to you."
 	/>
 	<link rel="canonical" href="https://canvas-watch.markzebley.com/" />
 </svelte:head>
@@ -121,12 +121,16 @@
 		<div class="cw-shell">
 			<p class="font-sm letter-spacing-wide text-uppercase margin-0">@mzebley/canvas-watch</p>
 			<h1 class="font-2xl margin-block-start-05 margin-block-end-1 measure-3">
-				Tint a floating element to match whatever is behind it.
+				Floating elements that know what they're over.
 			</h1>
+			<p class="font-lg measure-2 margin-block-end-1">
+				Sticky nav bars, docked players, and cards drift over backgrounds that keep changing.
+				canvas-watch works out which zone an element is currently sitting over and puts that answer
+				on the element as a class.
+			</p>
 			<p class="font-lg measure-2 margin-block-end-2">
-				Sticky nav bars, docked players, and cards that float over changing backgrounds shouldn't
-				keep one fixed shadow colour. canvas-watch works out which background zone an element is
-				sitting over and puts that answer on the element as a class.
+				What you do with that class is entirely yours. Re-tint a shadow, flip dark text to light,
+				swap a border, invert the whole panel — the library only ever swaps the class.
 			</p>
 
 			<div class="measure-2 margin-block-end-1">
@@ -147,8 +151,8 @@
 			</div>
 
 			<p class="font-sm margin-block-start-2 margin-block-end-0">
-				The bar at the top of this page is a canvas-watch element. Scroll, and watch its shadow
-				follow the section behind it.
+				The bar at the top of this page is a canvas-watch element. Scroll, and watch its shadow and
+				border follow the section behind it — and read the class it's wearing, live.
 			</p>
 		</div>
 	</section>
@@ -180,10 +184,15 @@
 		<div class="cw-shell">
 			<div class="cw-prose margin-block-end-2">
 				<h2 class="font-xl margin-block-start-0 margin-block-end-05">Try it</h2>
-				<p class="margin-0">
+				<p class="margin-block-end-1">
 					Scroll inside the frame. The card is watched; the bands behind it are trigger zones. The
 					winning zone is the one covering the largest share of the card — and only if that share
 					clears the threshold, which you can drag.
+				</p>
+				<p class="margin-0">
+					The card does more than re-tint a shadow: over the pale band it inverts completely, dark
+					panel and light text, so it still reads. None of that is the library's doing — it swapped
+					one class, and the CSS did the rest.
 				</p>
 			</div>
 			<DemoStage />
@@ -257,11 +266,12 @@
 							The <code>canvaschange</code> event
 						</h3>
 						<p class="margin-0">
-							Each time the applied class changes, the watched element dispatches a
+							Most restyling needs no JavaScript at all — write CSS for the <code>over-*</code>
+							class and you're done. When you need more, each change dispatches a
 							<code>canvaschange</code>
 							CustomEvent with <code>detail: &lbrace; appliedClass, previousClass &rbrace;</code> (each
-							<code>string | null</code>). That's the hook for anything beyond CSS — flipping text colour
-							for contrast, say. Both adapters surface it: <code>onChange</code> in Svelte,
+							<code>string | null</code>): swap an icon set, re-render a chart's palette, announce
+							something. Both adapters surface it: <code>onChange</code> in Svelte,
 							<code>(canvasChange)</code> in Angular.
 						</p>
 					</div>
@@ -514,20 +524,21 @@
 					<zbk-heading level="2">Accessibility</zbk-heading>
 					<div class="cw-prose margin-block-start-1">
 						<p class="margin-block-end-1">
-							canvas-watch is <strong>purely presentational</strong>. It toggles a class and changes a
-							colour. It adds no ARIA, announces nothing to assistive technology, and never alters
-							content, focus order, or layout.
+							canvas-watch is <strong>purely presentational</strong>. It adds and removes one class.
+							It adds no ARIA, announces nothing to assistive technology, and never alters content,
+							focus order, or layout.
+						</p>
+						<p class="margin-block-end-1">
+							<strong>Contrast is your responsibility, and it matters more the more you restyle.</strong>
+							A shadow that misses 3:1 is cosmetic; text that lands at 2:1 because the panel behind it
+							changed is a WCAG 1.4.3 failure. If your <code>over-*</code> rules touch text, border, or
+							icon colour, check every zone — the library only tells you which one you're over, it has
+							no idea whether the result is legible.
 						</p>
 						<p class="margin-block-end-1">
 							<strong>Reduced motion is the consumer's call.</strong> Put any
-							<code>transition</code>
-							on the tinted property behind
+							<code>transition</code> on the properties you change behind
 							<code>@media (prefers-reduced-motion: reduce)</code>.
-						</p>
-						<p class="margin-block-end-1">
-							<strong>If you flip text colour,</strong> the <code>canvaschange</code> event makes it
-							easy — and meeting WCAG contrast is then <em>your</em> responsibility. The library only
-							tells you which zone you're over.
 						</p>
 						<p class="margin-0">
 							Under the hood it needs <code>IntersectionObserver</code>,

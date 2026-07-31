@@ -1,6 +1,6 @@
 {
   "name": "@mzebley/canvas-watch",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "description": "Detect which background zone a floating element sits over and reflect it as a class, so shadows or text can re-tint to match what's behind them. Framework-agnostic core with optional Svelte and Angular adapters.",
   "author": "Mark Zebley",

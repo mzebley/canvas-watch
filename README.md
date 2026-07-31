@@ -1,11 +1,10 @@
 # @mzebley/canvas-watch
 
 Detect which background "canvas" zone a floating element is sitting over, and
-reflect it as a class on that element — so its shadow (or, later, its text
-color) can be tinted to match what's behind it.
+reflect it as a class on that element — so whatever you'd like can be visually updated to match what's behind it.
 
 Useful for sticky nav bars, docked players, and cards that float over changing
-backgrounds, where one fixed shadow color looks wrong against a shifting page.
+backgrounds, where a fixed shadow color may look wrong against a shifting page, or flipping floating elements that are darkly colored over to being lightly colored when they're over a dark background so they still pop.
 
 ```svelte
 <script>

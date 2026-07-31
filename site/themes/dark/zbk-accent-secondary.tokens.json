@@ -1,0 +1,17 @@
+{
+  "canvas": {
+    "$value": "{accent-secondary.700}",
+    "$type": "color",
+    "$description": "Dark-mode filled secondary accent zone."
+  },
+  "canvas-emphasis": {
+    "$value": "{accent-secondary.800}",
+    "$type": "color",
+    "$description": "Dark-mode high-prominence secondary accent zone."
+  },
+  "ink": {
+    "$value": "{accent-secondary.300}",
+    "$type": "color",
+    "$description": "Dark-mode secondary accent text."
+  }
+}

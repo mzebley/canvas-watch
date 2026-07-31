@@ -1,0 +1,27 @@
+{
+  "canvas": {
+    "$value": "{accent-primary.700}",
+    "$type": "color",
+    "$description": "Dark-mode filled accent zone."
+  },
+  "canvas-muted": {
+    "$value": "{accent-primary.900}",
+    "$type": "color",
+    "$description": "Dark-mode recessed accent surface."
+  },
+  "canvas-emphasis": {
+    "$value": "{accent-primary.800}",
+    "$type": "color",
+    "$description": "Dark-mode high-prominence accent zone."
+  },
+  "ink": {
+    "$value": "{accent-primary.300}",
+    "$type": "color",
+    "$description": "Dark-mode headings and accent text."
+  },
+  "ink-subtle": {
+    "$value": "{accent-primary.400}",
+    "$type": "color",
+    "$description": "Dark-mode table-of-contents labels."
+  }
+}

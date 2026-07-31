@@ -1,0 +1,27 @@
+{
+  "canvas": {
+    "$value": "{brand.700}",
+    "$type": "color",
+    "$description": "Dark-mode off-state track."
+  },
+  "border-color": {
+    "$value": "{brand.300}",
+    "$type": "color",
+    "$description": "Dark-mode off-track border, 3:1 against the track."
+  },
+  "thumb-canvas": {
+    "$value": "{brand.100}",
+    "$type": "color",
+    "$description": "Dark-mode off-state thumb."
+  },
+  "canvas-checked": {
+    "$value": "{brand.300}",
+    "$type": "color",
+    "$description": "Dark-mode on-state track."
+  },
+  "thumb-canvas-checked": {
+    "$value": "{brand.950}",
+    "$type": "color",
+    "$description": "Dark-mode on-state thumb."
+  }
+}

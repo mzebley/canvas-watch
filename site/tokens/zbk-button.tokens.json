@@ -1,0 +1,17 @@
+{
+  "border-color": {
+    "$value": "{brand.600}",
+    "$type": "color",
+    "$description": "Button border, 3:1 against the button canvas."
+  },
+  "border-color-hover": {
+    "$value": "{brand.700}",
+    "$type": "color",
+    "$description": "Button border on hover."
+  },
+  "border-color-active": {
+    "$value": "{brand.600}",
+    "$type": "color",
+    "$description": "Button border while pressed."
+  }
+}

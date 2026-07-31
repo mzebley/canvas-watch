@@ -9,6 +9,9 @@
   "files": [
     "dist"
   ],
+  "workspaces": [
+    "site"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -36,6 +39,9 @@
     "build:angular": "ngc -p tsconfig.angular.json",
     "test": "npm run build:core && node --test",
     "demo": "npm run build:core && npx --yes serve .",
+    "site:dev": "npm run dev --workspace site",
+    "site:build": "npm run build --workspace site",
+    "site:preview": "npm run preview --workspace site",
     "prepare": "npm run build"
   },
   "keywords": [

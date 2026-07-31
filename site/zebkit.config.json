@@ -1,0 +1,46 @@
+{
+  "$schema": "../node_modules/zebkit/dist/editor/schemas/zebkit.config.schema.json",
+  "configVersion": 1,
+  "tokens": {
+    "destinationPath": "./static",
+    "assetFilePath": "/",
+    "basePreset": "default",
+    "tokenPath": "./tokens",
+    "themeName": "canvas-watch",
+    "overlays": [
+      {
+        "themeName": "dark",
+        "tokenPath": "./themes/dark"
+      }
+    ],
+    "prune": {
+      "enabled": true,
+      "content": ["./src/**/*.svelte", "./src/**/*.js", "./src/**/*.css", "./src/app.html"],
+      "safelist": ["/^zbk-/", "/^over-/", "/^cw-/"]
+    }
+  },
+  "context": {
+    "path": "./zebkit/context"
+  },
+  "runtime": {
+    "path": "./src/lib/zebkit/zebkit.runtime.js"
+  },
+  "check": {
+    "content": ["./src/**/*.svelte", "./src/app.html"]
+  },
+  "accessibility": {
+    "delivery": "auto",
+    "verify": {
+      "routes": [{ "id": "landing", "path": "/" }],
+      "viewports": [
+        { "id": "mobile", "width": 375, "height": 812 },
+        { "id": "desktop", "width": 1440, "height": 1000 },
+        { "id": "reflow", "width": 320, "height": 800, "reflow": true }
+      ],
+      "themes": [
+        { "id": "light", "selector": "html", "attribute": "data-zbk-theme" },
+        { "id": "dark", "selector": "html", "attribute": "data-zbk-theme", "value": "dark" }
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "border-color": {
+    "$value": "{brand.400}",
+    "$type": "color",
+    "$description": "Off-track border against the track surface."
+  },
+  "thumb-canvas": {
+    "$value": "{brand.700}",
+    "$type": "color",
+    "$description": "Off-state thumb against the light track."
+  },
+  "thumb-canvas-checked": {
+    "$value": "{color.global-white}",
+    "$type": "color",
+    "$description": "On-state thumb against the filled track."
+  },
+  "thumb-canvas-disabled": {
+    "$value": "{neutral.900}",
+    "$type": "color",
+    "$description": "Disabled thumb against the disabled track."
+  }
+}

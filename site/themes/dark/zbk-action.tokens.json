@@ -1,0 +1,52 @@
+{
+  "canvas": {
+    "$value": "{brand.400}",
+    "$type": "color",
+    "$description": "Dark-mode interactive surface."
+  },
+  "canvas-muted": {
+    "$value": "{brand.800}",
+    "$type": "color",
+    "$description": "Dark-mode low-emphasis interactive surface."
+  },
+  "canvas-emphasis": {
+    "$value": "{brand.300}",
+    "$type": "color",
+    "$description": "Dark-mode high-prominence interactive surface."
+  },
+  "ink": {
+    "$value": "{brand.300}",
+    "$type": "color",
+    "$description": "Dark-mode link and interactive text."
+  },
+  "ink-muted": {
+    "$value": "{brand.400}",
+    "$type": "color",
+    "$description": "Dark-mode secondary interactive text."
+  },
+  "ink-emphasis": {
+    "$value": "{brand.200}",
+    "$type": "color",
+    "$description": "Dark-mode high-prominence interactive text."
+  },
+  "border": {
+    "$value": "{brand.400}",
+    "$type": "color",
+    "$description": "Dark-mode interactive border."
+  },
+  "border-muted": {
+    "$value": "{brand.600}",
+    "$type": "color",
+    "$description": "Dark-mode low-emphasis interactive border."
+  },
+  "border-emphasis": {
+    "$value": "{brand.300}",
+    "$type": "color",
+    "$description": "Dark-mode high-prominence interactive border."
+  },
+  "canvas-subtle": {
+    "$value": "{brand.900}",
+    "$type": "color",
+    "$description": "Dark-mode least-prominent interactive surface."
+  }
+}

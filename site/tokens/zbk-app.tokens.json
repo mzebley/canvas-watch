@@ -1,0 +1,32 @@
+{
+  "canvas": {
+    "$value": "{brand.50}",
+    "$type": "color",
+    "$description": "Page canvas — the neutral reading surface between demo zones."
+  },
+  "canvas-subtle": {
+    "$value": "{color.global-white}",
+    "$type": "color",
+    "$description": "Raised surface for cards and code blocks."
+  },
+  "canvas-muted": {
+    "$value": "{brand.100}",
+    "$type": "color",
+    "$description": "Recessed surface for inline code and table headers."
+  },
+  "ink": {
+    "$value": "{brand.900}",
+    "$type": "color",
+    "$description": "Body text."
+  },
+  "ink-muted": {
+    "$value": "{brand.700}",
+    "$type": "color",
+    "$description": "Secondary text and captions."
+  },
+  "border": {
+    "$value": "{brand.400}",
+    "$type": "color",
+    "$description": "Content borders and dividers."
+  }
+}

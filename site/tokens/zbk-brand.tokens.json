@@ -1,0 +1,67 @@
+{
+  "50": {
+    "$value": "hsl(243, 55%, 98%)",
+    "$type": "color",
+    "$description": "For primary branded surfaces."
+  },
+  "100": {
+    "$value": "hsl(243, 55%, 90%)",
+    "$type": "color",
+    "$description": "For primary branded surfaces."
+  },
+  "200": {
+    "$value": "hsl(243, 55%, 81%)",
+    "$type": "color",
+    "$description": "For primary branded surfaces."
+  },
+  "300": {
+    "$value": "hsl(243, 55%, 68%)",
+    "$type": "color",
+    "$description": "For primary branded surfaces."
+  },
+  "400": {
+    "$value": "hsl(243, 55%, 56%)",
+    "$type": "color",
+    "$description": "For primary branded surfaces."
+  },
+  "500": {
+    "$value": "hsl(243, 55%, 44%)",
+    "$type": "color",
+    "$description": "For primary branded surfaces."
+  },
+  "600": {
+    "$value": "hsl(243, 55%, 36%)",
+    "$type": "color",
+    "$description": "For primary branded surfaces."
+  },
+  "700": {
+    "$value": "hsl(243, 55%, 28%)",
+    "$type": "color",
+    "$description": "For primary branded surfaces."
+  },
+  "800": {
+    "$value": "hsl(243, 55%, 21%)",
+    "$type": "color",
+    "$description": "For primary branded surfaces."
+  },
+  "900": {
+    "$value": "hsl(243, 55%, 12%)",
+    "$type": "color",
+    "$description": "For primary branded surfaces."
+  },
+  "950": {
+    "$value": "hsl(243, 55%, 4%)",
+    "$type": "color",
+    "$description": "For primary branded surfaces."
+  },
+  "ink-inverse": {
+    "$value": "{brand.200}",
+    "$type": "color",
+    "$description": "Body text on brand emphasis canvases (5.8:1)."
+  },
+  "ink-inverse-emphasis": {
+    "$value": "{brand.100}",
+    "$type": "color",
+    "$description": "High-prominence text on brand emphasis canvases (8.2:1)."
+  }
+}

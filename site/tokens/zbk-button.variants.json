@@ -1,0 +1,20 @@
+{
+  "button": {
+    "inverse": {
+      "overrides": {
+        "canvas": "transparent",
+        "canvas-hover": "{brand.700}",
+        "canvas-active": "{brand.700}",
+        "canvas-disabled": "transparent",
+        "ink": "{brand.100}",
+        "ink-hover": "{brand.50}",
+        "ink-active": "{brand.50}",
+        "border-color": "{brand.200}",
+        "border-color-hover": "{brand.100}",
+        "border-color-active": "{brand.100}",
+        "border-width": "{border.width-sm}",
+        "border-radius": "{border.radius-md}"
+      }
+    }
+  }
+}

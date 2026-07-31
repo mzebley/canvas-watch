@@ -1,0 +1,22 @@
+{
+  "canvas-checked": {
+    "$value": "{brand.700}",
+    "$type": "color",
+    "$description": "Selected control surface."
+  },
+  "canvas-checked-hover": {
+    "$value": "{brand.800}",
+    "$type": "color",
+    "$description": "Selected control surface on hover."
+  },
+  "canvas-checked-active": {
+    "$value": "{brand.800}",
+    "$type": "color",
+    "$description": "Selected control surface while pressed."
+  },
+  "indicator-canvas": {
+    "$value": "{color.global-white}",
+    "$type": "color",
+    "$description": "Selection dot against the selected control."
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "canvas": {
+    "$value": "{brand.500}",
+    "$type": "color",
+    "$description": "Interactive surface."
+  },
+  "canvas-subtle": {
+    "$value": "{brand.50}",
+    "$type": "color",
+    "$description": "Least-prominent interactive surface."
+  },
+  "canvas-muted": {
+    "$value": "{brand.100}",
+    "$type": "color",
+    "$description": "Low-emphasis interactive surface."
+  },
+  "canvas-emphasis": {
+    "$value": "{brand.600}",
+    "$type": "color",
+    "$description": "High-prominence interactive surface."
+  },
+  "canvas-inverse": {
+    "$value": "{brand.400}",
+    "$type": "color",
+    "$description": "Interactive surface on inverse canvases."
+  },
+  "canvas-inverse-subtle": {
+    "$value": "{brand.900}",
+    "$type": "color",
+    "$description": "Least-prominent interactive surface on inverse canvases."
+  },
+  "canvas-inverse-muted": {
+    "$value": "{brand.800}",
+    "$type": "color",
+    "$description": "Low-emphasis interactive surface on inverse canvases."
+  },
+  "canvas-inverse-emphasis": {
+    "$value": "{brand.300}",
+    "$type": "color",
+    "$description": "High-prominence interactive surface on inverse canvases."
+  },
+  "ink": {
+    "$value": "{brand.700}",
+    "$type": "color",
+    "$description": "Link and interactive text."
+  },
+  "ink-subtle": {
+    "$value": "{brand.400}",
+    "$type": "color",
+    "$description": "Least-prominent interactive text."
+  },
+  "ink-muted": {
+    "$value": "{brand.500}",
+    "$type": "color",
+    "$description": "Secondary interactive text."
+  },
+  "ink-emphasis": {
+    "$value": "{brand.800}",
+    "$type": "color",
+    "$description": "High-prominence interactive text."
+  },
+  "ink-inverse": {
+    "$value": "{brand.300}",
+    "$type": "color",
+    "$description": "Interactive text on inverse canvases."
+  },
+  "ink-inverse-subtle": {
+    "$value": "{brand.500}",
+    "$type": "color",
+    "$description": "Least-prominent interactive text on inverse canvases."
+  },
+  "ink-inverse-muted": {
+    "$value": "{brand.400}",
+    "$type": "color",
+    "$description": "Secondary interactive text on inverse canvases."
+  },
+  "ink-inverse-emphasis": {
+    "$value": "{brand.200}",
+    "$type": "color",
+    "$description": "High-prominence interactive text on inverse canvases."
+  },
+  "border": {
+    "$value": "{brand.500}",
+    "$type": "color",
+    "$description": "Interactive border."
+  },
+  "border-subtle": {
+    "$value": "{brand.200}",
+    "$type": "color",
+    "$description": "Least-prominent interactive border."
+  },
+  "border-muted": {
+    "$value": "{brand.300}",
+    "$type": "color",
+    "$description": "Low-emphasis interactive border."
+  },
+  "border-emphasis": {
+    "$value": "{brand.600}",
+    "$type": "color",
+    "$description": "High-prominence interactive border."
+  },
+  "border-inverse": {
+    "$value": "{brand.500}",
+    "$type": "color",
+    "$description": "Interactive border on inverse canvases."
+  },
+  "border-inverse-subtle": {
+    "$value": "{brand.800}",
+    "$type": "color",
+    "$description": "Least-prominent interactive border on inverse canvases."
+  },
+  "border-inverse-muted": {
+    "$value": "{brand.700}",
+    "$type": "color",
+    "$description": "Low-emphasis interactive border on inverse canvases."
+  },
+  "border-inverse-emphasis": {
+    "$value": "{brand.400}",
+    "$type": "color",
+    "$description": "High-prominence interactive border on inverse canvases."
+  }
+}

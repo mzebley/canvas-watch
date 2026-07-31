@@ -1,0 +1,77 @@
+{
+  "50": {
+    "$value": "hsl(186, 46%, 98%)",
+    "$type": "color",
+    "$description": "For secondary accent surfaces."
+  },
+  "100": {
+    "$value": "hsl(186, 46%, 90%)",
+    "$type": "color",
+    "$description": "For secondary accent surfaces."
+  },
+  "200": {
+    "$value": "hsl(186, 46%, 81%)",
+    "$type": "color",
+    "$description": "For secondary accent surfaces."
+  },
+  "300": {
+    "$value": "hsl(186, 46%, 68%)",
+    "$type": "color",
+    "$description": "For secondary accent surfaces."
+  },
+  "400": {
+    "$value": "hsl(186, 46%, 56%)",
+    "$type": "color",
+    "$description": "For secondary accent surfaces."
+  },
+  "500": {
+    "$value": "hsl(186, 46%, 44%)",
+    "$type": "color",
+    "$description": "For secondary accent surfaces."
+  },
+  "600": {
+    "$value": "hsl(186, 46%, 36%)",
+    "$type": "color",
+    "$description": "For secondary accent surfaces."
+  },
+  "700": {
+    "$value": "hsl(186, 46%, 28%)",
+    "$type": "color",
+    "$description": "For secondary accent surfaces."
+  },
+  "800": {
+    "$value": "hsl(186, 46%, 21%)",
+    "$type": "color",
+    "$description": "For secondary accent surfaces."
+  },
+  "900": {
+    "$value": "hsl(186, 46%, 12%)",
+    "$type": "color",
+    "$description": "For secondary accent surfaces."
+  },
+  "950": {
+    "$value": "hsl(186, 46%, 4%)",
+    "$type": "color",
+    "$description": "For secondary accent surfaces."
+  },
+  "canvas": {
+    "$value": "{accent-secondary.700}",
+    "$type": "color",
+    "$description": "Filled secondary accent zone, dark enough for inverse ink."
+  },
+  "canvas-emphasis": {
+    "$value": "{accent-secondary.800}",
+    "$type": "color",
+    "$description": "High-prominence secondary accent zone."
+  },
+  "ink-inverse": {
+    "$value": "{accent-secondary.100}",
+    "$type": "color",
+    "$description": "Body text on the secondary accent canvas (5.8:1)."
+  },
+  "ink-inverse-emphasis": {
+    "$value": "{accent-secondary.50}",
+    "$type": "color",
+    "$description": "High-prominence text on the secondary accent canvas (6.7:1)."
+  }
+}

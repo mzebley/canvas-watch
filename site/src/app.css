@@ -1,0 +1,455 @@
+/*
+ * Site styles for canvas-watch.
+ *
+ * Everything colour-, type-, and spacing-related comes from zebkit tokens and
+ * utilities. This file holds only what a utility layer can't express: the tint
+ * system canvas-watch drives, and a few page-level layout primitives.
+ */
+
+/* ── The tint system ──────────────────────────────────────────────────────────
+ *
+ * `.cw-watched` is a floating element registered with canvas-watch. It composes
+ * its shadow from a single `--cw-shadow-color`, declared *on the element* — not
+ * on `:root` — so that an `over-*` class can re-bake it. (See the "composed
+ * shadow token" gotcha in the docs: CSS resolves a nested var() once, where the
+ * composite is declared.)
+ */
+.cw-watched {
+	--cw-shadow-color: var(--zbk-app-ink);
+	--cw-shadow-strength: 1;
+	border-color: color-mix(in srgb, var(--cw-shadow-color) 28%, transparent);
+	box-shadow:
+		0 1px 2px
+			color-mix(
+				in srgb,
+				var(--cw-shadow-color) calc(14% * var(--cw-shadow-strength)),
+				transparent
+			),
+		0 10px 30px -8px
+			color-mix(
+				in srgb,
+				var(--cw-shadow-color) calc(46% * var(--cw-shadow-strength)),
+				transparent
+			);
+	transition:
+		box-shadow 400ms cubic-bezier(0.22, 1, 0.36, 1),
+		border-color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Zone → tint. These class names are the whole API surface of canvas-watch:
+   a `canvas-brand-emphasis-trigger` zone applies `over-canvas-brand-emphasis`. */
+.cw-watched.over-canvas-brand-emphasis {
+	--cw-shadow-color: var(--zbk-brand-canvas-emphasis);
+	--cw-shadow-strength: 1.5;
+}
+.cw-watched.over-canvas-brand-subtle {
+	--cw-shadow-color: var(--zbk-brand-canvas-emphasis);
+	--cw-shadow-strength: 0.85;
+}
+.cw-watched.over-canvas-accent-primary {
+	--cw-shadow-color: var(--zbk-accent-primary-canvas);
+	--cw-shadow-strength: 1.6;
+}
+.cw-watched.over-canvas-accent-secondary {
+	--cw-shadow-color: var(--zbk-accent-secondary-canvas);
+	--cw-shadow-strength: 1.6;
+}
+.cw-watched.over-canvas-critical {
+	--cw-shadow-color: var(--zbk-critical-canvas);
+	--cw-shadow-strength: 1.6;
+}
+.cw-watched.over-canvas-positive {
+	--cw-shadow-color: var(--zbk-positive-canvas);
+	--cw-shadow-strength: 1.6;
+}
+
+/* On a dark canvas the tint has to read as a glow, so it moves up the ramp —
+ * a 700-step shadow on a 950-step page is invisible.
+ */
+[data-zbk-theme='dark'] .cw-watched {
+	--cw-shadow-color: var(--zbk-brand-400);
+}
+[data-zbk-theme='dark'] .cw-watched.over-canvas-brand-emphasis {
+	--cw-shadow-color: var(--zbk-brand-400);
+	--cw-shadow-strength: 1.4;
+}
+[data-zbk-theme='dark'] .cw-watched.over-canvas-brand-subtle {
+	--cw-shadow-color: var(--zbk-brand-500);
+	--cw-shadow-strength: 1;
+}
+[data-zbk-theme='dark'] .cw-watched.over-canvas-accent-primary {
+	--cw-shadow-color: var(--zbk-accent-primary-400);
+	--cw-shadow-strength: 1.5;
+}
+[data-zbk-theme='dark'] .cw-watched.over-canvas-accent-secondary {
+	--cw-shadow-color: var(--zbk-accent-secondary-400);
+	--cw-shadow-strength: 1.5;
+}
+/* critical and positive have no numeric ramp — only semantic tokens — and their
+   canvases are already mid-range enough to glow on a dark page, so the base
+   rules above carry over unchanged. */
+
+/* Motion is the consumer's call — canvas-watch itself only toggles a class. */
+@media (prefers-reduced-motion: reduce) {
+	.cw-watched {
+		transition: none;
+	}
+}
+
+/* ── Page scaffolding ───────────────────────────────────────────────────────── */
+
+html {
+	scroll-behavior: smooth;
+	/* The sticky header must not cover the heading an anchor link lands on. */
+	scroll-padding-block-start: 6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+body {
+	margin: 0;
+	overflow-x: hidden;
+}
+
+/* Full-bleed zone sections. Each one is a canvas-watch trigger. */
+.cw-zone {
+	position: relative;
+	padding-block: clamp(4rem, 12vh, 8rem);
+	padding-inline: 1.5rem;
+}
+
+.cw-zone--tall {
+	min-block-size: 88vh;
+	display: flex;
+	align-items: center;
+}
+
+.cw-shell {
+	inline-size: min(72rem, 100%);
+	margin-inline: auto;
+}
+
+.cw-prose {
+	inline-size: min(44rem, 100%);
+}
+
+/* Docs body: sticky table of contents beside the content column. */
+.cw-docs {
+	display: grid;
+	gap: clamp(2rem, 5vw, 4rem);
+	align-items: start;
+}
+
+@media (min-width: 60rem) {
+	.cw-docs {
+		grid-template-columns: 15rem minmax(0, 1fr);
+	}
+}
+
+.cw-toc {
+	display: none;
+}
+
+@media (min-width: 60rem) {
+	.cw-toc {
+		display: block;
+		position: sticky;
+		inset-block-start: 6rem;
+		max-block-size: calc(100vh - 8rem);
+		overflow-y: auto;
+	}
+}
+
+.cw-toc ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.cw-toc a {
+	display: block;
+	padding-block: 0.3rem;
+	padding-inline-start: 0.75rem;
+	border-inline-start: 2px solid var(--zbk-app-border);
+	color: var(--zbk-app-ink-muted);
+	text-decoration: none;
+	line-height: 1.35;
+}
+
+.cw-toc a:hover {
+	color: var(--zbk-action-ink);
+	border-inline-start-color: var(--zbk-action-ink);
+}
+
+.cw-toc a[aria-current='true'] {
+	color: var(--zbk-action-ink);
+	border-inline-start-color: var(--zbk-action-ink);
+	font-weight: 600;
+}
+
+.cw-toc a:focus-visible {
+	outline: 2px solid var(--zbk-focus-color);
+	outline-offset: 2px;
+}
+
+/* ── Code blocks ────────────────────────────────────────────────────────────── */
+
+.cw-code {
+	position: relative;
+	border: 1px solid var(--zbk-app-border);
+	border-radius: 0.75rem;
+	overflow: hidden;
+	background: var(--zbk-app-canvas-subtle);
+}
+
+.cw-code__bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	padding-inline: 0.9rem;
+	padding-block: 0.4rem;
+	border-block-end: 1px solid var(--zbk-app-border);
+	background: var(--zbk-app-canvas-muted);
+	font-size: 0.78rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--zbk-app-ink-muted);
+}
+
+.cw-code pre {
+	margin: 0;
+	padding: 1rem 1.1rem;
+	overflow-x: auto;
+	font-size: 0.875rem;
+	line-height: 1.6;
+	tab-size: 2;
+}
+
+/* Shiki dual-theme output: light values inline, dark values swapped by token. */
+.shiki,
+.shiki span {
+	color: var(--shiki-light);
+	background-color: var(--shiki-light-bg);
+}
+
+[data-zbk-theme='dark'] .shiki,
+[data-zbk-theme='dark'] .shiki span {
+	color: var(--shiki-dark);
+	background-color: var(--shiki-dark-bg);
+}
+
+/* ── Reference tables ───────────────────────────────────────────────────────── */
+
+.cw-table-scroll {
+	overflow-x: auto;
+	border: 1px solid var(--zbk-app-border);
+	border-radius: 0.75rem;
+}
+
+.cw-table {
+	inline-size: 100%;
+	border-collapse: collapse;
+	font-size: 0.925rem;
+}
+
+.cw-table th,
+.cw-table td {
+	text-align: start;
+	padding: 0.7rem 0.9rem;
+	border-block-end: 1px solid var(--zbk-app-border);
+	vertical-align: top;
+}
+
+.cw-table thead th {
+	background: var(--zbk-app-canvas-muted);
+	font-size: 0.8rem;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--zbk-app-ink-muted);
+	white-space: nowrap;
+}
+
+.cw-table tbody tr:last-child th,
+.cw-table tbody tr:last-child td {
+	border-block-end: none;
+}
+
+.cw-table code {
+	white-space: nowrap;
+}
+
+code {
+	font-family: var(--zbk-font-family-code, ui-monospace, SFMono-Regular, Menlo, monospace);
+}
+
+/* Inline code inside prose. */
+.cw-prose :not(pre) > code,
+.cw-table :not(pre) > code {
+	background: var(--zbk-app-canvas-muted);
+	border-radius: 0.3rem;
+	padding: 0.1em 0.35em;
+	font-size: 0.9em;
+}
+
+/* ── Live class readout ─────────────────────────────────────────────────────── */
+
+.cw-readout {
+	font-family: var(--zbk-font-family-code, ui-monospace, SFMono-Regular, Menlo, monospace);
+	font-size: 0.78rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* ── Demo stage ─────────────────────────────────────────────────────────────── */
+
+.cw-stage {
+	position: relative;
+	block-size: min(32rem, 70vh);
+	overflow-y: auto;
+	/* Deliberately NOT overscroll-behavior: contain — that traps the wheel on a
+	   page-embedded demo. Default chaining hands scrolling back at the edges. */
+	border: 1px solid var(--zbk-app-border);
+	border-radius: 1rem;
+	background: var(--zbk-app-canvas);
+}
+
+.cw-stage__zone {
+	min-block-size: 14rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1.5rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+}
+
+/* The demo's floating card sits above the scrolling zones, pinned to the stage. */
+.cw-stage__card {
+	position: sticky;
+	inset-block-start: 40%;
+	inline-size: min(20rem, 76%);
+	margin-inline: auto;
+	z-index: 2;
+	padding: 1rem 1.15rem;
+	border-radius: 0.9rem;
+	/* Width and style only — `border` shorthand would reset the tinted
+	   border-color that `.cw-watched` sets (same specificity, later in source). */
+	border-width: 1px;
+	border-style: solid;
+	background: var(--zbk-app-canvas-subtle);
+}
+
+.cw-stage__spacer {
+	block-size: 8rem;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────────── */
+
+/* Fixed rather than sticky so it takes no flow space: the hero starts at the
+   very top of the viewport and the bar always overlaps a zone. canvas-watch
+   cares about overlap geometry, not positioning mode — either works. */
+.cw-header {
+	position: fixed;
+	inset-block-start: 0.75rem;
+	inset-inline: 0;
+	z-index: 20;
+	inline-size: min(72rem, calc(100% - 1.5rem));
+	margin-inline: auto;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.55rem 0.9rem;
+	border-radius: 0.9rem;
+	/* See the note on .cw-stage__card — never the `border` shorthand here. */
+	border-width: 1px;
+	border-style: solid;
+	background: color-mix(in srgb, var(--zbk-app-canvas-subtle) 88%, transparent);
+	backdrop-filter: blur(12px);
+}
+
+/* A sticky element can't stick if an ancestor clips overflow — keep the page
+   wrapper unclipped. (This is one of the documented gotchas.) */
+.cw-page {
+	position: relative;
+}
+
+.cw-header__spacer {
+	flex: 1 1 auto;
+	min-inline-size: 0;
+}
+
+/* The live readout is the nicest thing in the header, but on a phone the
+   controls need the room more. It is aria-hidden either way. */
+@media (max-width: 30rem) {
+	.cw-header__spacer {
+		display: none;
+	}
+}
+
+.cw-skip-link {
+	position: absolute;
+	inset-block-start: -100%;
+	inset-inline-start: 0.75rem;
+	z-index: 40;
+	padding: 0.6rem 1rem;
+	border-radius: 0.5rem;
+	background: var(--zbk-app-canvas-subtle);
+	color: var(--zbk-action-ink);
+}
+
+.cw-skip-link:focus {
+	inset-block-start: 0.75rem;
+}
+
+/* ── Angular demo pill ──────────────────────────────────────────────────────── */
+
+/* Rendered by the Angular app, styled by the same `.cw-watched` contract as the
+   Svelte-driven header — the point being that the tint comes from one watcher. */
+.cw-angular-pill {
+	position: fixed;
+	inset-block-end: 1rem;
+	inset-inline: 0;
+	z-index: 20;
+	inline-size: max-content;
+	max-inline-size: calc(100% - 1.5rem);
+	margin-inline: auto;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.5rem 0.9rem;
+	border-radius: 999px;
+	/* Width and style only — `.cw-watched` owns border-color. */
+	border-width: 1px;
+	border-style: solid;
+	background: color-mix(in srgb, var(--zbk-app-canvas-subtle) 92%, transparent);
+	backdrop-filter: blur(12px);
+	font-size: 0.8rem;
+}
+
+.cw-angular-pill__tag {
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+/* ── Hero mark ──────────────────────────────────────────────────────────────── */
+
+.cw-mark {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	text-decoration: none;
+	color: inherit;
+	white-space: nowrap;
+}
+
+.cw-mark svg {
+	flex: none;
+}

@@ -24,6 +24,9 @@ backgrounds, where a fixed shadow color may look wrong against a shifting page, 
 As the card scrolls over the section, it gains the class
 `over-canvas-brand-emphasis`; when it leaves, the class is removed.
 
+**[canvas-watch.markzebley.com](https://canvas-watch.markzebley.com)** — docs
+with a live demo you can scroll. Source in [`site/`](site/README.md).
+
 ---
 
 ## Install

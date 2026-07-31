@@ -1,0 +1,77 @@
+{
+  "50": {
+    "$value": "hsl(27, 74%, 98%)",
+    "$type": "color",
+    "$description": "For primary accent surfaces."
+  },
+  "100": {
+    "$value": "hsl(27, 74%, 90%)",
+    "$type": "color",
+    "$description": "For primary accent surfaces."
+  },
+  "200": {
+    "$value": "hsl(27, 74%, 81%)",
+    "$type": "color",
+    "$description": "For primary accent surfaces."
+  },
+  "300": {
+    "$value": "hsl(27, 74%, 68%)",
+    "$type": "color",
+    "$description": "For primary accent surfaces."
+  },
+  "400": {
+    "$value": "hsl(27, 74%, 56%)",
+    "$type": "color",
+    "$description": "For primary accent surfaces."
+  },
+  "500": {
+    "$value": "hsl(27, 74%, 44%)",
+    "$type": "color",
+    "$description": "For primary accent surfaces."
+  },
+  "600": {
+    "$value": "hsl(27, 74%, 36%)",
+    "$type": "color",
+    "$description": "For primary accent surfaces."
+  },
+  "700": {
+    "$value": "hsl(27, 74%, 28%)",
+    "$type": "color",
+    "$description": "For primary accent surfaces."
+  },
+  "800": {
+    "$value": "hsl(27, 74%, 21%)",
+    "$type": "color",
+    "$description": "For primary accent surfaces."
+  },
+  "900": {
+    "$value": "hsl(27, 74%, 12%)",
+    "$type": "color",
+    "$description": "For primary accent surfaces."
+  },
+  "950": {
+    "$value": "hsl(27, 74%, 4%)",
+    "$type": "color",
+    "$description": "For primary accent surfaces."
+  },
+  "canvas": {
+    "$value": "{accent-primary.700}",
+    "$type": "color",
+    "$description": "Filled accent zone, dark enough for inverse ink."
+  },
+  "canvas-emphasis": {
+    "$value": "{accent-primary.800}",
+    "$type": "color",
+    "$description": "High-prominence accent zone."
+  },
+  "ink-inverse": {
+    "$value": "{accent-primary.100}",
+    "$type": "color",
+    "$description": "Body text on the accent canvas (6.4:1)."
+  },
+  "ink-inverse-emphasis": {
+    "$value": "{accent-primary.50}",
+    "$type": "color",
+    "$description": "High-prominence text on the accent canvas (7.6:1)."
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "canvas": {
+    "$value": "{brand.950}",
+    "$type": "color",
+    "$description": "Dark-mode page canvas."
+  },
+  "canvas-subtle": {
+    "$value": "{brand.900}",
+    "$type": "color",
+    "$description": "Dark-mode raised card and code surface."
+  },
+  "canvas-muted": {
+    "$value": "{brand.800}",
+    "$type": "color",
+    "$description": "Dark-mode recessed surface."
+  },
+  "canvas-emphasis": {
+    "$value": "{brand.900}",
+    "$type": "color",
+    "$description": "Dark-mode table header surface."
+  },
+  "ink": {
+    "$value": "{brand.100}",
+    "$type": "color",
+    "$description": "Dark-mode body text."
+  },
+  "ink-muted": {
+    "$value": "{brand.300}",
+    "$type": "color",
+    "$description": "Dark-mode secondary text."
+  },
+  "border": {
+    "$value": "{brand.600}",
+    "$type": "color",
+    "$description": "Dark-mode borders and dividers."
+  }
+}

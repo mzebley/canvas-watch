@@ -1,0 +1,42 @@
+{
+  "canvas": {
+    "$value": "{brand.500}",
+    "$type": "color",
+    "$description": "Dark-mode branded surface."
+  },
+  "canvas-subtle": {
+    "$value": "{brand.900}",
+    "$type": "color",
+    "$description": "Dark-mode subtle branded surface."
+  },
+  "canvas-muted": {
+    "$value": "{brand.800}",
+    "$type": "color",
+    "$description": "Dark-mode header and footer surface."
+  },
+  "canvas-emphasis": {
+    "$value": "{brand.700}",
+    "$type": "color",
+    "$description": "Dark-mode high-prominence branded zone."
+  },
+  "ink": {
+    "$value": "{brand.200}",
+    "$type": "color",
+    "$description": "Dark-mode branded supporting text."
+  },
+  "ink-emphasis": {
+    "$value": "{brand.100}",
+    "$type": "color",
+    "$description": "Dark-mode branded high-emphasis text."
+  },
+  "border-subtle": {
+    "$value": "{brand.800}",
+    "$type": "color",
+    "$description": "Dark-mode subtle branded borders."
+  },
+  "border-muted": {
+    "$value": "{brand.700}",
+    "$type": "color",
+    "$description": "Dark-mode low-emphasis branded borders."
+  }
+}

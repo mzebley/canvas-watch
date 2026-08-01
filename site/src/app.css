@@ -49,6 +49,12 @@
 	--cw-shadow-color: var(--zbk-brand-canvas-emphasis);
 	--cw-shadow-strength: 0.85;
 }
+/* The hero is a brand-muted zone, so this pairing has to exist or the bar goes
+   flat across the whole first screen. */
+.cw-watched.over-canvas-brand-muted {
+	--cw-shadow-color: var(--zbk-brand-canvas-emphasis);
+	--cw-shadow-strength: 1.1;
+}
 .cw-watched.over-canvas-accent-primary {
 	--cw-shadow-color: var(--zbk-accent-primary-canvas);
 	--cw-shadow-strength: 1.6;
@@ -91,6 +97,11 @@
 	--cw-shadow-color: var(--zbk-brand-500);
 	--cw-accent: var(--zbk-brand-300);
 	--cw-shadow-strength: 1;
+}
+[data-zbk-theme='dark'] .cw-watched.over-canvas-brand-muted {
+	--cw-shadow-color: var(--zbk-brand-400);
+	--cw-accent: var(--zbk-brand-300);
+	--cw-shadow-strength: 1.2;
 }
 [data-zbk-theme='dark'] .cw-watched.over-canvas-accent-primary {
 	--cw-shadow-color: var(--zbk-accent-primary-400);
@@ -541,4 +552,174 @@ code {
 
 .cw-mark svg {
 	flex: none;
+}
+
+/* ── Liquid glass bars (review only) ─────────────────────────────────────────
+ *
+ * Technique adapted from https://codepen.io/daftplug/pen/QwbaYGO. Two layers:
+ *
+ *   ::after  captures the backdrop (backdrop-filter promotes it to a backdrop
+ *            root) and refracts it through an SVG displacement filter.
+ *   ::before paints the specular edge — the inset white hairlines that read as
+ *            a bevel catching light.
+ *
+ * The bar's own background stays (near) transparent, which is the whole point
+ * and also the whole problem: the text is effectively sitting on the zone
+ * itself, so ink has to be chosen per zone rather than fixed.
+ */
+
+.cw-glassbar {
+	position: fixed;
+	inset-block-start: var(--cw-glassbar-offset, 0.75rem);
+	inset-inline: 0;
+	z-index: 20;
+	inline-size: min(72rem, calc(100% - 1.5rem));
+	margin-inline: auto;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.5rem 0.9rem;
+	border-radius: 1.1rem;
+	isolation: isolate;
+	color: var(--cw-glass-ink, var(--zbk-app-ink));
+	transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cw-glassbar::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	box-shadow:
+		inset 2px 2px 0 -2px rgb(255 255 255 / 0.7),
+		inset 0 0 3px 1px rgb(255 255 255 / 0.7);
+}
+
+.cw-glassbar::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	pointer-events: none;
+	overflow: hidden;
+}
+
+/* Variant A — the bar itself is the lens. No frost at all. */
+.cw-glassbar--surface::after {
+	backdrop-filter: blur(0px);
+	filter: url(#cw-glass-surface);
+}
+
+/* Variant B — the bar is a light frost; the controls are the lenses. */
+.cw-glassbar--controls::after {
+	backdrop-filter: blur(14px) saturate(1.6);
+	background: rgb(255 255 255 / 0.07);
+}
+
+.cw-glassbar--controls .cw-glassbar__pill {
+	position: relative;
+	isolation: isolate;
+	padding: 0.3rem 0.7rem;
+	border-radius: 999px;
+}
+
+.cw-glassbar--controls .cw-glassbar__pill::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	background: rgb(255 255 255 / 0.1);
+	box-shadow:
+		inset 2px 2px 0 -2px rgb(255 255 255 / 0.7),
+		inset 0 0 3px 1px rgb(255 255 255 / 0.7);
+}
+
+.cw-glassbar--controls .cw-glassbar__pill::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	pointer-events: none;
+	backdrop-filter: blur(2px);
+	filter: url(#cw-glass-control);
+}
+
+.cw-glassbar__pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	white-space: nowrap;
+}
+
+.cw-glassbar__spacer {
+	flex: 1 1 auto;
+	min-inline-size: 0;
+	text-align: end;
+}
+
+.cw-glassbar__tag {
+	font-size: 0.7rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	opacity: 0.85;
+	white-space: nowrap;
+}
+
+/* Neither Firefox nor older Safari will displace a backdrop through an SVG
+   filter. Without a fallback the bar would be fully transparent there, so fall
+   back to the frosted surface the real header already uses. */
+@supports not (backdrop-filter: blur(1px)) {
+	.cw-glassbar::after {
+		background: color-mix(in srgb, var(--zbk-app-canvas-subtle) 88%, transparent);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cw-glassbar {
+		transition: none;
+	}
+}
+
+/* ── Adaptive ink for the glass bars ─────────────────────────────────────────
+ * With a transparent bar the effective background *is* the zone, so each zone
+ * picks the ink its own module already provides for that surface. Measured, not
+ * guessed — see the review page for the numbers.
+ */
+.cw-glassbar.over-canvas-brand-emphasis {
+	--cw-glass-ink: var(--zbk-brand-ink-inverse);
+}
+.cw-glassbar.over-canvas-brand-muted,
+.cw-glassbar.over-canvas-brand-subtle {
+	--cw-glass-ink: var(--zbk-brand-ink-emphasis);
+}
+.cw-glassbar.over-canvas-accent-primary {
+	--cw-glass-ink: var(--zbk-accent-primary-ink-inverse);
+}
+.cw-glassbar.over-canvas-accent-secondary {
+	--cw-glass-ink: var(--zbk-accent-secondary-ink-inverse);
+}
+/* The status canvases are bright mid-tones. Neither of the module's own inks
+   works on them through a transparent bar — measured 1.95:1 for `ink` and
+   1.89:1 for `ink-inverse` on critical, because both sit mid-ramp too. These
+   zones take a fixed dark primitive, which is also theme-independent: the red
+   and the green don't change between light and dark, so the ink shouldn't. */
+.cw-glassbar.over-canvas-critical,
+.cw-glassbar.over-canvas-positive {
+	--cw-glass-ink: var(--zbk-brand-950);
+}
+
+/* No blanket dark rule here. A `[data-zbk-theme='dark'] .cw-glassbar` selector
+   ties on specificity with `.cw-glassbar.over-*` and, coming later, would win
+   for every zone — silently throwing away all the per-zone ink above. Only the
+   zones whose canvas actually changes in dark mode get an override.
+   brand-muted and brand-subtle go dark in the overlay, so their ink flips. */
+[data-zbk-theme='dark'] .cw-glassbar.over-canvas-brand-muted,
+[data-zbk-theme='dark'] .cw-glassbar.over-canvas-brand-subtle {
+	--cw-glass-ink: var(--zbk-brand-ink);
 }

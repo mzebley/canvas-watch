@@ -120,12 +120,12 @@
 <main id="top">
 	<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
 	<section
-		class="cw-zone cw-zone--tall canvas-brand-emphasis ink-brand-inverse canvas-brand-emphasis-trigger"
+		class="cw-zone cw-zone--tall canvas-brand-muted ink-brand canvas-brand-muted-trigger"
 	>
 		<div class="cw-shell">
 			<p class="font-sm letter-spacing-wide text-uppercase margin-0">@mzebley/canvas-watch</p>
 			<h1 class="font-2xl margin-block-start-05 margin-block-end-1 measure-3">
-				Floating elements that know what they're over.
+				Floating elements that know where they're at.
 			</h1>
 			<p class="font-lg measure-2 margin-block-end-1">
 				Sticky nav bars, docked players, and cards drift over backgrounds that keep changing.

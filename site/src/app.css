@@ -17,6 +17,9 @@
 .cw-watched {
 	--cw-shadow-color: var(--zbk-app-ink);
 	--cw-shadow-strength: 1;
+	/* The accent handed to non-shadow details — the mark, the theme switch.
+	   Resolved on this element, so the over-* override above it applies. */
+	--cw-accent: var(--cw-shadow-color);
 	border-color: color-mix(in srgb, var(--cw-shadow-color) 28%, transparent);
 	box-shadow:
 		0 1px 2px
@@ -54,12 +57,18 @@
 	--cw-shadow-color: var(--zbk-accent-secondary-canvas);
 	--cw-shadow-strength: 1.6;
 }
+/* The status canvases are light enough that using them as the accent puts a
+   pale icon on a pale bar — measured at 1.2:1 for positive. The shadow can stay
+   the canvas colour, since a shadow is decorative; the accent drops to the ink
+   token, which is what these modules provide for exactly this reason. */
 .cw-watched.over-canvas-critical {
 	--cw-shadow-color: var(--zbk-critical-canvas);
+	--cw-accent: var(--zbk-critical-ink);
 	--cw-shadow-strength: 1.6;
 }
 .cw-watched.over-canvas-positive {
 	--cw-shadow-color: var(--zbk-positive-canvas);
+	--cw-accent: var(--zbk-positive-ink);
 	--cw-shadow-strength: 1.6;
 }
 
@@ -68,22 +77,36 @@
  */
 [data-zbk-theme='dark'] .cw-watched {
 	--cw-shadow-color: var(--zbk-brand-400);
+	/* The accent sits a step lighter than the glow: it has to clear 3:1 against
+	   the dark header surface *and* against the toggle's dark track, which the
+	   400 step does not. */
+	--cw-accent: var(--zbk-brand-300);
 }
 [data-zbk-theme='dark'] .cw-watched.over-canvas-brand-emphasis {
 	--cw-shadow-color: var(--zbk-brand-400);
+	--cw-accent: var(--zbk-brand-300);
 	--cw-shadow-strength: 1.4;
 }
 [data-zbk-theme='dark'] .cw-watched.over-canvas-brand-subtle {
 	--cw-shadow-color: var(--zbk-brand-500);
+	--cw-accent: var(--zbk-brand-300);
 	--cw-shadow-strength: 1;
 }
 [data-zbk-theme='dark'] .cw-watched.over-canvas-accent-primary {
 	--cw-shadow-color: var(--zbk-accent-primary-400);
+	--cw-accent: var(--zbk-accent-primary-300);
 	--cw-shadow-strength: 1.5;
 }
 [data-zbk-theme='dark'] .cw-watched.over-canvas-accent-secondary {
 	--cw-shadow-color: var(--zbk-accent-secondary-400);
+	--cw-accent: var(--zbk-accent-secondary-300);
 	--cw-shadow-strength: 1.5;
+}
+[data-zbk-theme='dark'] .cw-watched.over-canvas-critical {
+	--cw-accent: var(--zbk-critical-ink-inverse);
+}
+[data-zbk-theme='dark'] .cw-watched.over-canvas-positive {
+	--cw-accent: var(--zbk-positive-ink-inverse);
 }
 /* critical and positive have no numeric ramp — only semantic tokens — and their
    canvases are already mid-range enough to glow on a dark page, so the base
@@ -394,6 +417,49 @@ code {
 	border-style: solid;
 	background: color-mix(in srgb, var(--zbk-app-canvas-subtle) 88%, transparent);
 	backdrop-filter: blur(12px);
+
+	/* Hand the zone's accent to the theme switch.
+	 *
+	 * These are zebkit component tokens, declared on :root. That matters: the
+	 * `-hover` and `-active` variants are authored as `var(--zbk-toggle-canvas-checked)`
+	 * *on :root*, so they bake against the :root value and re-declaring only the
+	 * base here would leave hover reverting to the default action colour. This is
+	 * exactly the composed-token trap documented in the Gotchas section, met in
+	 * the wild — so every variant is re-declared on this element.
+	 *
+	 * Restyling a component instance is the escape hatch on zebkit's ladder, not
+	 * the first rung. It is deliberate here: the value is only knowable at
+	 * runtime, from whatever the bar happens to be floating over, which no token
+	 * can express.
+	 */
+	--zbk-toggle-canvas-checked: var(--cw-accent);
+	--zbk-toggle-canvas-checked-hover: var(--cw-accent);
+	--zbk-toggle-canvas-checked-active: var(--cw-accent);
+	--zbk-toggle-border-color-checked: var(--cw-accent);
+	--zbk-toggle-border-color-checked-hover: var(--cw-accent);
+	--zbk-toggle-border-color-checked-active: var(--cw-accent);
+	--zbk-toggle-thumb-canvas: var(--cw-accent);
+	--zbk-toggle-thumb-canvas-hover: var(--cw-accent);
+}
+
+/* The mark's bars are drawn with currentColor, so this tints the icon without
+   touching the wordmark beside it — that stays app ink, where it can be held to
+   the 4.5:1 text threshold regardless of what's behind the bar. */
+.cw-mark svg {
+	color: var(--cw-accent);
+	transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The switch needs no transition rule here: zebkit already lists background-color
+   and border-color in --zbk-toggle-transition-property, on a duration that
+   follows the runtime accessibility modifier. Styling .zbk-toggle__track
+   directly would also reach into a compiled skeleton class, which is not a
+   consumer API. */
+
+@media (prefers-reduced-motion: reduce) {
+	.cw-mark svg {
+		transition: none;
+	}
 }
 
 /* A sticky element can't stick if an ancestor clips overflow — keep the page

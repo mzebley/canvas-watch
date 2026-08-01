@@ -91,6 +91,10 @@
 			body: 'Majority overlap ignores z-index. The larger overlap area wins, which may not be the element actually painted on top.'
 		},
 		{
+			title: 'Neither is clipping',
+			body: "getBoundingClientRect reports where an element would be, not what's visible. A trigger zone inside a scrolling container still reports a full-size rect once it has scrolled out of view, so a watched element can pick up a zone that is no longer on screen. When your zones live in a scroller, put the trigger class on the scroller itself — its rect is the visible box — and relabel it as its content scrolls. The playground on this page does exactly that."
+		},
+		{
 			title: 'Dynamic triggers need refresh()',
 			body: 'Trigger zones are indexed on refresh() — at adapter mount, or via refreshCanvasWatch() — not continuously observed for class changes.'
 		}
@@ -196,9 +200,14 @@
 				</p>
 			</div>
 			<DemoStage />
-			<p class="font-sm ink-app-muted margin-block-start-1 measure-2">
-				Note that the header bar above has gone neutral: this section registers no trigger zone, so
-				every <code>over-*</code> class is removed.
+			<p class="font-sm ink-app-muted margin-block-start-1 measure-3">
+				Scroll the page — not the frame — until the bar at the top passes over these bands, and it
+				picks them up too: its mark and theme switch pull their accent from whichever band is
+				behind it. The bands can't be page triggers directly, though. canvas-watch compares
+				unclipped rectangles, so a band scrolled out of this frame still reports a rect where it
+				would have been, and the bar would tint from a zone that isn't on screen. The frame itself
+				carries the trigger instead, relabelled as you scroll — the same proxy any zone inside a
+				scroller needs.
 			</p>
 
 			<div class="margin-block-start-3">

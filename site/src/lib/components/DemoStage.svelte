@@ -1,12 +1,16 @@
 <script>
+	import { refreshCanvasWatch } from '@mzebley/canvas-watch/svelte';
+
 	/**
 	 * The interactive playground.
 	 *
 	 * It runs its own watcher rather than the shared one, because `threshold` is
 	 * a construction option and this demo lets you change it. Its selectors are
-	 * deliberately distinct (`-demozone`, not `-trigger`) so the page-level
-	 * watcher driving the header never sees these zones — two independent
-	 * watchers, one page, no interference.
+	 * deliberately distinct (`-demozone`, not `-trigger`), so the page-level
+	 * watcher never resolves these bands directly.
+	 *
+	 * The page's header still reacts to them, but through the proxy trigger
+	 * below rather than the bands themselves — see the note there for why.
 	 */
 
 	// A pale band sits second so you scroll dark → light → dark and watch the
@@ -52,6 +56,66 @@
 		};
 	});
 
+	/**
+	 * Proxy trigger for the page-level watcher.
+	 *
+	 * The bands can't carry `-trigger` themselves: canvas-watch compares
+	 * *unclipped* bounding rects, and a band scrolled out of this frame still
+	 * reports a rect where it would have been. That rect can cross the header
+	 * while the band is invisible, tinting the bar from a zone that isn't there.
+	 *
+	 * So the frame itself becomes the trigger — its rect is exactly the visible
+	 * box — and carries the class of whichever band is actually painted behind
+	 * the header. Same idea a consumer needs for any zone inside a scroller.
+	 */
+	let stageTrigger = $state('');
+
+	$effect(() => {
+		let frame = 0;
+
+		const sync = () => {
+			frame = 0;
+			const header = document.querySelector('.cw-header');
+			if (!stage || !header) return;
+
+			const hr = header.getBoundingClientRect();
+			const sr = stage.getBoundingClientRect();
+			const midpoint = (hr.top + hr.bottom) / 2;
+
+			let next = '';
+			// Only claim the header while it is genuinely over the frame.
+			if (midpoint >= sr.top && midpoint <= sr.bottom) {
+				for (const band of stage.querySelectorAll('[data-zone]')) {
+					const r = band.getBoundingClientRect();
+					if (midpoint >= r.top && midpoint <= r.bottom) {
+						next = `${band.getAttribute('data-zone')}-trigger`;
+						break;
+					}
+				}
+			}
+
+			if (next !== stageTrigger) {
+				stageTrigger = next;
+				// The class changed, so the shared watcher has to re-index it.
+				refreshCanvasWatch();
+			}
+		};
+
+		const schedule = () => {
+			if (!frame) frame = requestAnimationFrame(sync);
+		};
+
+		sync();
+		window.addEventListener('scroll', schedule, { passive: true, capture: true });
+		window.addEventListener('resize', schedule, { passive: true });
+
+		return () => {
+			if (frame) cancelAnimationFrame(frame);
+			window.removeEventListener('scroll', schedule, { capture: true });
+			window.removeEventListener('resize', schedule);
+		};
+	});
+
 	/** @param {Event} event */
 	function oncanvaschange(event) {
 		applied = /** @type {CustomEvent} */ (event).detail.appliedClass;
@@ -93,7 +157,7 @@
 </div>
 
 <div
-	class="cw-stage"
+	class="cw-stage {stageTrigger}"
 	bind:this={stage}
 	tabindex="0"
 	role="region"
@@ -110,7 +174,13 @@
 	</div>
 
 	{#each zones as zone (zone.canvas)}
-		<div class="cw-stage__zone {zone.canvas} {zone.ink} {zone.canvas}-demozone">
+		<!-- `-demozone` drives this section's own threshold-configurable watcher.
+		     `data-zone` is read by the proxy-trigger effect above, which hands the
+		     visible band up to the page-level watcher behind the header. -->
+		<div
+			data-zone={zone.canvas}
+			class="cw-stage__zone {zone.canvas} {zone.ink} {zone.canvas}-demozone"
+		>
 			<code>.{zone.canvas}-demozone</code>
 		</div>
 	{/each}

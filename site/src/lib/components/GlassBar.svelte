@@ -22,7 +22,7 @@
 </script>
 
 <div
-	class="cw-glassbar cw-glassbar--{variant} cw-watched"
+	class="cw-glassbar cw-glassbar--{variant} cw-glass cw-watched"
 	style="--cw-glassbar-offset: {offset}"
 	use:watchBgCanvas={{ onChange: (detail) => (applied = detail.appliedClass) }}
 >

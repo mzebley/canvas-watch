@@ -422,12 +422,12 @@ code {
 	align-items: center;
 	gap: 0.75rem;
 	padding: 0.55rem 0.9rem;
-	border-radius: 0.9rem;
+	border-radius: 1.1rem;
 	/* See the note on .cw-stage__card — never the `border` shorthand here. */
 	border-width: 1px;
 	border-style: solid;
-	background: color-mix(in srgb, var(--zbk-app-canvas-subtle) 88%, transparent);
-	backdrop-filter: blur(12px);
+	/* No background or backdrop-filter here: `.cw-glass` owns the surface, via a
+	   blurred + refracted ::after and a tinted ::before. */
 
 	/* Hand the zone's accent to the theme switch.
 	 *
@@ -554,18 +554,84 @@ code {
 	flex: none;
 }
 
-/* ── Liquid glass bars (review only) ─────────────────────────────────────────
+/* ── Liquid glass ────────────────────────────────────────────────────────────
  *
  * Technique adapted from https://codepen.io/daftplug/pen/QwbaYGO. Two layers:
  *
  *   ::after  captures the backdrop (backdrop-filter promotes it to a backdrop
- *            root) and refracts it through an SVG displacement filter.
- *   ::before paints the specular edge — the inset white hairlines that read as
- *            a bevel catching light.
+ *            root), blurs it, and refracts that blurred result through an SVG
+ *            displacement filter.
+ *   ::before paints the tint and the specular edge — the inset white hairlines
+ *            that read as a bevel catching light. Unfiltered, so the tint stays
+ *            even while the backdrop warps beneath it.
  *
- * The bar's own background stays (near) transparent, which is the whole point
- * and also the whole problem: the text is effectively sitting on the zone
- * itself, so ink has to be chosen per zone rather than fixed.
+ * The surface is near-transparent, which is the whole point and also the whole
+ * problem: the text is effectively sitting on the zone itself, so ink has to be
+ * chosen per zone rather than fixed. See the ink map below.
+ *
+ * `.cw-glass` is the treatment. It expects a positioned host with a
+ * border-radius; the header and the review bars both supply that.
+ */
+
+.cw-glass {
+	isolation: isolate;
+	color: var(--cw-glass-ink, var(--zbk-app-ink));
+	transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cw-glass::before,
+.cw-glass::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+}
+
+.cw-glass::before {
+	z-index: 0;
+	background: rgb(255 255 255 / 0.07);
+	box-shadow:
+		inset 2px 2px 0 -2px rgb(255 255 255 / 0.7),
+		inset 0 0 3px 1px rgb(255 255 255 / 0.7);
+}
+
+.cw-glass::after {
+	z-index: -1;
+	overflow: hidden;
+	backdrop-filter: blur(8px) saturate(1.6);
+	filter: url(#cw-glass-lens);
+}
+
+/* Zebkit components colour themselves from tokens, not from `color`, so they
+   would ignore the adaptive ink and keep their fixed action colour on a
+   transparent bar. Point their ink at the same variable. */
+.cw-glass zbk-link,
+.cw-glass .zbk-link {
+	--zbk-link-ink: var(--cw-glass-ink);
+	--zbk-link-ink-hover: var(--cw-glass-ink);
+	--zbk-link-ink-focus: var(--cw-glass-ink);
+	--zbk-link-ink-active: var(--cw-glass-ink);
+	--zbk-link-ink-visited: var(--cw-glass-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cw-glass {
+		transition: none;
+	}
+}
+
+/* Neither Firefox nor older Safari will displace a backdrop through an SVG
+   filter. Without a fallback the surface would be nearly invisible there, so
+   fall back to a solid-enough frost. */
+@supports not (backdrop-filter: blur(1px)) {
+	.cw-glass::after {
+		background: color-mix(in srgb, var(--zbk-app-canvas-subtle) 88%, transparent);
+	}
+}
+
+/* ── Review bars ─────────────────────────────────────────────────────────────
+ * Only used by /glass, to compare treatments side by side.
  */
 
 .cw-glassbar {
@@ -580,50 +646,15 @@ code {
 	gap: 0.75rem;
 	padding: 0.5rem 0.9rem;
 	border-radius: 1.1rem;
-	isolation: isolate;
-	color: var(--cw-glass-ink, var(--zbk-app-ink));
-	transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.cw-glassbar::before {
-	content: '';
-	position: absolute;
-	inset: 0;
-	z-index: 0;
-	border-radius: inherit;
-	pointer-events: none;
-	box-shadow:
-		inset 2px 2px 0 -2px rgb(255 255 255 / 0.7),
-		inset 0 0 3px 1px rgb(255 255 255 / 0.7);
+/* Variant A — turbulence, no tint. The bar is a lens, not a frost. */
+.cw-glassbar--surface::before {
+	background: none;
 }
 
-.cw-glassbar::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	z-index: -1;
-	border-radius: inherit;
-	pointer-events: none;
-	overflow: hidden;
-}
-
-/* Variant A — the bar itself is the lens. No frost at all. */
 .cw-glassbar--surface::after {
 	backdrop-filter: blur(0px);
-	filter: url(#cw-glass-surface);
-}
-
-/* Variant B — frost *and* refraction. backdrop-filter blurs the backdrop first,
-   then the SVG filter displaces that blurred result, so it reads as frosted
-   glass with the same wobble as A rather than a plain blur.
-   The white tint lives on ::before, which is unfiltered — displacing a flat
-   fill only produces fringing at the edges where it samples past the region. */
-.cw-glassbar--controls::before {
-	background: rgb(255 255 255 / 0.07);
-}
-
-.cw-glassbar--controls::after {
-	backdrop-filter: blur(8px) saturate(1.6);
 	filter: url(#cw-glass-surface);
 }
 
@@ -648,55 +679,44 @@ code {
 	white-space: nowrap;
 }
 
-/* Neither Firefox nor older Safari will displace a backdrop through an SVG
-   filter. Without a fallback the bar would be fully transparent there, so fall
-   back to the frosted surface the real header already uses. */
-@supports not (backdrop-filter: blur(1px)) {
-	.cw-glassbar::after {
-		background: color-mix(in srgb, var(--zbk-app-canvas-subtle) 88%, transparent);
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.cw-glassbar {
-		transition: none;
-	}
-}
-
-/* ── Adaptive ink for the glass bars ─────────────────────────────────────────
- * With a transparent bar the effective background *is* the zone, so each zone
- * picks the ink its own module already provides for that surface. Measured, not
- * guessed — see the review page for the numbers.
+/* ── Adaptive ink ────────────────────────────────────────────────────────────
+ * With a transparent surface the effective background *is* the zone, so each
+ * zone picks the ink its own module provides for that surface. Measured against
+ * every zone in both themes; nothing here is guessed.
  */
-.cw-glassbar.over-canvas-brand-emphasis {
+.cw-glass.over-canvas-brand-emphasis {
 	--cw-glass-ink: var(--zbk-brand-ink-inverse);
 }
-.cw-glassbar.over-canvas-brand-muted,
-.cw-glassbar.over-canvas-brand-subtle {
+.cw-glass.over-canvas-brand-muted,
+.cw-glass.over-canvas-brand-subtle {
 	--cw-glass-ink: var(--zbk-brand-ink-emphasis);
 }
-.cw-glassbar.over-canvas-accent-primary {
+.cw-glass.over-canvas-accent-primary {
 	--cw-glass-ink: var(--zbk-accent-primary-ink-inverse);
 }
-.cw-glassbar.over-canvas-accent-secondary {
+.cw-glass.over-canvas-accent-secondary {
 	--cw-glass-ink: var(--zbk-accent-secondary-ink-inverse);
 }
 /* The status canvases are bright mid-tones. Neither of the module's own inks
    works on them through a transparent bar — measured 1.95:1 for `ink` and
    1.89:1 for `ink-inverse` on critical, because both sit mid-ramp too. These
-   zones take a fixed dark primitive, which is also theme-independent: the red
-   and the green don't change between light and dark, so the ink shouldn't. */
-.cw-glassbar.over-canvas-critical,
-.cw-glassbar.over-canvas-positive {
+   take a fixed dark primitive, which is also theme-independent: the red and the
+   green don't change between light and dark, so the ink shouldn't either. */
+.cw-glass.over-canvas-critical,
+.cw-glass.over-canvas-positive {
 	--cw-glass-ink: var(--zbk-brand-950);
 }
 
-/* No blanket dark rule here. A `[data-zbk-theme='dark'] .cw-glassbar` selector
-   ties on specificity with `.cw-glassbar.over-*` and, coming later, would win
-   for every zone — silently throwing away all the per-zone ink above. Only the
-   zones whose canvas actually changes in dark mode get an override.
-   brand-muted and brand-subtle go dark in the overlay, so their ink flips. */
-[data-zbk-theme='dark'] .cw-glassbar.over-canvas-brand-muted,
-[data-zbk-theme='dark'] .cw-glassbar.over-canvas-brand-subtle {
+/* No blanket dark rule here. A `[data-zbk-theme='dark'] .cw-glass` selector
+   ties on specificity with `.cw-glass.over-*` and, coming later, would win for
+   every zone — silently throwing away all the per-zone ink above. Only the
+   zones whose canvas actually changes in dark mode get an override. */
+[data-zbk-theme='dark'] .cw-glass.over-canvas-brand-muted,
+[data-zbk-theme='dark'] .cw-glass.over-canvas-brand-subtle {
 	--cw-glass-ink: var(--zbk-brand-ink);
 }
+
+/* The readout takes the adaptive ink at full strength. Dimming it to 80% was
+   measured at 3.71:1 over brand-emphasis — on a near-transparent bar there is
+   no headroom to spend on de-emphasis. It reads as secondary through size and
+   the monospace face instead. */

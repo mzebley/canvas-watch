@@ -1,51 +1,69 @@
 <script>
-	/**
-	 * SVG filter definition for the liquid-glass bar.
-	 *
-	 * A pseudo-element sets `backdrop-filter: blur(0px)`, which promotes it to a
-	 * backdrop root, and then `filter: url(#…)` displaces that captured backdrop.
-	 *
-	 * Technique from https://codepen.io/daftplug/pen/QwbaYGO — retuned, because
-	 * the reference is a 300x200 card and this is a ~1150x44 bar, where the
-	 * original `scale="77"` smears the backdrop into mush.
-	 *
-	 * The pen's second filter (a baked displacement-map PNG for its button) is
-	 * gone: nothing uses it now that the controls sit directly on the bar, and it
-	 * carried ~9 KB of base64 with it.
-	 */
+	import { glassDisplacementMap } from '$lib/data/glass-map.js';
 
 	/**
-	 * Displacement strength.
+	 * SVG filter definitions for the liquid-glass bars.
 	 *
-	 * Keep this well under half the bar's height. The turbulence map displaces
-	 * uniformly, including at the very edge of the element, and the filter region
-	 * is clipped to the element box — so any pixel pulled from beyond that box
-	 * samples transparency. On a ~44px bar, scale 24 pulls from further than the
-	 * bar is tall and the frost fills with pale smears. (The reference pen avoids
-	 * this on small elements by using an edge-weighted displacement image instead
-	 * of turbulence, which falls off to zero at the border.)
+	 * Both work the same way: a pseudo-element sets `backdrop-filter`, which
+	 * promotes it to a backdrop root, and then `filter: url(#…)` displaces that
+	 * captured backdrop. What differs is where the displacement comes from.
+	 *
+	 * Technique from https://codepen.io/daftplug/pen/QwbaYGO.
 	 */
-	let { scale = 9, baseFrequency = '0.015 0.03', seed = 92 } = $props();
+
+	let {
+		/**
+		 * Turbulence strength, for `#cw-glass-surface`.
+		 *
+		 * Has to stay well under half the bar's height. Turbulence displaces
+		 * uniformly right up to the element's border, and the filter region is
+		 * clipped to the element box, so any pixel pulled from beyond that box
+		 * samples transparency. On a ~44px bar, scale 24 reaches further than the
+		 * bar is tall and the frost fills with pale smears.
+		 */
+		scale = 9,
+		baseFrequency = '0.015 0.03',
+		seed = 92,
+
+		/**
+		 * Lens strength, for `#cw-glass-lens`.
+		 *
+		 * This one uses the baked map, which bends hardest at the edges and falls
+		 * off to nothing at the border — so it has no smearing ceiling and can be
+		 * pushed far harder than turbulence. `primitiveUnits="objectBoundingBox"`
+		 * means the value is a fraction of the box, not pixels.
+		 */
+		lensScale = 0.05
+	} = $props();
 </script>
 
 <svg aria-hidden="true" focusable="false" class="cw-glass-defs">
 	<defs>
-		<!-- Whole-bar glass: organic turbulence, bending the backdrop everywhere.
-		     x/y/width/height clip the filter region to the element box so the
-		     effect can't bleed past a bar that spans most of the viewport. -->
+		<!-- Organic turbulence, bending the backdrop everywhere. x/y/width/height
+		     clip the filter region to the element box so the effect can't bleed
+		     past a bar that spans most of the viewport. -->
 		<filter id="cw-glass-surface" x="0%" y="0%" width="100%" height="100%">
-			<feTurbulence
-				type="fractalNoise"
-				{baseFrequency}
-				numOctaves="2"
-				{seed}
-				result="noise"
-			/>
+			<feTurbulence type="fractalNoise" {baseFrequency} numOctaves="2" {seed} result="noise" />
 			<feGaussianBlur in="noise" stdDeviation="0.02" result="blurredNoise" />
 			<feDisplacementMap
 				in="SourceGraphic"
 				in2="blurredNoise"
 				{scale}
+				xChannelSelector="R"
+				yChannelSelector="G"
+			/>
+		</filter>
+
+		<!-- Edge-weighted lens. The map is neutral through the middle and bends
+		     hard near the border, which is what reads as thick glass with a
+		     refracting rim rather than an evenly wobbled surface. -->
+		<filter id="cw-glass-lens" primitiveUnits="objectBoundingBox">
+			<feImage href={glassDisplacementMap} x="0" y="0" width="1" height="1" result="map" />
+			<feGaussianBlur in="SourceGraphic" stdDeviation="0.01" result="blurred" />
+			<feDisplacementMap
+				in="blurred"
+				in2="map"
+				scale={lensScale}
 				xChannelSelector="R"
 				yChannelSelector="G"
 			/>

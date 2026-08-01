@@ -146,7 +146,7 @@
 				<zbk-link
 					href="https://github.com/mzebley/canvas-watch"
 					appearance="button"
-					variant="inverse lg"
+					variant="outline lg"
 					target="_blank"
 					rel="noopener"
 				>

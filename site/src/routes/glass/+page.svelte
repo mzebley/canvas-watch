@@ -1,6 +1,5 @@
 <script>
 	import GlassBar from '$lib/components/GlassBar.svelte';
-	import GlassFilters from '$lib/components/GlassFilters.svelte';
 
 	/**
 	 * Side-by-side review of two liquid-glass treatments for the site header.
@@ -25,7 +24,6 @@
 	<meta name="robots" content="noindex" />
 </svelte:head>
 
-<GlassFilters />
 
 <GlassBar variant="surface" label="A · surface glass" offset="4.25rem" />
 <GlassBar variant="controls" label="B · frosted surface" offset="7.75rem" />

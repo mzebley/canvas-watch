@@ -3,6 +3,7 @@
 	import { watchBgCanvas } from '@mzebley/canvas-watch/svelte';
 	import { syncThemeFromDocument } from '$lib/theme.svelte.js';
 	import { defineZebkit } from '$lib/zebkit/define.js';
+	import GlassFilters from '$lib/components/GlassFilters.svelte';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import '../app.css';
 
@@ -23,11 +24,13 @@
 	});
 </script>
 
+<GlassFilters />
+
 <div class="cw-page">
 	<a class="cw-skip-link" href="#top">Skip to content</a>
 
 	<header
-		class="cw-header cw-watched"
+		class="cw-header cw-glass cw-watched"
 		use:watchBgCanvas={{ onChange: (detail) => (applied = detail.appliedClass) }}
 	>
 		<a class="cw-mark" href="#top">
@@ -49,7 +52,9 @@
 		</a>
 
 		<div class="cw-header__spacer">
-			<p class="cw-readout ink-app-muted margin-0 text-right" aria-hidden="true">
+			<!-- No ink-* utility here: the bar is glass, so its colour has to come
+			     from the adaptive `--cw-glass-ink`, not a fixed token. -->
+			<p class="cw-readout margin-0 text-right" aria-hidden="true">
 				{zoneLabel ? `over: ${zoneLabel}` : 'over: —'}
 			</p>
 		</div>

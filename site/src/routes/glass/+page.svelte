@@ -28,7 +28,7 @@
 <GlassFilters />
 
 <GlassBar variant="surface" label="A · surface glass" offset="4.25rem" />
-<GlassBar variant="controls" label="B · frosted controls" offset="7.75rem" />
+<GlassBar variant="controls" label="B · frosted surface" offset="7.75rem" />
 
 <main class="cw-glassreview">
 	<section class="cw-zone canvas-app">
@@ -45,9 +45,10 @@
 					<code>.glassContainer</code>.
 				</li>
 				<li>
-					<strong>B — frosted controls.</strong> The bar is a light frost
-					(<code>backdrop-filter: blur(14px)</code>) and each control sits on its own glass pill
-					using the pen's baked displacement map — its <code>.glassBtn</code>.
+					<strong>B — frosted surface.</strong> One translucent frost across the whole bar
+					(<code>backdrop-filter: blur(8px)</code> over 7% white), with the same specular edge.
+					Controls sit directly on it — one backdrop-filter for the bar rather than one per
+					control.
 				</li>
 			</ul>
 			<p class="margin-block-end-1">
@@ -84,8 +85,9 @@
 				base frequency. Easy to push either way.
 			</p>
 			<p class="margin-0">
-				B costs an extra ~9 KB for the base64 displacement map, and puts a
-				<code>backdrop-filter</code> on every control rather than one on the bar.
+				B carries no SVG filter at all now — just one <code>backdrop-filter</code> and a
+				translucent white. That makes it the cheaper of the two, and the only one that degrades
+				gracefully outside Chromium.
 			</p>
 		</div>
 	</section>

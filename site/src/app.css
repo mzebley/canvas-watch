@@ -613,41 +613,12 @@ code {
 	filter: url(#cw-glass-surface);
 }
 
-/* Variant B — the bar is a light frost; the controls are the lenses. */
+/* Variant B — one frosted surface for the whole bar. The controls sit directly
+   on it: no second glass layer behind them, so there's only one backdrop-filter
+   on the bar rather than one per control. */
 .cw-glassbar--controls::after {
-	backdrop-filter: blur(14px) saturate(1.6);
+	backdrop-filter: blur(8px) saturate(1.6);
 	background: rgb(255 255 255 / 0.07);
-}
-
-.cw-glassbar--controls .cw-glassbar__pill {
-	position: relative;
-	isolation: isolate;
-	padding: 0.3rem 0.7rem;
-	border-radius: 999px;
-}
-
-.cw-glassbar--controls .cw-glassbar__pill::before {
-	content: '';
-	position: absolute;
-	inset: 0;
-	z-index: 0;
-	border-radius: inherit;
-	pointer-events: none;
-	background: rgb(255 255 255 / 0.1);
-	box-shadow:
-		inset 2px 2px 0 -2px rgb(255 255 255 / 0.7),
-		inset 0 0 3px 1px rgb(255 255 255 / 0.7);
-}
-
-.cw-glassbar--controls .cw-glassbar__pill::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	z-index: -1;
-	border-radius: inherit;
-	pointer-events: none;
-	backdrop-filter: blur(2px);
-	filter: url(#cw-glass-control);
 }
 
 .cw-glassbar__pill {

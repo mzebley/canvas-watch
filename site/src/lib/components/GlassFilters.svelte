@@ -1,16 +1,17 @@
 <script>
-	import { glassDisplacementMap } from '$lib/data/glass-map.js';
-
 	/**
-	 * SVG filter definitions for the liquid-glass bars.
+	 * SVG filter definition for the liquid-glass bar.
 	 *
-	 * Both work the same way: a pseudo-element sets `backdrop-filter: blur(0px)`,
-	 * which promotes it to a backdrop root, and then `filter: url(#…)` displaces
-	 * that captured backdrop. The displacement source is what differs.
+	 * A pseudo-element sets `backdrop-filter: blur(0px)`, which promotes it to a
+	 * backdrop root, and then `filter: url(#…)` displaces that captured backdrop.
 	 *
-	 * Technique from https://codepen.io/daftplug/pen/QwbaYGO — the numbers below
-	 * are retuned, because the reference is a 300x200 card and these are ~1150x44
-	 * bars, where the original `scale="77"` smears the backdrop into mush.
+	 * Technique from https://codepen.io/daftplug/pen/QwbaYGO — retuned, because
+	 * the reference is a 300x200 card and this is a ~1150x44 bar, where the
+	 * original `scale="77"` smears the backdrop into mush.
+	 *
+	 * The pen's second filter (a baked displacement-map PNG for its button) is
+	 * gone: nothing uses it now that the controls sit directly on the bar, and it
+	 * carried ~9 KB of base64 with it.
 	 */
 
 	/** Displacement strength for the surface filter. */
@@ -35,20 +36,6 @@
 				in="SourceGraphic"
 				in2="blurredNoise"
 				{scale}
-				xChannelSelector="R"
-				yChannelSelector="G"
-			/>
-		</filter>
-
-		<!-- Control glass: a baked map that bends hard at the edges and stays flat
-		     in the middle, which is what makes a small pill read as a lens. -->
-		<filter id="cw-glass-control" primitiveUnits="objectBoundingBox">
-			<feImage href={glassDisplacementMap} x="0" y="0" width="1" height="1" result="map" />
-			<feGaussianBlur in="SourceGraphic" stdDeviation="0.02" result="blurred" />
-			<feDisplacementMap
-				in="blurred"
-				in2="map"
-				scale="1"
 				xChannelSelector="R"
 				yChannelSelector="G"
 			/>

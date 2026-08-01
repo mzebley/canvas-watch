@@ -613,12 +613,18 @@ code {
 	filter: url(#cw-glass-surface);
 }
 
-/* Variant B — one frosted surface for the whole bar. The controls sit directly
-   on it: no second glass layer behind them, so there's only one backdrop-filter
-   on the bar rather than one per control. */
+/* Variant B — frost *and* refraction. backdrop-filter blurs the backdrop first,
+   then the SVG filter displaces that blurred result, so it reads as frosted
+   glass with the same wobble as A rather than a plain blur.
+   The white tint lives on ::before, which is unfiltered — displacing a flat
+   fill only produces fringing at the edges where it samples past the region. */
+.cw-glassbar--controls::before {
+	background: rgb(255 255 255 / 0.07);
+}
+
 .cw-glassbar--controls::after {
 	backdrop-filter: blur(8px) saturate(1.6);
-	background: rgb(255 255 255 / 0.07);
+	filter: url(#cw-glass-surface);
 }
 
 .cw-glassbar__pill {

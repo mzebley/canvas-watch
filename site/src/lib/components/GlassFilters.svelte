@@ -14,8 +14,18 @@
 	 * carried ~9 KB of base64 with it.
 	 */
 
-	/** Displacement strength for the surface filter. */
-	let { scale = 24, baseFrequency = '0.012 0.02', seed = 92 } = $props();
+	/**
+	 * Displacement strength.
+	 *
+	 * Keep this well under half the bar's height. The turbulence map displaces
+	 * uniformly, including at the very edge of the element, and the filter region
+	 * is clipped to the element box — so any pixel pulled from beyond that box
+	 * samples transparency. On a ~44px bar, scale 24 pulls from further than the
+	 * bar is tall and the frost fills with pale smears. (The reference pen avoids
+	 * this on small elements by using an edge-weighted displacement image instead
+	 * of turbulence, which falls off to zero at the border.)
+	 */
+	let { scale = 9, baseFrequency = '0.015 0.03', seed = 92 } = $props();
 </script>
 
 <svg aria-hidden="true" focusable="false" class="cw-glass-defs">

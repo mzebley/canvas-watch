@@ -1,0 +1,107 @@
+{
+  "primary": {
+    "$value": "Manrope",
+    "$type": "fontFamily",
+    "$extensions": {
+      "dev.zebkit": {
+        "font": {
+          "source": "google",
+          "fallback": "sans",
+          "styles": [
+            "normal",
+            "italic"
+          ],
+          "weights": "200..800"
+        }
+      }
+    }
+  },
+  "alt": {
+    "$value": "Outfit",
+    "$type": "fontFamily",
+    "$extensions": {
+      "dev.zebkit": {
+        "font": {
+          "source": "google",
+          "fallback": "sans",
+          "styles": [
+            "normal",
+            "italic"
+          ],
+          "weights": "300..900"
+        }
+      }
+    }
+  },
+  "monospace": {
+    "$value": "Google Sans Code",
+    "$type": "fontFamily",
+    "$extensions": {
+      "dev.zebkit": {
+        "font": {
+          "source": "google",
+          "fallback": "mono",
+          "styles": [
+            "normal",
+            "italic"
+          ],
+          "weights": "300..800"
+        }
+      }
+    }
+  },
+  "interface": {
+    "$value": "{font-family.primary}"
+  },
+  "system-sans": {
+    "$value": "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\"",
+    "$description": "System sans-serif stack. Zero network cost; uses the platform UI font.",
+    "$type": "cssFontFamily",
+    "$extensions": {
+      "dev.zebkit": {
+        "font": {
+          "source": "system"
+        }
+      }
+    }
+  },
+  "system-serif": {
+    "$value": "ui-serif, Georgia, Cambria, \"Times New Roman\", Times, serif",
+    "$description": "System serif stack. Zero network cost.",
+    "$type": "cssFontFamily",
+    "$extensions": {
+      "dev.zebkit": {
+        "font": {
+          "source": "system"
+        }
+      }
+    }
+  },
+  "system-mono": {
+    "$value": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+    "$description": "System monospace stack. Zero network cost.",
+    "$type": "cssFontFamily",
+    "$extensions": {
+      "dev.zebkit": {
+        "font": {
+          "source": "system"
+        }
+      }
+    }
+  },
+  "heading": {
+    "$value": "{font-family.alt}",
+    "$description": "Font family used for heading elements.",
+    "$type": "fontFamily"
+  },
+  "body": {
+    "$value": "{font-family.primary}",
+    "$description": "Font family used for <p>, <li>, etc.",
+    "$type": "fontFamily"
+  },
+  "code": {
+    "$value": "{font-family.monospace}",
+    "$description": "Font family used within <code> blocks",
+    "$type": "fontFamily"
+  }
+}

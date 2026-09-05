@@ -15,9 +15,9 @@
     "$description": "Dark-mode header and footer surface."
   },
   "canvas-emphasis": {
-    "$value": "{brand.700}",
+    "$value": "{brand.900}",
     "$type": "color",
-    "$description": "Dark-mode high-prominence branded zone."
+    "$description": "Dark-mode hero zone. Deliberately deeper than button.canvas (brand.700): at brand.700 the zone and the filled button were the same colour, so the hero's primary CTA read as an outline button."
   },
   "ink": {
     "$value": "{brand.200}",

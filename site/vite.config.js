@@ -11,21 +11,8 @@ export default defineConfig({
 		// import specifiers a consumer writes. `npm run lib` refreshes ../dist first.
 		alias: [
 			{ find: '@mzebley/canvas-watch/svelte', replacement: libDist('svelte/index.js') },
-			{ find: '@mzebley/canvas-watch/angular', replacement: libDist('angular/index.js') },
-			// Also catches the bare self-reference inside dist/angular/*, so the
-			// Angular directive and the Svelte action resolve to one module
-			// instance — and therefore one shared watcher.
 			{ find: /^@mzebley\/canvas-watch$/, replacement: libDist('index.js') }
 		]
-	},
-	esbuild: {
-		// The Angular demo component uses decorators.
-		tsconfigRaw: {
-			compilerOptions: {
-				experimentalDecorators: true,
-				useDefineForClassFields: false
-			}
-		}
 	},
 	server: {
 		fs: {

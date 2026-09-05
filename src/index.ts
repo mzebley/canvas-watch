@@ -1,22 +1,28 @@
 /**
  * @mzebley/canvas-watch — framework-agnostic core.
  *
- * Detect which background "canvas" zone a floating element sits over and reflect
- * it as an `over-*` class on that element, so shadows (or text color) can re-tint
- * to match what's behind them.
+ * Detect which background "canvas" zone a floating element sits over, or track
+ * whether a referenced element is above, within, below, or missing from the
+ * viewport.
  *
- * Framework adapters live at `@mzebley/canvas-watch/svelte` and
- * `@mzebley/canvas-watch/angular`.
+ * The Svelte adapter lives at `@mzebley/canvas-watch/svelte`.
  */
 export {
 	createCanvasWatcher,
+	classifyViewportRect,
 	overlapArea,
+	pickWinningClass,
 	resolveAppliedClass,
 	type CanvasWatcher,
 	type CanvasWatchOptions,
 	type CanvasChangeDetail,
 	type ClassResolveOptions,
 	type DOMRectLike,
+	type ZoneOverlap,
+	type ViewportChangeDetail,
+	type ViewportListener,
+	type ViewportReference,
+	type ViewportState,
 } from './core/canvas-watcher.js';
 
 export {

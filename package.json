@@ -1,8 +1,8 @@
 {
   "name": "@mzebley/canvas-watch",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
-  "description": "Detect which background zone a floating element sits over and reflect it as a class, so shadows or text can re-tint to match what's behind them. Framework-agnostic core with optional Svelte and Angular adapters.",
+  "description": "Track canvas overlap and reactive vertical viewport state with a framework-agnostic core and optional Svelte adapter.",
   "author": "Mark Zebley",
   "license": "ISC",
   "sideEffects": false,
@@ -24,10 +24,6 @@
       "import": "./dist/svelte/index.js",
       "require": "./dist/svelte/index.cjs"
     },
-    "./angular": {
-      "types": "./dist/angular/index.d.ts",
-      "import": "./dist/angular/index.js"
-    },
     "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
@@ -38,10 +34,13 @@
     "access": "public"
   },
   "scripts": {
-    "build": "rm -rf dist && tsup && ngc -p tsconfig.angular.json",
+    "build": "tsup",
     "build:core": "tsup",
-    "build:angular": "ngc -p tsconfig.angular.json",
     "test": "npm run build:core && node --test",
+    "verify:package": "node scripts/verify-package.mjs",
+    "profile:library": "npm run build:core && node scripts/profile-performance.mjs",
+    "verify:site-demo": "node scripts/verify-site-demo.mjs",
+    "verify": "npm test && npm run site:build && npm run verify:site-demo && npm run verify:package && git diff --check",
     "demo": "npm run build:core && npx --yes serve .",
     "site:dev": "npm run dev --workspace site",
     "site:build": "npm run build --workspace site",
@@ -50,14 +49,13 @@
   },
   "keywords": [
     "intersection-observer",
+    "viewport",
     "scroll",
     "background",
     "shadow",
     "contrast",
     "svelte",
     "svelte-action",
-    "angular",
-    "angular-directive",
     "liquid-glass"
   ],
   "repository": {
@@ -69,23 +67,17 @@
   },
   "homepage": "https://canvas-watch.markzebley.com",
   "peerDependencies": {
-    "@angular/core": ">=16",
-    "svelte": ">=5"
+    "svelte": ">=5.7"
   },
   "peerDependenciesMeta": {
-    "@angular/core": {
-      "optional": true
-    },
     "svelte": {
       "optional": true
     }
   },
   "devDependencies": {
-    "@angular/compiler": "^18.2.0",
-    "@angular/compiler-cli": "^18.2.0",
-    "@angular/core": "^18.2.0",
-    "rxjs": "^7.8.0",
-    "svelte": "^5.0.0",
+    "esbuild": "^0.27.7",
+    "playwright": "^1.62.1",
+    "svelte": "^5.7.0",
     "tsup": "^8.3.0",
     "typescript": "~5.5.4"
   }

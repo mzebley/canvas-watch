@@ -1,0 +1,57 @@
+{
+  "font-family": {
+    "$value": "{font-family.heading}",
+    "$type": "fontFamily",
+    "$description": "Font family for H1 elements with .prose applied directly or that are a child of a .prose container."
+  },
+  "font-size": {
+    "$value": "{font-size.3xl}",
+    "$type": "cssDimension",
+    "$description": "Font size for H1 elements — Carbon fluid heading (~42px)."
+  },
+  "font-weight": {
+    "$value": "{font-weight.black}",
+    "$type": "fontWeight",
+    "$description": "Font weight for H1 — Carbon expressive uses Light at the largest sizes."
+  },
+  "line-height": {
+    "$value": "{line-height.1}",
+    "$type": "number",
+    "$description": "Line height for H1 elements with .prose applied directly or that are a child of a .prose container."
+  },
+  "letter-spacing": {
+    "$value": "{letter-spacing.tighter}",
+    "$type": "dimension",
+    "$description": "Tracking for H1 — Carbon fluid-display roles use -0.64px tracking."
+  },
+  "measure": {
+    "$value": "{text-measure.4}",
+    "$type": "cssDimension",
+    "$description": "Maximum width for H1 elements with .prose applied directly or that are a child of a .prose container."
+  },
+  "spacing-before": {
+    "$value": "0",
+    "$type": "dimension",
+    "$description": "Amount of margin block start for H1 elements with .prose applied directly or that are a child of a .prose container."
+  },
+  "spacing-after": {
+    "$value": "{spacing.1}",
+    "$type": "dimension",
+    "$description": "Amount of margin block end for H1 elements with .prose applied directly or that are a child of a .prose container."
+  },
+  "color": {
+    "$value": "currentColor",
+    "$type": "color",
+    "$description": "Color of H1 elements with .prose applied directly or that are a child of a .prose container."
+  },
+  "font-style": {
+    "$value": "normal",
+    "$type": "fontStyle",
+    "$description": "Font style for H1 elements with .prose applied directly or that are a child of a .prose container."
+  },
+  "text-transform": {
+    "$value": "none",
+    "$type": "textTransform",
+    "$description": "Text transform for H1 elements with .prose applied directly or that are a child of a .prose container."
+  }
+}

@@ -3,7 +3,8 @@
  *
  * Everything colour-, type-, and spacing-related comes from zebkit tokens and
  * utilities. This file holds only what a utility layer can't express: the tint
- * system canvas-watch drives, and a few page-level layout primitives.
+ * system canvas-watch drives, the glass treatment, and a few page-level layout
+ * primitives.
  */
 
 /* ── The tint system ──────────────────────────────────────────────────────────
@@ -17,6 +18,9 @@
 .cw-watched {
 	--cw-shadow-color: var(--zbk-app-ink);
 	--cw-shadow-strength: 1;
+	/* The accent handed to non-shadow details — the mark, the theme switch.
+	   Resolved on this element, so the over-* override above it applies. */
+	--cw-accent: var(--cw-shadow-color);
 	border-color: color-mix(in srgb, var(--cw-shadow-color) 28%, transparent);
 	box-shadow:
 		0 1px 2px
@@ -54,40 +58,36 @@
 	--cw-shadow-color: var(--zbk-accent-secondary-canvas);
 	--cw-shadow-strength: 1.6;
 }
-.cw-watched.over-canvas-critical {
-	--cw-shadow-color: var(--zbk-critical-canvas);
-	--cw-shadow-strength: 1.6;
-}
-.cw-watched.over-canvas-positive {
-	--cw-shadow-color: var(--zbk-positive-canvas);
-	--cw-shadow-strength: 1.6;
-}
 
 /* On a dark canvas the tint has to read as a glow, so it moves up the ramp —
  * a 700-step shadow on a 950-step page is invisible.
  */
 [data-zbk-theme='dark'] .cw-watched {
 	--cw-shadow-color: var(--zbk-brand-400);
+	/* The accent sits a step lighter than the glow: it has to clear 3:1 against
+	   the dark header surface *and* against the toggle's dark track. */
+	--cw-accent: var(--zbk-brand-300);
 }
 [data-zbk-theme='dark'] .cw-watched.over-canvas-brand-emphasis {
 	--cw-shadow-color: var(--zbk-brand-400);
+	--cw-accent: var(--zbk-brand-300);
 	--cw-shadow-strength: 1.4;
 }
 [data-zbk-theme='dark'] .cw-watched.over-canvas-brand-subtle {
 	--cw-shadow-color: var(--zbk-brand-500);
+	--cw-accent: var(--zbk-brand-300);
 	--cw-shadow-strength: 1;
 }
 [data-zbk-theme='dark'] .cw-watched.over-canvas-accent-primary {
 	--cw-shadow-color: var(--zbk-accent-primary-400);
+	--cw-accent: var(--zbk-accent-primary-300);
 	--cw-shadow-strength: 1.5;
 }
 [data-zbk-theme='dark'] .cw-watched.over-canvas-accent-secondary {
 	--cw-shadow-color: var(--zbk-accent-secondary-400);
+	--cw-accent: var(--zbk-accent-secondary-300);
 	--cw-shadow-strength: 1.5;
 }
-/* critical and positive have no numeric ramp — only semantic tokens — and their
-   canvases are already mid-range enough to glow on a dark page, so the base
-   rules above carry over unchanged. */
 
 /* Motion is the consumer's call — canvas-watch itself only toggles a class. */
 @media (prefers-reduced-motion: reduce) {
@@ -97,6 +97,18 @@
 }
 
 /* ── Page scaffolding ───────────────────────────────────────────────────────── */
+
+:root {
+	/*
+	 * The site's own decorative rules: table dividers, container edges, the TOC
+	 * rail. These are not control affordances, so they need not clear the 3:1
+	 * non-text threshold that `--zbk-app-border` has to hold for the components
+	 * that inherit it — at full strength a 3.4:1 grey reads as a heavy box around
+	 * every table cell. Mixing it back toward the canvas keeps the hairline quiet
+	 * without lowering the token components depend on.
+	 */
+	--cw-rule: color-mix(in srgb, var(--zbk-app-border) 45%, var(--zbk-app-canvas));
+}
 
 html {
 	scroll-behavior: smooth;
@@ -118,35 +130,502 @@ body {
 /* Full-bleed zone sections. Each one is a canvas-watch trigger. */
 .cw-zone {
 	position: relative;
-	padding-block: clamp(4rem, 12vh, 8rem);
+	padding-block: clamp(4.5rem, 10vw, 7.5rem);
 	padding-inline: 1.5rem;
 }
 
-.cw-zone--tall {
-	min-block-size: 88vh;
+.cw-zone--hero {
+	min-block-size: min(100svh, 52rem);
 	display: flex;
 	align-items: center;
+	padding-block-start: clamp(6rem, 14vh, 9rem);
 }
 
+/*
+ * The single content rail.
+ *
+ * `.cw-shell` is the *only* element on the page allowed to centre itself. Width
+ * constraints on prose use `.cw-measure`, which narrows without re-centring —
+ * combining `margin-inline: auto` with a narrower measure is what made the
+ * content column's left edge jump from section to section.
+ */
 .cw-shell {
 	inline-size: min(72rem, 100%);
 	margin-inline: auto;
 }
 
-.cw-prose {
-	inline-size: min(44rem, 100%);
+.cw-measure {
+	inline-size: min(42rem, 100%);
 }
 
-/* Docs body: sticky table of contents beside the content column. */
+.cw-measure--wide {
+	inline-size: min(54rem, 100%);
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────────────── */
+
+.cw-hero {
+	display: grid;
+	gap: clamp(2.5rem, 5vw, 4.5rem);
+	align-items: center;
+}
+
+@media (min-width: 62rem) {
+	.cw-hero {
+		grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+	}
+}
+
+/*
+ * The hero diagram: a static miniature of what the playground does live, so the
+ * concept is legible above the fold without waiting for a scroll. Decorative —
+ * the figure is aria-hidden and the caption below carries the same information
+ * in prose.
+ */
+.cw-hero-figure {
+	position: relative;
+	border-radius: 1.25rem;
+	overflow: hidden;
+	border: 1px solid color-mix(in srgb, var(--zbk-brand-ink-inverse) 22%, transparent);
+	box-shadow: 0 24px 60px -24px rgb(0 0 0 / 0.55);
+}
+
+.cw-hero-figure__band {
+	display: flex;
+	align-items: center;
+	padding: 0.85rem 1.1rem;
+	min-block-size: 5.5rem;
+	font-size: 0.75rem;
+	letter-spacing: 0.04em;
+	font-family: var(--zbk-font-family-code, ui-monospace, SFMono-Regular, Menlo, monospace);
+}
+
+.cw-hero-figure__card {
+	position: absolute;
+	inset-inline: clamp(1.5rem, 8%, 3.5rem);
+	inset-block-start: 38%;
+	z-index: 2;
+	padding: 0.85rem 1rem;
+	border-radius: 0.85rem;
+	border: 1px solid color-mix(in srgb, var(--cw-glass-ink) 30%, transparent);
+	box-shadow: 0 12px 32px -10px rgb(0 0 0 / 0.5);
+}
+
+.cw-hero-figure__overlap {
+	position: absolute;
+	inset-inline-end: 0.75rem;
+	inset-block-start: 0.75rem;
+	z-index: 3;
+	padding: 0.15rem 0.5rem;
+	border-radius: 999px;
+	font-size: 0.65rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	background: color-mix(in srgb, var(--zbk-color-global-black) 45%, transparent);
+	color: rgb(255 255 255 / 0.92);
+}
+
+/* ── Viewport state demo ───────────────────────────────────────────────────── */
+
+.cw-viewport-intro {
+	margin-block-end: clamp(2rem, 6vw, 4rem);
+}
+
+.cw-viewport-demo {
+	--cw-viewport-accent: #67e8f9;
+	--cw-viewport-accent-soft: rgb(103 232 249 / 0.22);
+	position: relative;
+	min-block-size: 300svh;
+	isolation: isolate;
+}
+
+.cw-viewport-demo[data-state='within'] {
+	--cw-viewport-accent: #fde047;
+	--cw-viewport-accent-soft: rgb(253 224 71 / 0.26);
+}
+
+.cw-viewport-demo[data-state='above'] {
+	--cw-viewport-accent: #f0abfc;
+	--cw-viewport-accent-soft: rgb(240 171 252 / 0.24);
+}
+
+.cw-viewport-demo[data-state='missing'] {
+	--cw-viewport-accent: #fb7185;
+	--cw-viewport-accent-soft: rgb(251 113 133 / 0.22);
+}
+
+.cw-viewport-demo__hud {
+	position: sticky;
+	inset-block-start: 5.25rem;
+	block-size: min(42rem, calc(100svh - 6.5rem));
+	min-block-size: 25rem;
+	overflow: hidden;
+	border: 1px solid rgb(255 255 255 / 0.24);
+	border-radius: clamp(1.25rem, 4vw, 2.5rem);
+	background:
+		radial-gradient(circle at 50% 50%, var(--cw-viewport-accent-soft), transparent 34%),
+		linear-gradient(145deg, rgb(9 8 31 / 0.96), rgb(20 12 48 / 0.96));
+	box-shadow:
+		0 2rem 6rem -2rem rgb(4 2 18 / 0.8),
+		inset 0 1px rgb(255 255 255 / 0.16);
+	transition:
+		background 420ms ease,
+		border-color 420ms ease;
+}
+
+.cw-viewport-demo__grid,
+.cw-viewport-demo__glow,
+.cw-viewport-demo__frame {
+	position: absolute;
+	pointer-events: none;
+}
+
+.cw-viewport-demo__grid {
+	inset: 0;
+	background-image:
+		linear-gradient(rgb(255 255 255 / 0.055) 1px, transparent 1px),
+		linear-gradient(90deg, rgb(255 255 255 / 0.055) 1px, transparent 1px);
+	background-size: 2.25rem 2.25rem;
+	mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+}
+
+.cw-viewport-demo__glow {
+	inline-size: min(72vw, 38rem);
+	aspect-ratio: 1;
+	inset: 50% auto auto 50%;
+	border-radius: 50%;
+	background: var(--cw-viewport-accent);
+	filter: blur(7rem);
+	opacity: 0.18;
+	transform: translate(-50%, -50%);
+	transition:
+		background 420ms ease,
+		opacity 420ms ease;
+}
+
+.cw-viewport-demo[data-state='within'] .cw-viewport-demo__glow {
+	opacity: 0.34;
+}
+
+.cw-viewport-demo__status {
+	position: absolute;
+	z-index: 3;
+	inset-block-start: clamp(1.25rem, 4vw, 2.25rem);
+	inset-inline-start: clamp(1.25rem, 4vw, 2.5rem);
+	max-inline-size: 30rem;
+}
+
+.cw-viewport-demo__eyebrow {
+	margin: 0 0 0.35rem;
+	color: rgb(255 255 255 / 0.62);
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+}
+
+.cw-viewport-demo__state {
+	margin: 0;
+	color: var(--cw-viewport-accent);
+	font-family: var(--zbk-font-family-heading);
+	font-size: clamp(3rem, 10vw, 7.5rem);
+	font-weight: 760;
+	line-height: 0.84;
+	letter-spacing: -0.055em;
+	text-shadow: 0 0 2.5rem var(--cw-viewport-accent-soft);
+	transition: color 320ms ease;
+}
+
+.cw-viewport-demo__description {
+	margin: 0.9rem 0 0;
+	color: rgb(255 255 255 / 0.76);
+	font-size: clamp(0.85rem, 2vw, 1rem);
+}
+
+.cw-viewport-demo__readout {
+	position: absolute;
+	z-index: 3;
+	inset-block-start: clamp(1.25rem, 4vw, 2.25rem);
+	inset-inline-end: clamp(1.25rem, 4vw, 2.5rem);
+	display: grid;
+	gap: 0.4rem;
+	justify-items: end;
+}
+
+.cw-viewport-demo__readout span {
+	padding: 0.35rem 0.65rem;
+	border: 1px solid rgb(255 255 255 / 0.12);
+	border-radius: 999px;
+	background: rgb(3 2 18 / 0.44);
+	color: rgb(255 255 255 / 0.46);
+	font-family: var(--zbk-font-family-code);
+	font-size: 0.72rem;
+	transition:
+		color 240ms ease,
+		border-color 240ms ease,
+		background 240ms ease,
+		box-shadow 240ms ease;
+}
+
+.cw-viewport-demo__readout span.active {
+	border-color: var(--cw-viewport-accent);
+	background: var(--cw-viewport-accent-soft);
+	box-shadow: 0 0 1.5rem var(--cw-viewport-accent-soft);
+	color: var(--cw-viewport-accent);
+}
+
+.cw-viewport-demo__frame {
+	z-index: 1;
+	inset: clamp(10rem, 24vw, 12rem) clamp(1rem, 4vw, 2.5rem) 5rem;
+	border-inline: 1px solid rgb(255 255 255 / 0.1);
+}
+
+.cw-viewport-demo__edge {
+	position: absolute;
+	inset-inline: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	color: rgb(255 255 255 / 0.42);
+	font-family: var(--zbk-font-family-code);
+	font-size: 0.68rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.cw-viewport-demo__edge::after {
+	content: '';
+	flex: 1;
+	border-block-start: 1px dashed rgb(255 255 255 / 0.26);
+}
+
+.cw-viewport-demo__edge--top {
+	inset-block-start: 0;
+}
+
+.cw-viewport-demo__edge--bottom {
+	inset-block-end: 0;
+}
+
+.cw-viewport-demo__crosshair {
+	position: absolute;
+	inset: 50% auto auto 50%;
+	inline-size: min(44vw, 16rem);
+	aspect-ratio: 1;
+	border: 1px solid rgb(255 255 255 / 0.13);
+	border-radius: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.cw-viewport-demo__crosshair::before,
+.cw-viewport-demo__crosshair::after {
+	content: '';
+	position: absolute;
+	inset: 50% auto auto 50%;
+	background: rgb(255 255 255 / 0.12);
+	transform: translate(-50%, -50%);
+}
+
+.cw-viewport-demo__crosshair::before {
+	inline-size: 140%;
+	block-size: 1px;
+}
+
+.cw-viewport-demo__crosshair::after {
+	inline-size: 1px;
+	block-size: 140%;
+}
+
+.cw-viewport-demo__toggle {
+	position: absolute;
+	z-index: 4;
+	inset-inline-end: clamp(1.25rem, 4vw, 2.5rem);
+	inset-block-end: 1.25rem;
+	min-block-size: 2.75rem;
+	padding: 0.6rem 1rem;
+	border: 1px solid color-mix(in srgb, var(--cw-viewport-accent) 68%, white);
+	border-radius: 999px;
+	background: rgb(3 2 18 / 0.72);
+	box-shadow: 0 0 1.75rem var(--cw-viewport-accent-soft);
+	color: var(--cw-viewport-accent);
+	font: inherit;
+	font-size: 0.8rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition:
+		color 240ms ease,
+		border-color 240ms ease,
+		box-shadow 240ms ease,
+		transform 160ms ease;
+}
+
+.cw-viewport-demo__toggle:hover {
+	transform: translateY(-2px);
+}
+
+.cw-viewport-demo__toggle:focus-visible {
+	outline: 3px solid white;
+	outline-offset: 3px;
+}
+
+.cw-viewport-demo__beacon {
+	position: absolute;
+	z-index: 2;
+	inset-block-start: 135svh;
+	inset-inline-start: 50%;
+	display: grid;
+	place-content: center;
+	gap: 0.35rem;
+	inline-size: clamp(11rem, 32vw, 17rem);
+	aspect-ratio: 1;
+	border: 2px solid rgb(255 255 255 / 0.82);
+	border-radius: 38% 62% 55% 45% / 52% 42% 58% 48%;
+	background:
+		radial-gradient(circle at 32% 24%, white 0 5%, transparent 6%),
+		conic-gradient(from 215deg, #22d3ee, #fde047, #f472b6, #8b5cf6, #22d3ee);
+	box-shadow:
+		0 0 0 0.7rem rgb(255 255 255 / 0.07),
+		0 0 5rem 1.2rem var(--cw-viewport-accent-soft),
+		0 2.5rem 5rem -2rem rgb(0 0 0 / 0.8);
+	color: #120a2a;
+	text-align: center;
+	transform: translateX(-50%) rotate(-5deg);
+	transition:
+		box-shadow 420ms ease,
+		filter 420ms ease;
+}
+
+.cw-viewport-demo__beacon span {
+	font-family: var(--zbk-font-family-heading);
+	font-size: clamp(1.3rem, 4vw, 2rem);
+	font-weight: 800;
+	letter-spacing: -0.04em;
+}
+
+.cw-viewport-demo__beacon code {
+	font-size: clamp(0.68rem, 2vw, 0.82rem);
+}
+
+.cw-viewport-demo[data-state='within'] .cw-viewport-demo__beacon {
+	box-shadow:
+		0 0 0 0.85rem rgb(253 224 71 / 0.12),
+		0 0 7rem 2rem rgb(253 224 71 / 0.52),
+		0 2.5rem 5rem -2rem rgb(0 0 0 / 0.8);
+	filter: saturate(1.25) brightness(1.08);
+	animation: cw-viewport-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes cw-viewport-pulse {
+	50% {
+		box-shadow:
+			0 0 0 1.4rem rgb(253 224 71 / 0.04),
+			0 0 9rem 2.75rem rgb(253 224 71 / 0.64),
+			0 2.5rem 5rem -2rem rgb(0 0 0 / 0.8);
+	}
+}
+
+@media (max-width: 48rem) {
+	.cw-viewport-demo__hud {
+		inset-block-start: 4.75rem;
+		block-size: calc(100svh - 5.75rem);
+	}
+
+	.cw-viewport-demo__status {
+		inset-inline-end: 1.25rem;
+	}
+
+	.cw-viewport-demo__state {
+		font-size: clamp(3rem, 18vw, 5rem);
+	}
+
+	.cw-viewport-demo__description {
+		max-inline-size: 18rem;
+	}
+
+	.cw-viewport-demo__readout {
+		inset-block: auto 4.75rem;
+		inset-inline: 1rem;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		justify-items: stretch;
+	}
+
+	.cw-viewport-demo__readout span {
+		text-align: center;
+	}
+
+	.cw-viewport-demo__frame {
+		inset-block-start: 11.5rem;
+		inset-block-end: 8.5rem;
+	}
+
+	.cw-viewport-demo__toggle {
+		inset-inline: 1rem;
+		inline-size: calc(100% - 2rem);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cw-viewport-demo__hud,
+	.cw-viewport-demo__glow,
+	.cw-viewport-demo__state,
+	.cw-viewport-demo__readout span,
+	.cw-viewport-demo__toggle,
+	.cw-viewport-demo__beacon {
+		transition: none;
+	}
+
+	.cw-viewport-demo[data-state='within'] .cw-viewport-demo__beacon {
+		animation: none;
+	}
+}
+
+@media (forced-colors: active) {
+	.cw-viewport-demo__hud {
+		border: 2px solid CanvasText;
+		background: Canvas;
+		color: CanvasText;
+	}
+
+	.cw-viewport-demo__grid,
+	.cw-viewport-demo__glow {
+		display: none;
+	}
+
+	.cw-viewport-demo__state,
+	.cw-viewport-demo__readout span.active {
+		color: Highlight;
+	}
+
+	.cw-viewport-demo__beacon {
+		border-color: HighlightText;
+		background: Highlight;
+		box-shadow: none;
+		color: HighlightText;
+	}
+
+	.cw-viewport-demo__toggle {
+		border-color: ButtonText;
+		background: ButtonFace;
+		box-shadow: none;
+		color: ButtonText;
+	}
+}
+
+/* ── Docs body: sticky table of contents beside the content column ──────────── */
+
 .cw-docs {
 	display: grid;
 	gap: clamp(2rem, 5vw, 4rem);
 	align-items: start;
 }
 
+.cw-docs-body {
+	min-inline-size: 0;
+}
+
 @media (min-width: 60rem) {
 	.cw-docs {
-		grid-template-columns: 15rem minmax(0, 1fr);
+		grid-template-columns: 14rem minmax(0, 1fr);
 	}
 }
 
@@ -174,7 +653,7 @@ body {
 	display: block;
 	padding-block: 0.3rem;
 	padding-inline-start: 0.75rem;
-	border-inline-start: 2px solid var(--zbk-app-border);
+	border-inline-start: 2px solid var(--cw-rule);
 	color: var(--zbk-app-ink-muted);
 	text-decoration: none;
 	line-height: 1.35;
@@ -196,11 +675,16 @@ body {
 	outline-offset: 2px;
 }
 
+/* Docs sections share one rhythm rather than each carrying its own margin. */
+.cw-docs-body > section + section {
+	margin-block-start: clamp(3rem, 6vw, 4.5rem);
+}
+
 /* ── Code blocks ────────────────────────────────────────────────────────────── */
 
 .cw-code {
 	position: relative;
-	border: 1px solid var(--zbk-app-border);
+	border: 1px solid var(--cw-rule);
 	border-radius: 0.75rem;
 	overflow: hidden;
 	background: var(--zbk-app-canvas-subtle);
@@ -213,7 +697,7 @@ body {
 	gap: 1rem;
 	padding-inline: 0.9rem;
 	padding-block: 0.4rem;
-	border-block-end: 1px solid var(--zbk-app-border);
+	border-block-end: 1px solid var(--cw-rule);
 	background: var(--zbk-app-canvas-muted);
 	font-size: 0.78rem;
 	letter-spacing: 0.04em;
@@ -247,7 +731,7 @@ body {
 
 .cw-table-scroll {
 	overflow-x: auto;
-	border: 1px solid var(--zbk-app-border);
+	border: 1px solid var(--cw-rule);
 	border-radius: 0.75rem;
 }
 
@@ -261,7 +745,7 @@ body {
 .cw-table td {
 	text-align: start;
 	padding: 0.7rem 0.9rem;
-	border-block-end: 1px solid var(--zbk-app-border);
+	border-block-end: 1px solid var(--cw-rule);
 	vertical-align: top;
 }
 
@@ -287,10 +771,20 @@ code {
 	font-family: var(--zbk-font-family-code, ui-monospace, SFMono-Regular, Menlo, monospace);
 }
 
-/* Inline code inside prose. */
-.cw-prose :not(pre) > code,
+/*
+ * Inline code inside prose.
+ *
+ * The chip is mixed from `currentColor` rather than set to a fixed surface
+ * token, because these sections sit on canvases of wildly different lightness.
+ * A fixed light chip put pale ink on a pale background inside the dark zones —
+ * `IntersectionObserver` was effectively invisible on the teal section. Deriving
+ * the wash from the ink means the chip is always a low-contrast tint *of the
+ * text*, on any canvas, in either theme.
+ */
+.cw-measure :not(pre) > code,
+.cw-measure--wide :not(pre) > code,
 .cw-table :not(pre) > code {
-	background: var(--zbk-app-canvas-muted);
+	background: color-mix(in srgb, currentColor 13%, transparent);
 	border-radius: 0.3rem;
 	padding: 0.1em 0.35em;
 	font-size: 0.9em;
@@ -306,34 +800,60 @@ code {
 	text-overflow: ellipsis;
 }
 
-/* ── Demo stage ─────────────────────────────────────────────────────────────── */
+/* ── Demo playground ─────────────────────────────────────────────────────────
+ *
+ * Two columns on desktop: the stage on the left, and the controls that drive it
+ * plus the explanation on the right. The controls used to sit in a full-width
+ * flex row above the frame, which pushed the threshold slider and the class
+ * readout ~1000px apart with nothing between them.
+ */
+
+.cw-demo {
+	display: grid;
+	gap: clamp(1.5rem, 3vw, 2.5rem);
+	align-items: start;
+}
+
+@media (min-width: 62rem) {
+	.cw-demo {
+		grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+	}
+}
+
+.cw-panel {
+	padding: 1.15rem 1.25rem;
+	border: 1px solid var(--cw-rule);
+	border-radius: 1rem;
+	background: var(--zbk-app-canvas-subtle);
+}
 
 .cw-stage {
 	position: relative;
-	block-size: min(32rem, 70vh);
+	block-size: min(30rem, 68vh);
 	overflow-y: auto;
 	/* Deliberately NOT overscroll-behavior: contain — that traps the wheel on a
 	   page-embedded demo. Default chaining hands scrolling back at the edges. */
-	border: 1px solid var(--zbk-app-border);
+	border: 1px solid var(--cw-rule);
 	border-radius: 1rem;
 	background: var(--zbk-app-canvas);
 }
 
 .cw-stage__zone {
-	min-block-size: 14rem;
+	min-block-size: 13rem;
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 1.5rem;
-	font-weight: 600;
+	align-items: flex-start;
+	justify-content: flex-start;
+	padding: 1.1rem 1.25rem;
+	font-size: 0.78rem;
 	letter-spacing: 0.02em;
+	font-family: var(--zbk-font-family-code, ui-monospace, SFMono-Regular, Menlo, monospace);
 }
 
 /* The demo's floating card sits above the scrolling zones, pinned to the stage. */
 .cw-stage__card {
 	position: sticky;
-	inset-block-start: 40%;
-	inline-size: min(20rem, 76%);
+	inset-block-start: 38%;
+	inline-size: min(22rem, 82%);
 	margin-inline: auto;
 	z-index: 2;
 	padding: 1rem 1.15rem;
@@ -342,11 +862,423 @@ code {
 	   border-color that `.cw-watched` sets (same specificity, later in source). */
 	border-width: 1px;
 	border-style: solid;
-	background: var(--zbk-app-canvas-subtle);
 }
 
 .cw-stage__spacer {
-	block-size: 8rem;
+	block-size: 7rem;
+}
+
+.cw-range {
+	inline-size: 100%;
+	accent-color: var(--zbk-action-ink);
+}
+
+/* ── Demo bands ──────────────────────────────────────────────────────────────
+ *
+ * Six decorative surfaces drawn from zebkit's *global* colour primitives rather
+ * than from a semantic module. That is the honest source: these bands carry no
+ * meaning, so borrowing `critical` (an error colour) to paint one would be a lie
+ * — and it is what made the old playground read as a traffic light.
+ *
+ * They alternate dark (step 900) and light (step 300) so every transition flips
+ * the glass card's ink as well as shifting its hue, and they span the hue wheel
+ * — 243°, 48°, 320°, 158°, 16°, 190° — so no two neighbours are close.
+ *
+ * The names are arbitrary on purpose: `cw-band-indigo-demozone` resolves to
+ * `over-cw-band-indigo` by exactly the same convention as a zebkit canvas class,
+ * which is the point — canvas-watch has no opinion about your class names.
+ */
+
+.cw-band-indigo {
+	background: var(--zbk-color-indigo-900);
+}
+.cw-band-butterfield {
+	background: var(--zbk-color-butterfield-300);
+}
+.cw-band-merlot {
+	background: var(--zbk-color-merlot-900);
+}
+.cw-band-mint {
+	background: var(--zbk-color-mint-300);
+}
+.cw-band-ember {
+	background: var(--zbk-color-ember-900);
+}
+.cw-band-cyan {
+	background: var(--zbk-color-cyan-300);
+}
+
+/* Band labels sit directly on the band, so they take the same measured ink the
+   glass card uses over that band. */
+.cw-band-indigo {
+	color: hsl(243 40% 86%);
+}
+.cw-band-butterfield {
+	color: hsl(48 60% 20%);
+}
+.cw-band-merlot {
+	color: hsl(320 40% 86%);
+}
+.cw-band-mint {
+	color: hsl(158 60% 20%);
+}
+.cw-band-ember {
+	color: hsl(16 40% 86%);
+}
+.cw-band-cyan {
+	color: hsl(190 60% 20%);
+}
+
+/* ── Glass ───────────────────────────────────────────────────────────────────
+ *
+ * Technique adapted from https://codepen.io/daftplug/pen/QwbaYGO. Two layers,
+ * both on a dedicated `.cw-glass__surface` child:
+ *
+ *   ::before captures the backdrop (backdrop-filter promotes it to a backdrop
+ *            root), blurs it, and refracts that blurred result through an SVG
+ *            displacement filter.
+ *   ::after  paints the contextual tint and specular edge — the inset white
+ *            hairlines that read as a bevel catching light. Unfiltered, so the
+ *            tint stays even while the backdrop warps beneath it.
+ *
+ * The surface is near-transparent, which is the whole point and also the whole
+ * problem: the text is effectively sitting on the zone itself, so ink has to be
+ * chosen per zone rather than fixed. See the ink map below.
+ *
+ * Keeping the effect on a child prevents host pseudo-elements from colliding
+ * with component decoration and keeps foreground content out of the filter's
+ * stacking context. `.cw-glass` expects a positioned host with a border-radius;
+ * the header, demo card and hero figure all supply that.
+ */
+
+.cw-glass {
+	isolation: isolate;
+}
+
+/*
+ * `.cw-tint` is the adaptive-ink half, split out from `.cw-glass` so an element
+ * can take a zone's ink without also painting a glass surface.
+ *
+ * That split is what lets the header tint per region. A single bar spanning a
+ * boundary can only hold one ink, so half of it lands on the wrong background —
+ * visible any time the bar straddles a light and a dark zone. Wrapping each
+ * cluster of bar content in its own watched `.cw-tint` gives each one its own
+ * answer, from the same shared watcher.
+ *
+ * This needs nothing from the library. canvas-watch resolves against elements
+ * carrying a `*-trigger` class, and the bar has none — it is invisible to the
+ * watcher, so a nested watched element measures against the same page zones the
+ * bar does rather than against the bar itself.
+ */
+.cw-tint {
+	color: var(--cw-glass-ink, var(--zbk-app-ink));
+	transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cw-glass__surface {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: inherit;
+	pointer-events: none;
+}
+
+.cw-glass__surface::before,
+.cw-glass__surface::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+}
+
+/*
+ * `saturate` is deliberately gentle. At 1.6 the filter lifted the hero canvas
+ * (brand.600) by 11 points of lightness before any ink was chosen, which both
+ * blew the bar out into an electric slab and dropped its text to 4.45:1. At
+ * 1.25 the lift is under 5 points, every zone clears 5:1, and the surface still
+ * reads as glass enriching what is behind it.
+ */
+.cw-glass__surface::before {
+	backdrop-filter: blur(8px) saturate(1.25);
+	filter: url(#cw-glass-lens);
+}
+
+.cw-glass--panel .cw-glass__surface::before {
+	filter: url(#cw-glass-panel);
+}
+
+/* The tint is driven by the same `over-*` class as the ink. It deliberately
+   changes hue, not just opacity: the surface borrows the winning canvas's
+   colour while keeping the amount of pigment a property of the surface type. */
+.cw-glass__surface::after {
+	background-color: color-mix(
+		in srgb,
+		var(--cw-glass-tint, var(--zbk-app-canvas-muted))
+			var(--cw-glass-tint-strength, 14%),
+		transparent
+	);
+	box-shadow:
+		inset 2px 2px 0 -2px rgb(255 255 255 / 0.7),
+		inset 0 0 3px 1px rgb(255 255 255 / 0.7);
+	transition: background-color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The mark and the switch take their group's own answer. `--cw-glass-accent` is
+   only defined for the demo bands, so page zones fall through to the ink — which
+   is already held to 4.5:1 and so clears the 3:1 these need. */
+.cw-tint {
+	--cw-accent: var(--cw-glass-accent, var(--cw-glass-ink, var(--zbk-app-ink)));
+}
+
+/*
+ * zebkit's base layer declares `color` on p and the heading tags from its own
+ * tokens. A declared colour always beats an inherited one — layers do not enter
+ * into it — so `color` on `.cw-tint` reached the element's own text but not any
+ * paragraph inside it, leaving the card's headline on app ink over an adaptive
+ * surface. `:where()` keeps this at `.cw-tint` specificity so the more specific
+ * tiers below still win on source order.
+ */
+.cw-tint :where(p, h1, h2, h3, h4, h5, h6, li, code) {
+	color: var(--cw-glass-ink, var(--zbk-app-ink));
+}
+
+/* Zebkit components colour themselves from tokens, not from `color`, so they
+   would ignore the adaptive ink and keep their fixed action colour on a
+   transparent bar. Point their ink at the same variable. */
+.cw-tint zbk-link:not([appearance='button']),
+.cw-tint .zbk-link {
+	--zbk-link-ink: var(--cw-glass-ink);
+	--zbk-link-ink-hover: var(--cw-glass-ink);
+	--zbk-link-ink-focus: var(--cw-glass-ink);
+	--zbk-link-ink-active: var(--cw-glass-ink);
+	--zbk-link-ink-current: var(--cw-glass-ink);
+	--zbk-link-ink-current-hover: var(--cw-glass-ink);
+	--zbk-link-ink-current-focus: var(--cw-glass-ink);
+	--zbk-link-ink-current-active: var(--cw-glass-ink);
+	--zbk-link-ink-visited: var(--cw-glass-ink);
+	--zbk-link-ink-visited-hover: var(--cw-glass-ink);
+	--zbk-link-ink-visited-focus: var(--cw-glass-ink);
+	--zbk-link-ink-visited-active: var(--cw-glass-ink);
+	--zbk-link-decoration-color: var(--cw-glass-ink);
+	--zbk-link-decoration-color-hover: var(--cw-glass-ink);
+	--zbk-link-decoration-color-visited: var(--cw-glass-ink);
+	--zbk-link-decoration-color-visited-hover: var(--cw-glass-ink);
+}
+
+/* The switch's label is the same story: `.zbk-toggle` declares
+   `color: var(--zbk-toggle-ink)`, which pinned "Dark" to a fixed near-black —
+   measured about 2:1 on the hero bar — while everything around it adapted. */
+.cw-tint zbk-toggle,
+.cw-tint .zbk-toggle {
+	--zbk-toggle-ink: var(--cw-glass-ink, var(--zbk-app-ink));
+	--zbk-toggle-canvas-checked: var(--cw-accent);
+	--zbk-toggle-canvas-checked-hover: var(--cw-accent);
+	--zbk-toggle-canvas-checked-active: var(--cw-accent);
+	--zbk-toggle-border-color-checked: var(--cw-accent);
+	--zbk-toggle-border-color-checked-hover: var(--cw-accent);
+	--zbk-toggle-border-color-checked-active: var(--cw-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cw-tint,
+	.cw-glass__surface::after {
+		transition: none;
+	}
+}
+
+/* Neither Firefox nor older Safari will displace a backdrop through an SVG
+   filter. Without a fallback the surface would be nearly invisible there, so
+   fall back to a solid-enough frost. */
+@supports not (backdrop-filter: blur(1px)) {
+	.cw-glass__surface::before {
+		background: color-mix(in srgb, var(--zbk-app-canvas-subtle) 88%, transparent);
+	}
+}
+
+@media (forced-colors: active) {
+	.cw-glass {
+		background: Canvas;
+		border-color: CanvasText;
+	}
+
+	.cw-glass__surface {
+		display: none;
+	}
+}
+
+/* ── Adaptive ink ────────────────────────────────────────────────────────────
+ *
+ * With a transparent surface the effective background *is* the zone, so each
+ * zone picks its own tint and ink. Every pair below was computed against the
+ * real backdrop after the gentle 1.25× saturation and contextual tint — not
+ * against the raw band colour. Body and label ink clear 4.5:1; the accent
+ * (mark, switch, borders) clears 3:1.
+ */
+
+/* Page zones. */
+.cw-glass.over-canvas-brand-emphasis,
+.cw-tint.over-canvas-brand-emphasis {
+	--cw-glass-tint: var(--zbk-brand-canvas-emphasis);
+	--cw-glass-ink: var(--zbk-brand-ink-inverse);
+}
+.cw-glass.over-canvas-brand-muted,
+.cw-tint.over-canvas-brand-muted {
+	--cw-glass-tint: var(--zbk-brand-canvas-muted);
+	--cw-glass-ink: var(--zbk-brand-ink-emphasis);
+}
+.cw-glass.over-canvas-brand-subtle,
+.cw-tint.over-canvas-brand-subtle {
+	--cw-glass-tint: var(--zbk-brand-canvas-subtle);
+	--cw-glass-ink: var(--zbk-brand-ink-emphasis);
+}
+.cw-glass.over-canvas-accent-primary,
+.cw-tint.over-canvas-accent-primary {
+	--cw-glass-tint: var(--zbk-accent-primary-canvas);
+	--cw-glass-ink: var(--zbk-accent-primary-ink-inverse);
+}
+.cw-glass.over-canvas-accent-secondary,
+.cw-tint.over-canvas-accent-secondary {
+	--cw-glass-tint: var(--zbk-accent-secondary-canvas);
+	--cw-glass-ink: var(--zbk-accent-secondary-ink-inverse);
+}
+
+/*
+ * Display type as a zone of its own.
+ *
+ * The hero canvas is dark, so its answer is light ink — correct for the canvas,
+ * wrong for the near-white display heading sitting on it, where a light bar
+ * crossing the letters is light ink on light text. The heading carries
+ * `cw-display-trigger`, a zone nested inside the hero's zone, and nesting wins:
+ * over those letters the bar takes a deep ink that reads against them.
+ *
+ * Fixed rather than themed, like the demo bands: the heading is light in both
+ * themes, so the ink answering it must not flip with the theme either.
+ */
+.cw-glass.over-cw-display,
+.cw-tint.over-cw-display {
+	--cw-glass-tint: var(--zbk-brand-ink-inverse);
+	--cw-glass-ink: var(--zbk-brand-900);
+}
+
+/* No blanket dark rule here. A `[data-zbk-theme='dark'] .cw-glass` selector
+   ties on specificity with `.cw-tint.over-*` and, coming later, would win for
+   every zone — silently throwing away all the per-zone ink above. Only the
+   zones whose canvas actually changes in dark mode get an override. */
+[data-zbk-theme='dark'] .cw-glass.over-canvas-brand-muted,
+[data-zbk-theme='dark'] .cw-tint.over-canvas-brand-muted {
+	--cw-glass-tint: var(--zbk-brand-canvas-muted);
+	--cw-glass-ink: var(--zbk-brand-ink);
+}
+[data-zbk-theme='dark'] .cw-glass.over-canvas-brand-subtle,
+[data-zbk-theme='dark'] .cw-tint.over-canvas-brand-subtle {
+	--cw-glass-tint: var(--zbk-brand-canvas-subtle);
+	--cw-glass-ink: var(--zbk-brand-ink);
+}
+
+/*
+ * Demo bands.
+ *
+ * These are theme-independent by construction: the band is a fixed primitive
+ * that does not change between light and dark, so its ink must not either.
+ * `--cw-glass-label` is the de-emphasised tier — it is a real second colour
+ * rather than an opacity, because on a near-transparent surface there is no
+ * headroom to spend on fading text out.
+ */
+.cw-glass.over-cw-band-indigo,
+.cw-tint.over-cw-band-indigo {
+	--cw-glass-tint: hsl(243 55% 6%);
+	--cw-glass-ink: hsl(243 55% 96%);
+	--cw-glass-label: hsl(243 40% 86%);
+	--cw-glass-accent: hsl(243 60% 70%);
+}
+.cw-glass.over-cw-band-butterfield,
+.cw-tint.over-cw-band-butterfield {
+	--cw-glass-tint: hsl(48 45% 94%);
+	--cw-glass-ink: hsl(48 70% 10%);
+	--cw-glass-label: hsl(48 60% 20%);
+	--cw-glass-accent: hsl(48 65% 28%);
+}
+.cw-glass.over-cw-band-merlot,
+.cw-tint.over-cw-band-merlot {
+	--cw-glass-tint: hsl(320 55% 6%);
+	--cw-glass-ink: hsl(320 55% 96%);
+	--cw-glass-label: hsl(320 40% 86%);
+	--cw-glass-accent: hsl(320 60% 70%);
+}
+.cw-glass.over-cw-band-mint,
+.cw-tint.over-cw-band-mint {
+	--cw-glass-tint: hsl(158 45% 94%);
+	--cw-glass-ink: hsl(158 70% 10%);
+	--cw-glass-label: hsl(158 60% 20%);
+	--cw-glass-accent: hsl(158 65% 28%);
+}
+.cw-glass.over-cw-band-ember,
+.cw-tint.over-cw-band-ember {
+	--cw-glass-tint: hsl(16 55% 6%);
+	--cw-glass-ink: hsl(16 55% 96%);
+	--cw-glass-label: hsl(16 40% 86%);
+	--cw-glass-accent: hsl(16 60% 70%);
+}
+.cw-glass.over-cw-band-cyan,
+.cw-tint.over-cw-band-cyan {
+	--cw-glass-tint: hsl(190 45% 94%);
+	--cw-glass-ink: hsl(190 70% 10%);
+	--cw-glass-label: hsl(190 60% 20%);
+	--cw-glass-accent: hsl(190 65% 28%);
+}
+
+/*
+ * The panel variant: glass that has to stay readable *while it crosses a
+ * boundary*, not just once it has settled.
+ *
+ * The header can afford a 14% tint because it is a thin bar over enormous zones.
+ * A card drifting through six bands cannot: at the moment a new band takes the
+ * majority, up to half the card is still over the old one, and with a near-
+ * transparent surface that half is light ink on a light band — measured as low
+ * as 2.3:1 mid-transition.
+ *
+ * So the panel carries more of the *winning* band's tint. Over its own band it
+ * barely shifts the colour; over the band it is leaving, it imposes the new
+ * band's hue and polarity, which is exactly what rescues the overlap. 74% is the
+ * lowest strength at which every band clears 4.5:1 in every straddle — verified
+ * against each neighbour pair, not just the settled state.
+ */
+.cw-glass--panel {
+	--cw-glass-tint-strength: 74%;
+}
+
+/* The secondary tier inside any glass surface. */
+.cw-glass__label {
+	color: var(--cw-glass-label, var(--zbk-app-ink-muted));
+	transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cw-glass__label {
+		transition: none;
+	}
+}
+
+/* The demo card is glass, so its border and shadow take the band's accent
+   rather than the page's ink — otherwise a dark border vanishes on a dark band.
+   `.cw-watched` owns the composite, so only the colour is re-pointed here. */
+.cw-stage__card.cw-glass {
+	--cw-shadow-color: var(--cw-glass-accent, var(--zbk-app-ink));
+	--cw-shadow-strength: 1.2;
+}
+
+/* The header hands the same accent to its mark and theme switch when it is over
+   a demo band. */
+.cw-watched.over-cw-band-indigo,
+.cw-watched.over-cw-band-butterfield,
+.cw-watched.over-cw-band-merlot,
+.cw-watched.over-cw-band-mint,
+.cw-watched.over-cw-band-ember,
+.cw-watched.over-cw-band-cyan {
+	--cw-shadow-color: var(--cw-glass-accent);
+	--cw-accent: var(--cw-glass-accent);
+	--cw-shadow-strength: 1.5;
 }
 
 /* ── Header ─────────────────────────────────────────────────────────────────── */
@@ -365,12 +1297,71 @@ code {
 	align-items: center;
 	gap: 0.75rem;
 	padding: 0.55rem 0.9rem;
-	border-radius: 0.9rem;
+	border-radius: 1.1rem;
 	/* See the note on .cw-stage__card — never the `border` shorthand here. */
 	border-width: 1px;
 	border-style: solid;
-	background: color-mix(in srgb, var(--zbk-app-canvas-subtle) 88%, transparent);
-	backdrop-filter: blur(12px);
+	/* No background or backdrop-filter here: `.cw-glass` owns the surface, via a
+	   blurred + refracted ::after and a tinted ::before. */
+
+}
+
+/*
+ * The bar's content clusters. Each is its own watched element, so each resolves
+ * its own zone and its own ink — see the note on `.cw-tint`.
+ */
+.cw-header__group {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.75rem;
+	min-inline-size: 0;
+}
+
+.cw-header__group--end {
+	justify-content: flex-end;
+
+	/* Hand this group's own zone accent to the theme switch.
+	 *
+	 * These are zebkit component tokens, declared on :root. That matters: the
+	 * `-hover` and `-active` variants are authored as `var(--zbk-toggle-canvas-checked)`
+	 * *on :root*, so they bake against the :root value and re-declaring only the
+	 * base here would leave hover reverting to the default action colour. This is
+	 * exactly the composed-token trap documented in the Gotchas section, met in
+	 * the wild — so every variant is re-declared on this element.
+	 *
+	 * Restyling a component instance is the escape hatch on zebkit's ladder, not
+	 * the first rung. It is deliberate here: the value is only knowable at
+	 * runtime, from whatever this end of the bar happens to be floating over,
+	 * which no token can express.
+	 */
+	--zbk-toggle-canvas-checked: var(--cw-accent);
+	--zbk-toggle-canvas-checked-hover: var(--cw-accent);
+	--zbk-toggle-canvas-checked-active: var(--cw-accent);
+	--zbk-toggle-border-color-checked: var(--cw-accent);
+	--zbk-toggle-border-color-checked-hover: var(--cw-accent);
+	--zbk-toggle-border-color-checked-active: var(--cw-accent);
+	--zbk-toggle-thumb-canvas: var(--cw-accent);
+	--zbk-toggle-thumb-canvas-hover: var(--cw-accent);
+}
+
+/* The mark's bars are drawn with currentColor, so this tints the icon without
+   touching the wordmark beside it — that stays app ink, where it can be held to
+   the 4.5:1 text threshold regardless of what's behind the bar. */
+.cw-mark svg {
+	color: var(--cw-accent);
+	transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The switch needs no transition rule here: zebkit already lists background-color
+   and border-color in --zbk-toggle-transition-property, on a duration that
+   follows the runtime accessibility modifier. Styling .zbk-toggle__track
+   directly would also reach into a compiled skeleton class, which is not a
+   consumer API. */
+
+@media (prefers-reduced-motion: reduce) {
+	.cw-mark svg {
+		transition: none;
+	}
 }
 
 /* A sticky element can't stick if an ancestor clips overflow — keep the page
@@ -386,8 +1377,8 @@ code {
 
 /* The live readout is the nicest thing in the header, but on a phone the
    controls need the room more. It is aria-hidden either way. */
-@media (max-width: 30rem) {
-	.cw-header__spacer {
+@media (max-width: 34rem) {
+	.cw-header__group--end .cw-readout {
 		display: none;
 	}
 }
@@ -407,37 +1398,7 @@ code {
 	inset-block-start: 0.75rem;
 }
 
-/* ── Angular demo pill ──────────────────────────────────────────────────────── */
-
-/* Rendered by the Angular app, styled by the same `.cw-watched` contract as the
-   Svelte-driven header — the point being that the tint comes from one watcher. */
-.cw-angular-pill {
-	position: fixed;
-	inset-block-end: 1rem;
-	inset-inline: 0;
-	z-index: 20;
-	inline-size: max-content;
-	max-inline-size: calc(100% - 1.5rem);
-	margin-inline: auto;
-	display: flex;
-	align-items: center;
-	gap: 0.75rem;
-	padding: 0.5rem 0.9rem;
-	border-radius: 999px;
-	/* Width and style only — `.cw-watched` owns border-color. */
-	border-width: 1px;
-	border-style: solid;
-	background: color-mix(in srgb, var(--zbk-app-canvas-subtle) 92%, transparent);
-	backdrop-filter: blur(12px);
-	font-size: 0.8rem;
-}
-
-.cw-angular-pill__tag {
-	font-weight: 600;
-	white-space: nowrap;
-}
-
-/* ── Hero mark ──────────────────────────────────────────────────────────────── */
+/* ── Mark ───────────────────────────────────────────────────────────────────── */
 
 .cw-mark {
 	display: inline-flex;

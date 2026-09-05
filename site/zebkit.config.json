@@ -2,6 +2,7 @@
   "$schema": "../node_modules/zebkit/dist/editor/schemas/zebkit.config.schema.json",
   "configVersion": 1,
   "tokens": {
+     "fonts": { "strategy": "link" },
     "destinationPath": "./static",
     "assetFilePath": "/",
     "basePreset": "default",

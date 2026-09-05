@@ -12,4 +12,4 @@ zebkit-a11y-report.*
 static/*.prune-report.json
 
 # zebkit CLI scratch (default runtime/context location)
-zebkit/
+/zebkit/

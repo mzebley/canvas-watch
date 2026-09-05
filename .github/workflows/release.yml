@@ -1,0 +1,151 @@
+name: Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      release_version:
+        description: Exact stable version already prepared on main (for example 1.1.0)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: canvas-watch-release
+  cancel-in-progress: false
+
+jobs:
+  package:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+       github.event.pull_request.head.repo.full_name == github.repository &&
+       (startsWith(github.event.pull_request.head.ref, 'codex/release-') ||
+        startsWith(github.event.pull_request.head.ref, 'release/') ||
+        startsWith(github.event.pull_request.head.ref, 'release-')))
+    name: Verify and pack release
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      packages: read
+    outputs:
+      version: ${{ steps.source.outputs.version }}
+      sha: ${{ steps.source.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.x
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: '@mzebley'
+      - name: Validate release source and version
+        id: source
+        run: node scripts/release.mjs validate
+      - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm ci --ignore-scripts
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verify library, site, and package consumers
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run verify
+      - name: Pack the canonical artifact
+        run: |
+          git diff --exit-code
+          node scripts/release.mjs pack
+      - uses: actions/upload-artifact@v7
+        with:
+          name: canvas-watch-${{ steps.source.outputs.version }}
+          path: release-artifacts/
+          if-no-files-found: error
+          retention-days: 90
+
+  npm:
+    name: Publish to npm
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.package.outputs.sha }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: canvas-watch-${{ needs.package.outputs.version }}
+          path: release-artifacts
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.x
+          registry-url: https://registry.npmjs.org
+          scope: '@mzebley'
+      - name: Install OIDC-capable npm
+        run: npm install --global 'npm@>=11.5.1 <13'
+      - name: Publish or verify identical existing version
+        run: node scripts/release.mjs publish npm
+
+  github-packages:
+    name: Publish to GitHub Packages
+    needs: package
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.package.outputs.sha }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: canvas-watch-${{ needs.package.outputs.version }}
+          path: release-artifacts
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.x
+          registry-url: https://npm.pkg.github.com
+          scope: '@mzebley'
+      - name: Publish or verify identical existing version
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/release.mjs publish github
+
+  finalize:
+    name: Tag and create GitHub Release
+    needs: [package, npm, github-packages]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.package.outputs.sha }}
+          fetch-depth: 0
+      - uses: actions/download-artifact@v8
+        with:
+          name: canvas-watch-${{ needs.package.outputs.version }}
+          path: release-artifacts
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.x
+      - name: Finalize immutable release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+        run: node scripts/release.mjs finalize

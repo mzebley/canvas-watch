@@ -1,6 +1,15 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { integrity, releaseSource, validateVersion } from '../scripts/release.mjs';
+import { integrity, parseRegistryIntegrity, releaseSource, validateVersion } from '../scripts/release.mjs';
+
+test('registry integrity accepts npm scalar and singleton array output only', () => {
+	const hash = integrity(Buffer.from('release artifact'));
+	assert.equal(parseRegistryIntegrity(JSON.stringify(hash)), hash);
+	assert.equal(parseRegistryIntegrity(JSON.stringify([hash])), hash);
+	for (const value of [null, {}, [], [hash, hash]]) {
+		assert.throws(() => parseRegistryIntegrity(JSON.stringify(value)));
+	}
+});
 
 const sha = 'a'.repeat(40);
 const repo = { full_name: 'mzebley/canvas-watch' };

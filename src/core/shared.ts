@@ -1,19 +1,44 @@
 /**
- * Process-wide shared watcher. Both the Svelte action and the Angular directive
- * register their elements here, so a single `requestAnimationFrame` loop drives
- * every watched element on the page regardless of which framework mounted it.
+ * JavaScript-realm-wide shared watcher. The Svelte action and reactive viewport
+ * state register here, so one `requestAnimationFrame` loop drives both APIs —
+ * and a consumer using the core directly can join the same loop.
  *
- * Framework-agnostic: no Svelte/Angular imports.
+ * Framework-agnostic: no Svelte imports.
  */
 import { createCanvasWatcher, type CanvasWatcher } from './canvas-watcher.js';
 
-let shared: CanvasWatcher | null = null;
-let refreshQueued = false;
+interface SharedState {
+	watcher: CanvasWatcher | null;
+	refreshQueuedFor: CanvasWatcher | null;
+}
 
-/** Get (lazily creating) the singleton watcher shared across all adapters. */
+const SHARED_STATE = Symbol.for('@mzebley/canvas-watch.shared.v1');
+const root = globalThis as typeof globalThis & { [SHARED_STATE]?: SharedState };
+const state = (root[SHARED_STATE] ??= { watcher: null, refreshQueuedFor: null });
+
+function createSharedWatcher(): CanvasWatcher {
+	const watcher = createCanvasWatcher();
+	const destroy = watcher.destroy.bind(watcher);
+	watcher.destroy = () => {
+		destroy();
+		if (state.watcher === watcher) state.watcher = null;
+		if (state.refreshQueuedFor === watcher) state.refreshQueuedFor = null;
+	};
+	return watcher;
+}
+
+/**
+ * Get the live singleton shared across ESM/CJS entries, lazily replacing a
+ * destroyed instance.
+ */
 export function getSharedWatcher(): CanvasWatcher {
-	if (!shared) shared = createCanvasWatcher();
-	return shared;
+	// Do not retain the SSR no-op: a reused module graph must be able to acquire
+	// a live watcher after a DOM becomes available during hydration or testing.
+	if (typeof window === 'undefined' || typeof document === 'undefined') {
+		return createCanvasWatcher();
+	}
+	if (!state.watcher) state.watcher = createSharedWatcher();
+	return state.watcher;
 }
 
 /**
@@ -22,11 +47,12 @@ export function getSharedWatcher(): CanvasWatcher {
  * than one scan each. No-op until the shared watcher actually exists.
  */
 export function scheduleRefresh(): void {
-	if (refreshQueued || !shared) return;
-	refreshQueued = true;
+	const intended = state.watcher;
+	if (!intended || state.refreshQueuedFor === intended) return;
+	state.refreshQueuedFor = intended;
 	queueMicrotask(() => {
-		refreshQueued = false;
-		shared?.refresh();
+		if (state.refreshQueuedFor === intended) state.refreshQueuedFor = null;
+		if (state.watcher === intended) intended.refresh();
 	});
 }
 

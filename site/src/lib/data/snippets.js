@@ -88,6 +88,20 @@ npm install @mzebley/canvas-watch`
 </div>`
 	},
 
+	'svelte-viewport': {
+		lang: 'svelte',
+		label: 'Header.svelte',
+		code: `<script>
+	import { canvasWatch } from '@mzebley/canvas-watch/svelte';
+	const hero = canvasWatch('#hero');
+</script>
+
+<header class:past-hero={hero.aboveViewport}>
+	{hero.missing ? 'Hero not found' : hero.state}
+</header>
+<section id="hero">…</section>`
+	},
+
 	'svelte-navigate': {
 		lang: 'svelte',
 		label: '+layout.svelte',
@@ -105,10 +119,67 @@ npm install @mzebley/canvas-watch`
 
 	'angular-directive': {
 		lang: 'ts',
+		label: 'canvas-watch.directive.ts',
+		code: `import {
+	Directive,
+	ElementRef,
+	EventEmitter,
+	inject,
+	NgZone,
+	Output,
+	type OnDestroy,
+	type OnInit,
+} from '@angular/core';
+import {
+	getSharedWatcher,
+	scheduleRefresh,
+	type CanvasChangeDetail,
+} from '@mzebley/canvas-watch';
+
+@Directive({
+	selector: '[canvasWatch]',
+	standalone: true,
+})
+export class CanvasWatchDirective implements OnInit, OnDestroy {
+	@Output() canvasChange = new EventEmitter<CanvasChangeDetail>();
+
+	private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+	private readonly zone = inject(NgZone);
+	private unwatch?: () => void;
+
+	private readonly listener = (event: Event): void => {
+		const detail = (event as CustomEvent<CanvasChangeDetail>).detail;
+		// Re-enter the zone only when a change actually fires (rare), so change
+		// detection runs for consumers without paying for it on every scroll.
+		this.zone.run(() => this.canvasChange.emit(detail));
+	};
+
+	ngOnInit(): void {
+		const node = this.host.nativeElement;
+		// Register outside the zone: the shared watcher is created lazily on first
+		// use, and its scroll listener + rAF loop must not be zone-patched —
+		// otherwise every scroll event app-wide triggers change detection.
+		this.zone.runOutsideAngular(() => {
+			this.unwatch = getSharedWatcher().watch(node);
+			// Pick up trigger zones already in the DOM (coalesced across mounts).
+			scheduleRefresh();
+			node.addEventListener('canvaschange', this.listener);
+		});
+	}
+
+	ngOnDestroy(): void {
+		this.host.nativeElement.removeEventListener('canvaschange', this.listener);
+		this.unwatch?.();
+	}
+}`
+	},
+
+	'angular-usage': {
+		lang: 'ts',
 		label: 'demo.component.ts',
 		code: `import { Component } from '@angular/core';
-import { CanvasWatchDirective } from '@mzebley/canvas-watch/angular';
-import type { CanvasChangeDetail } from '@mzebley/canvas-watch/angular';
+import type { CanvasChangeDetail } from '@mzebley/canvas-watch';
+import { CanvasWatchDirective } from './canvas-watch.directive';
 
 @Component({
 	standalone: true,
@@ -131,15 +202,13 @@ export class DemoComponent {
 		code: `import { inject } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { CanvasWatchService } from '@mzebley/canvas-watch/angular';
+import { refreshCanvasWatch } from '@mzebley/canvas-watch';
 
 export class AppComponent {
-	private readonly canvasWatch = inject(CanvasWatchService);
-
 	constructor() {
 		inject(Router)
 			.events.pipe(filter((e) => e instanceof NavigationEnd))
-			.subscribe(() => this.canvasWatch.refresh());
+			.subscribe(() => refreshCanvasWatch());
 	}
 }`
 	},
@@ -167,6 +236,24 @@ watcher.destroy();`
 		code: `<section class="canvas-brand-emphasis-trigger">…</section>
 
 <div class="card watch-bg-canvas">…</div>`
+	},
+
+	'viewport-markup': {
+		lang: 'html',
+		label: 'index.html',
+		code: `<header class="site-header" data-canvas-watch-viewport="#hero"></header>
+<section id="hero"></section>`
+	},
+
+	'viewport-core': {
+		lang: 'ts',
+		label: 'main.ts',
+		code: `const stop = watcher.observeViewport('#hero', (detail) => {
+	console.log(detail.state); // missing | above | within | below
+});
+
+// Later
+stop();`
 	},
 
 	'vanilla-event': {

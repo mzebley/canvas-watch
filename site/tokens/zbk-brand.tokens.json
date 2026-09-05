@@ -1,67 +1,72 @@
 {
   "50": {
-    "$value": "hsl(243, 55%, 98%)",
+    "$value": "hsl(250, 28%, 98%)",
     "$type": "color",
-    "$description": "For primary branded surfaces."
+    "$description": "Page canvas. Saturation is deliberately low at this end — a flat-S ramp makes every neutral surface read as lavender."
   },
   "100": {
-    "$value": "hsl(243, 55%, 90%)",
+    "$value": "hsl(251, 26%, 95.5%)",
     "$type": "color",
-    "$description": "For primary branded surfaces."
+    "$description": "Barely-tinted branded surface."
   },
   "200": {
-    "$value": "hsl(243, 55%, 81%)",
+    "$value": "hsl(252, 32%, 89%)",
     "$type": "color",
-    "$description": "For primary branded surfaces."
+    "$description": "Body text on brand emphasis canvases (6.3:1)."
   },
   "300": {
-    "$value": "hsl(243, 55%, 68%)",
+    "$value": "hsl(253, 44%, 78%)",
     "$type": "color",
-    "$description": "For primary branded surfaces."
+    "$description": "Dark-mode links and secondary text."
   },
   "400": {
-    "$value": "hsl(243, 55%, 56%)",
+    "$value": "hsl(255, 56%, 66%)",
     "$type": "color",
-    "$description": "For primary branded surfaces."
+    "$description": "Dark-mode interactive surfaces."
   },
   "500": {
-    "$value": "hsl(243, 55%, 44%)",
+    "$value": "hsl(256, 60%, 55%)",
     "$type": "color",
-    "$description": "For primary branded surfaces."
+    "$description": "The brand at full strength."
   },
   "600": {
-    "$value": "hsl(243, 55%, 36%)",
+    "$value": "hsl(257, 58%, 44%)",
     "$type": "color",
-    "$description": "For primary branded surfaces."
+    "$description": "Filled brand zone, dark enough for inverse ink."
   },
   "700": {
-    "$value": "hsl(243, 55%, 28%)",
+    "$value": "hsl(258, 56%, 34%)",
     "$type": "color",
-    "$description": "For primary branded surfaces."
+    "$description": "Secondary text on light surfaces (10.6:1 on brand.50)."
   },
   "800": {
-    "$value": "hsl(243, 55%, 21%)",
+    "$value": "hsl(259, 54%, 24%)",
     "$type": "color",
-    "$description": "For primary branded surfaces."
+    "$description": "Dark-mode recessed surface."
   },
   "900": {
-    "$value": "hsl(243, 55%, 12%)",
+    "$value": "hsl(260, 48%, 14%)",
     "$type": "color",
-    "$description": "For primary branded surfaces."
+    "$description": "Body text (16.6:1 on brand.50)."
   },
   "950": {
-    "$value": "hsl(243, 55%, 4%)",
+    "$value": "hsl(261, 44%, 7%)",
     "$type": "color",
-    "$description": "For primary branded surfaces."
+    "$description": "Dark-mode page canvas."
+  },
+  "canvas-subtle": {
+    "$value": "{brand.100}",
+    "$type": "color",
+    "$description": "The docs zone. One step deeper than the page canvas on purpose — the preset points both at brand.50, which left the docs section and the demo section the same colour, so the boundary between two full-bleed zones read as an accidental void."
   },
   "ink-inverse": {
     "$value": "{brand.200}",
     "$type": "color",
-    "$description": "Body text on brand emphasis canvases (5.8:1)."
+    "$description": "Body text on brand emphasis canvases (6.3:1)."
   },
   "ink-inverse-emphasis": {
     "$value": "{brand.100}",
     "$type": "color",
-    "$description": "High-prominence text on brand emphasis canvases (8.2:1)."
+    "$description": "High-prominence text on brand emphasis canvases (7.7:1)."
   }
 }

@@ -1,13 +1,14 @@
 <script>
-	import AngularDemo from '$lib/components/AngularDemo.svelte';
 	import CodeBlock from '$lib/components/CodeBlock.svelte';
 	import DemoStage from '$lib/components/DemoStage.svelte';
 	import Toc from '$lib/components/Toc.svelte';
+	import ViewportDemo from '$lib/components/ViewportDemo.svelte';
 
 	let { data } = $props();
 	const s = data.snippets;
 
 	const sections = [
+		{ id: 'viewport-demo', label: 'Viewport demo' },
 		{ id: 'concepts', label: 'Concepts' },
 		{ id: 'install', label: 'Install' },
 		{ id: 'usage', label: 'Usage' },
@@ -47,11 +48,15 @@
 		}
 	];
 
-	const methods = [
-		{ name: 'refresh()', desc: 'Re-scan the DOM for watch + trigger elements. Call after DOM changes.' },
-		{ name: 'watch(el)', desc: 'Manually register an element. Returns an unwatch() function.' },
-		{ name: 'schedule()', desc: 'Force a recompute on the next frame.' },
-		{ name: 'destroy()', desc: 'Disconnect observers and listeners, and remove all applied classes.' }
+		const methods = [
+			{ name: 'refresh()', desc: 'Re-scan watch, trigger and declarative viewport elements.' },
+			{ name: 'watch(el)', desc: 'Register one overlap owner. Returns an idempotent unwatch() function.' },
+			{
+				name: 'observeViewport(reference, listener)',
+				desc: 'Subscribe one owner to vertical viewport state. Returns an idempotent unsubscribe function.'
+			},
+			{ name: 'schedule()', desc: 'Force a recompute on the next frame.' },
+			{ name: 'destroy()', desc: 'Terminally cancel work, disconnect observers and remove owned classes.' }
 	];
 
 	const steps = [
@@ -59,13 +64,13 @@
 			title: 'Visibility gate',
 			body: 'Each watched element is tracked by an IntersectionObserver, so only on-screen elements are ever measured. A second observer tracks trigger zones with a root margin, so only zones near the viewport are considered.'
 		},
-		{
-			title: 'One rAF loop',
-			body: 'Scroll, resize, ResizeObserver and observer callbacks all funnel into a single coalesced requestAnimationFrame. At most one recompute per frame — and both adapters share one watcher, so a Svelte and an Angular element on the same page still share that loop.'
-		},
-		{
-			title: 'Read, then write',
-			body: 'Per frame, every trigger rect is read once (not once per watched element), then every watched rect, then all class changes are applied together. One layout pass instead of a reflow per element.'
+			{
+				title: 'One rAF loop',
+				body: 'Scroll, resize, DOM mutation, ResizeObserver and observer callbacks all funnel into one coalesced requestAnimationFrame. Overlap and viewport registrations share that loop.'
+			},
+			{
+				title: 'Read, commit, then notify',
+				body: 'Per frame, every unique element rect is read once. Classes, ownership and observer targets are committed before consumer callbacks, so reentrant teardown cannot resurrect stale work.'
 		},
 		{
 			title: 'Minimal DOM churn',
@@ -73,7 +78,7 @@
 		},
 		{
 			title: 'Idle pages cost nothing',
-			body: 'With no trigger zones, or nothing visible, scroll frames short-circuit before any work is scheduled.'
+			body: 'With no visible overlap work and no viewport registrations, scroll frames short-circuit before any work is scheduled.'
 		}
 	];
 
@@ -86,18 +91,26 @@
 			title: 'position: sticky and overflow',
 			body: "A sticky watched element won't stick if an ancestor has overflow: hidden, auto, or scroll. Put clipping on a sibling layer, not an ancestor of the sticky element."
 		},
-		{
-			title: 'Stacking is not considered',
-			body: 'Majority overlap ignores z-index. The larger overlap area wins, which may not be the element actually painted on top.'
+			{
+				title: 'Stacking is not considered',
+				body: 'Overlap ignores z-index. At one nesting depth the larger physical coverage wins, which may not be the element actually painted on top.'
 		},
 		{
 			title: 'Neither is clipping',
 			body: "getBoundingClientRect reports where an element would be, not what's visible. A trigger zone inside a scrolling container still reports a full-size rect once it has scrolled out of view, so a watched element can pick up a zone that is no longer on screen. When your zones live in a scroller, put the trigger class on the scroller itself — its rect is the visible box — and relabel it as its content scrolls. The playground on this page does exactly that."
 		},
 		{
-			title: 'Dynamic triggers need refresh()',
-			body: 'Trigger zones are indexed on refresh() — at adapter mount, or via refreshCanvasWatch() — not continuously observed for class changes.'
-		}
+			title: 'One element gets one answer',
+			body: "Majority overlap resolves per watched element, so a wide element spanning two zones takes a single class — and half of it ends up styled for the wrong background. A bar across the full content width hits this constantly. The fix is not in the library: watch the regions instead of the container. Wrap each cluster of content in its own watched element and each resolves its own zone, in the same frame, from the same watcher. The header on this page does exactly that — its left and right ends carry different classes whenever they sit over different zones. Nesting is safe because a watched element only ever resolves against elements carrying a trigger class, so the container it sits inside is invisible to it."
+		},
+			{
+				title: 'Dynamic triggers need refresh()',
+				body: 'Trigger zones are indexed on refresh() — at adapter mount, or via refreshCanvasWatch() — not continuously observed for class changes.'
+			},
+			{
+				title: 'Unobservable motion needs schedule()',
+				body: 'Scroll, resize, relevant DOM mutations, target resizing and viewport-boundary crossings invalidate geometry. Call schedule() after motion that changes geometry without producing one of those signals.'
+			}
 	];
 </script>
 
@@ -105,7 +118,7 @@
 	<title>canvas-watch — floating elements that know what they're over</title>
 	<meta
 		name="description"
-		content="Detect which background zone a floating element sits over and reflect it as a class, so you can restyle it however you like — shadow, text colour, border, the whole panel. Framework-agnostic core with Svelte and Angular adapters."
+		content="Detect which background zone a floating element sits over and reflect it as a class, so you can restyle it however you like — shadow, text colour, border, the whole panel. Framework-agnostic core with a Svelte adapter."
 	/>
 	<meta property="og:title" content="canvas-watch" />
 	<meta property="og:type" content="website" />
@@ -118,75 +131,135 @@
 </svelte:head>
 
 <main id="top">
-	<!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+	<!-- ── Hero ──────────────────────────────────────────────── -->
 	<section
-		class="cw-zone cw-zone--tall canvas-brand-muted ink-brand canvas-brand-muted-trigger"
+		id="hero"
+		class="cw-zone cw-zone--hero canvas-brand-emphasis ink-brand-inverse canvas-brand-emphasis-trigger"
 	>
-		<div class="cw-shell">
-			<p class="font-sm letter-spacing-wide text-uppercase margin-0">@mzebley/canvas-watch</p>
-			<h1 class="font-2xl margin-block-start-05 margin-block-end-1 measure-3">
-				Floating elements that know where they're at.
-			</h1>
-			<p class="font-lg measure-2 margin-block-end-1">
-				Sticky nav bars, docked players, and cards drift over backgrounds that keep changing.
-				canvas-watch works out which zone an element is currently sitting over and puts that answer
-				on the element as a class.
-			</p>
-			<p class="font-lg measure-2 margin-block-end-2">
-				What you do with that class is entirely yours. Re-tint a shadow, flip dark text to light,
-				swap a border, invert the whole panel — the library only ever swaps the class.
-			</p>
+		<div class="cw-shell cw-hero">
+			<div class="prose ">
+				<!--
+					A zone inside a zone. The hero canvas is dark, so the bar's answer for
+					it is light ink — but the display type on it is near-white and huge,
+					and a light bar crossing it puts light text on light text. The heading
+					is therefore its own zone, nested inside the hero's, and nesting wins:
+					while the bar is over these letters it takes dark ink instead.
+				-->
+				<h1 class="cw-display-trigger">
+					Floating elements that know where they're at.
+				</h1>
+				<p class="lede">
+					Sticky nav bars, docked players, and cards drift over backgrounds that keep changing.
+					canvas-watch works out which zone an element is currently sitting over and puts that answer
+					on the element as a class.
+				</p>
+				<p class="font-lg margin-block-end-2">
+					What you do with that class is entirely yours. Re-tint a shadow, flip dark text to light,
+					swap a border, invert the whole panel — the library only ever swaps the class.
+				</p>
 
-			<div class="measure-2 margin-block-end-1">
+				<div class="display-flex flex-wrap gap-1 align-items-center margin-block-end-105">
+					<zbk-link href="#viewport-demo" appearance="button" variant="lg">
+						See viewport tracking
+					</zbk-link>
+					<!-- `inverse`, not `outline`: the hero is a dark canvas, and the outline
+					     variant's ink is the light-theme action colour. -->
+					<zbk-link
+						href="https://github.com/mzebley/canvas-watch"
+						appearance="button"
+						variant="inverse lg"
+						target="_blank"
+						rel="noopener"
+					>
+						Source on GitHub
+					</zbk-link>
+				</div>
+
 				<CodeBlock snippet={s['install-npm']} />
 			</div>
 
-			<div class="display-flex flex-wrap gap-1 align-items-center">
-				<zbk-link href="#demo" appearance="button" variant="lg">See it move</zbk-link>
-				<zbk-link
-					href="https://github.com/mzebley/canvas-watch"
-					appearance="button"
-					variant="outline lg"
-					target="_blank"
-					rel="noopener"
-				>
-					Source on GitHub
-				</zbk-link>
-			</div>
+			<div>
+				<!-- A static miniature of the playground below, so the idea is legible
+				     before any scrolling happens. Decorative: the caption carries the
+				     same information in prose. -->
+				<div class="cw-hero-figure" aria-hidden="true">
+					<span class="cw-hero-figure__overlap">62% overlap wins</span>
 
-			<p class="font-sm margin-block-start-2 margin-block-end-0">
-				The bar at the top of this page is a canvas-watch element. Scroll, and watch its shadow and
-				border follow the section behind it — and read the class it's wearing, live.
-			</p>
+					<div
+						class="cw-hero-figure__card cw-glass cw-glass--panel cw-tint over-cw-band-merlot"
+					>
+						<span class="cw-glass__surface" aria-hidden="true"></span>
+						<p class="cw-glass__label font-xs letter-spacing-wide text-uppercase margin-0">
+							Watched element
+						</p>
+						<p class="cw-readout font-sm font-weight-semibold margin-0">over-cw-band-merlot</p>
+					</div>
+
+					<div class="cw-hero-figure__band cw-band-indigo">.cw-band-indigo-trigger</div>
+					<div class="cw-hero-figure__band cw-band-merlot">.cw-band-merlot-trigger</div>
+					<div class="cw-hero-figure__band cw-band-butterfield">.cw-band-butterfield-trigger</div>
+				</div>
+
+				<p class="font-sm margin-block-start-1 margin-block-end-0">
+					The card straddles two zones. The one covering most of it wins, and its name lands on the
+					card as a class — which is the entire API. The bar at the top of this page is doing it for
+					real: scroll, and read the class it's wearing.
+				</p>
+			</div>
 		</div>
 	</section>
 
-	<!-- ── Why not IntersectionObserver ──────────────────────────────────────── -->
+	<!-- ── Why not IntersectionObserver ─────────────────────────────── -->
 	<section
 		id="why"
 		class="cw-zone canvas-accent-secondary ink-accent-secondary-inverse canvas-accent-secondary-trigger"
 	>
-		<div class="cw-shell cw-prose">
-			<h2 class="font-xl margin-block-start-0 margin-block-end-1">
-				Why not just IntersectionObserver?
-			</h2>
-			<p class="font-lg margin-block-end-1">
-				Because it can't answer this question. <code>IntersectionObserver</code> compares a target
-				against its scroll-ancestor or the viewport — never against an arbitrary sibling element.
-			</p>
-			<p class="margin-block-end-1">
-				"Is this floating card mostly over that background zone?" is a 2D overlap question between
-				two unrelated elements. So canvas-watch compares bounding rectangles instead.
-				IntersectionObserver is still in play — as a cheap visibility gate, so the overlap maths
-				only runs for elements actually on screen.
-			</p>
+		<div class="cw-shell">
+			<div class="cw-measure">
+				<h2 class="font-xl margin-block-start-0 margin-block-end-1">
+					Why not just IntersectionObserver?
+				</h2>
+				<p class="font-lg margin-block-end-1">
+					Because it can't answer this question. <code>IntersectionObserver</code> compares a target
+					against its scroll-ancestor or the viewport — never against an arbitrary sibling element.
+				</p>
+				<p class="margin-0">
+					"Is this floating card mostly over that background zone?" is a 2D overlap question between
+					two unrelated elements. So canvas-watch compares bounding rectangles instead.
+					IntersectionObserver is still in play — as a cheap visibility gate, so the overlap maths
+					only runs for elements actually on screen.
+				</p>
+			</div>
 		</div>
 	</section>
 
-	<!-- ── Live demo ─────────────────────────────────────────────────────────── -->
+	<!-- ── Viewport state demo ─────────────────────────────────── -->
+	<section
+		id="viewport-demo"
+		class="cw-zone canvas-brand-emphasis ink-brand-inverse canvas-brand-emphasis-trigger"
+	>
+		<div class="cw-shell">
+			<div class="cw-viewport-intro cw-measure">
+				<h2 class="font-xl margin-block-start-0 margin-block-end-1">
+					Watch one reference cross the viewport.
+				</h2>
+				<p class="font-lg margin-block-end-1">
+					Keep scrolling. The beacon starts below you, burns bright while any part of it is in
+					view, then leaves above. The panel stays put so the state change is impossible to miss.
+				</p>
+				<p class="margin-0">
+					This is the real Svelte API watching <code>#viewport-beacon</code>. Remove the reference
+					to see <code>missing</code>, then restore it and continue the flight.
+				</p>
+			</div>
+			<ViewportDemo />
+		</div>
+	</section>
+
+	<!-- ── Live demo ────────────────────────────────────────── -->
 	<section id="demo" class="cw-zone canvas-app">
 		<div class="cw-shell">
-			<div class="cw-prose margin-block-end-2">
+			<div class="cw-measure margin-block-end-2">
 				<h2 class="font-xl margin-block-start-0 margin-block-end-05">Try it</h2>
 				<p class="margin-block-end-1">
 					Scroll inside the frame. The card is watched; the bands behind it are trigger zones. The
@@ -194,25 +267,12 @@
 					clears the threshold, which you can drag.
 				</p>
 				<p class="margin-0">
-					The card does more than re-tint a shadow: over the pale band it inverts completely, dark
-					panel and light text, so it still reads. None of that is the library's doing — it swapped
-					one class, and the CSS did the rest.
+					The card is a sheet of glass whose low-opacity tint follows the winning band. The same
+					class updates tint, ink and border as one measured pairing. None of it is the library's
+					doing: it swapped one class, and the CSS did the rest.
 				</p>
 			</div>
 			<DemoStage />
-			<p class="font-sm ink-app-muted margin-block-start-1 measure-3">
-				Scroll the page — not the frame — until the bar at the top passes over these bands, and it
-				picks them up too: its mark and theme switch pull their accent from whichever band is
-				behind it. The bands can't be page triggers directly, though. canvas-watch compares
-				unclipped rectangles, so a band scrolled out of this frame still reports a rect where it
-				would have been, and the bar would tint from a zone that isn't on screen. The frame itself
-				carries the trigger instead, relabelled as you scroll — the same proxy any zone inside a
-				scroller needs.
-			</p>
-
-			<div class="margin-block-start-3">
-				<AngularDemo />
-			</div>
 		</div>
 	</section>
 
@@ -221,12 +281,12 @@
 		<div class="cw-shell cw-docs">
 			<Toc {sections} />
 
-			<div>
+			<div class="cw-docs-body">
 				<!-- Concepts -->
-				<section id="concepts" class="margin-block-end-3">
+				<section id="concepts">
 					<zbk-heading level="2">Concepts</zbk-heading>
 
-					<div class="cw-prose">
+					<div class="cw-measure--wide">
 						<h3 class="font-lg margin-block-start-105 margin-block-end-05">Watched element</h3>
 						<p class="margin-0">
 							A floating element you tag with <code>watch-bg-canvas</code> (or register through an
@@ -256,19 +316,32 @@
 									<td><code>over-canvas-brand-emphasis</code></td>
 								</tr>
 								<tr>
-									<td><code>canvas-danger-trigger</code></td>
-									<td><code>over-canvas-danger</code></td>
+									<td><code>cw-band-merlot-trigger</code></td>
+									<td><code>over-cw-band-merlot</code></td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
 
-					<div class="cw-prose">
+					<div class="cw-measure--wide">
 						<h3 class="font-lg margin-block-start-105 margin-block-end-05">Winner = majority overlap</h3>
 						<p class="margin-0">
-							A watched element gets the class of the zone covering the largest share of
-							<em>its own</em> area. If that share is below the threshold (default 50%), or it overlaps
-							no zone at all, every <code>over-*</code> class is removed. Only one is applied at a time.
+								A watched element gets the class of the zone covering the largest share of
+								<em>its own</em> area. If that share is below the threshold (default 50%), or it overlaps
+								no zone at all, every <code>over-*</code> class is removed. Same-class rectangles count
+								by their physical union, so duplicate pixels are never counted twice.
+						</p>
+
+						<h3 class="font-lg margin-block-start-105 margin-block-end-05">Nesting wins</h3>
+						<p class="margin-0">
+							A zone inside another zone is the more specific answer, so it beats its container
+							outright — otherwise a container could never be overridden, because its overlap is by
+								definition at least its children's. Depth only reorders zones that already clear the
+								threshold, so a nested zone that barely clips the element can't hijack it, and among
+								zones at the same depth the larger overlap still wins. Coverage stays paired with its
+								depth, so a tiny nested zone cannot promote a same-class ancestor. The heading at the top of this
+							page is a zone of its own inside the hero's: the bar takes dark ink while it is crossing
+							those pale letters, and the hero's light ink everywhere else.
 						</p>
 
 						<h3 class="font-lg margin-block-start-105 margin-block-end-05">
@@ -280,23 +353,22 @@
 							<code>canvaschange</code>
 							CustomEvent with <code>detail: &lbrace; appliedClass, previousClass &rbrace;</code> (each
 							<code>string | null</code>): swap an icon set, re-render a chart's palette, announce
-							something. Both adapters surface it: <code>onChange</code> in Svelte,
-							<code>(canvasChange)</code> in Angular.
+							something. The Svelte adapter surfaces it as <code>onChange</code>.
 						</p>
 					</div>
 				</section>
 
 				<!-- Install -->
-				<section id="install" class="margin-block-end-3">
+				<section id="install">
 					<zbk-heading level="2">Install</zbk-heading>
 
 					<div class="margin-block-start-1 margin-block-end-105">
 						<CodeBlock snippet={s['install-npm']} />
 					</div>
 
-					<p class="cw-prose margin-block-end-1">
-						Framework adapters ship as subpath entry points and pull in <strong>optional</strong> peer
-						dependencies — install only what you use.
+					<p class="cw-measure--wide margin-block-end-1">
+						The Svelte adapter ships as a subpath entry point and pulls in an
+						<strong>optional</strong> peer dependency — install it only if you use it.
 					</p>
 
 					<div class="cw-table-scroll margin-block-end-105">
@@ -316,13 +388,8 @@
 								</tr>
 								<tr>
 									<td><code>@mzebley/canvas-watch/svelte</code></td>
-									<td><code>watchBgCanvas</code> action</td>
-									<td><code>svelte &gt;= 5</code></td>
-								</tr>
-								<tr>
-									<td><code>@mzebley/canvas-watch/angular</code></td>
-									<td><code>CanvasWatchDirective</code> + <code>CanvasWatchService</code></td>
-									<td><code>@angular/core &gt;= 16</code></td>
+									<td><code>watchBgCanvas</code> action and reactive <code>canvasWatch</code> state</td>
+								<td><code>svelte &gt;= 5.7</code></td>
 								</tr>
 							</tbody>
 						</table>
@@ -333,7 +400,7 @@
 					</zbk-button>
 					<zbk-panel id="install-prerelease" hidden="until-found">
 						<div class="margin-block-start-1">
-							<p class="cw-prose margin-block-end-1">
+							<p class="cw-measure--wide margin-block-end-1">
 								While the package is distributed privately through GitHub Packages, point the
 								<code>@mzebley</code> scope at that registry. Locally, authenticate once with a classic
 								personal access token carrying only <code>read:packages</code>:
@@ -341,7 +408,7 @@
 							<div class="margin-block-end-1">
 								<CodeBlock snippet={s['install-github']} />
 							</div>
-							<p class="cw-prose margin-block-end-1">
+							<p class="cw-measure--wide margin-block-end-1">
 								For CI or hosted builds, keep the token in a secret and reference it from
 								<code>.npmrc</code> rather than committing the value:
 							</p>
@@ -351,10 +418,10 @@
 				</section>
 
 				<!-- Usage -->
-				<section id="usage" class="margin-block-end-3">
+				<section id="usage">
 					<zbk-heading level="2">Usage</zbk-heading>
 
-					<div class="cw-prose margin-block-start-1 margin-block-end-105">
+					<div class="cw-measure--wide margin-block-start-1 margin-block-end-105">
 						<p class="margin-0">
 							The shape is the same everywhere: mark the background zones, register the floating
 							element, and write CSS for the <code>over-*</code> classes.
@@ -376,7 +443,9 @@
 						<zbk-radio name="framework" value="svelte" checked toggles="usage-svelte">
 							Svelte
 						</zbk-radio>
-						<zbk-radio name="framework" value="angular" toggles="usage-angular">Angular</zbk-radio>
+						<zbk-radio name="framework" value="angular" toggles="usage-angular">
+							Angular
+						</zbk-radio>
 						<zbk-radio name="framework" value="vanilla" toggles="usage-vanilla">
 							Vanilla JS
 						</zbk-radio>
@@ -384,7 +453,7 @@
 
 					<zbk-panel id="usage-svelte">
 						<h3 class="font-lg margin-block-start-0 margin-block-end-05">Svelte</h3>
-						<p class="cw-prose margin-block-end-1">
+						<p class="cw-measure--wide margin-block-end-1">
 							The action shares one watcher across the whole app and cleans up on destroy.
 							<code>class="watch-bg-canvas"</code> is optional when you use the action — it registers
 							the node directly — but keeping it makes the intent obvious in markup.
@@ -392,7 +461,18 @@
 						<div class="margin-block-end-105">
 							<CodeBlock snippet={s['svelte-action']} />
 						</div>
-						<p class="cw-prose margin-block-end-1">
+						<h3 class="font-lg margin-block-start-105 margin-block-end-05">Viewport state</h3>
+						<p class="cw-measure--wide margin-block-end-1">
+							<code>canvasWatch('#hero')</code> exposes reactive <code>aboveViewport</code>,
+							<code>inViewport</code>, <code>belowViewport</code> and <code>missing</code> properties.
+								The full state starts as <code>unknown</code>; a missing ID becomes
+								<code>missing</code> only after client resolution. Read these properties in a template
+								or tracked effect; imperative callers should use <code>observeViewport</code>.
+						</p>
+						<div class="margin-block-end-105">
+							<CodeBlock snippet={s['svelte-viewport']} />
+						</div>
+						<p class="cw-measure--wide margin-block-end-1">
 							Elements that outlive a page — a layout-level nav or player — are registered once and
 							won't automatically see a new page's trigger zones. Re-scan after navigation:
 						</p>
@@ -401,25 +481,34 @@
 
 					<zbk-panel id="usage-angular" hidden="until-found">
 						<h3 class="font-lg margin-block-start-0 margin-block-end-05">Angular</h3>
-						<p class="cw-prose margin-block-end-1">
-							<code>CanvasWatchDirective</code> is a <strong>standalone</strong> directive — import it
-							directly into a component's <code>imports</code>. You can
-							<zbk-link href="#demo">run it live on this page</zbk-link>: the demo section
-							bootstraps a real Angular app that shares this page's watcher with the Svelte header.
+						<p class="cw-measure--wide margin-block-end-1">
+							There is no Angular entry point to install — the core is enough. A standalone directive
+							wraps it in about thirty lines, and because it registers on
+							<code>getSharedWatcher()</code>, it joins the same single rAF loop as every other
+							watched element on the page. Own this file in your app:
 						</p>
 						<div class="margin-block-end-105">
 							<CodeBlock snippet={s['angular-directive']} />
 						</div>
-						<p class="cw-prose margin-block-end-1">
-							After router navigation, re-scan so persistent watched elements pick up the new page's
-							trigger zones — the analogue of Svelte's <code>afterNavigate</code>:
+						<p class="cw-measure--wide margin-block-end-1">
+							The <code>runOutsideAngular</code> wrapper is the part worth keeping. The watcher's
+							scroll listener and rAF loop would otherwise be zone-patched, and every scroll frame
+							app-wide would trigger change detection. Re-entering the zone only when a class actually
+							changes keeps that cost off the scroll path.
+						</p>
+						<div class="margin-block-end-105">
+							<CodeBlock snippet={s['angular-usage']} />
+						</div>
+						<p class="cw-measure--wide margin-block-end-1">
+							Elements that outlive a route — a layout-level nav or player — are registered once and
+							won't automatically see the next page's trigger zones. Re-scan after navigation:
 						</p>
 						<CodeBlock snippet={s['angular-refresh']} />
 					</zbk-panel>
 
 					<zbk-panel id="usage-vanilla" hidden="until-found">
 						<h3 class="font-lg margin-block-start-0 margin-block-end-05">Vanilla, or any framework</h3>
-						<p class="cw-prose margin-block-end-1">
+						<p class="cw-measure--wide margin-block-end-1">
 							The core has no framework dependencies. Tag the elements in markup, then create a
 							watcher and refresh it.
 						</p>
@@ -429,21 +518,34 @@
 						<div class="margin-block-end-105">
 							<CodeBlock snippet={s['vanilla-core']} />
 						</div>
-						<p class="cw-prose margin-block-end-1">Listen for changes directly on the element:</p>
+						<h3 class="font-lg margin-block-start-105 margin-block-end-05">Viewport state</h3>
+						<p class="cw-measure--wide margin-block-end-1">
+								Subscribe in JavaScript, or let HTML own one default state class. ID resolution,
+								late insertion, removal and relevant attribute changes share one coalesced
+								<code>MutationObserver</code> per watcher. Unrelated classes are untouched.
+						</p>
+						<div class="margin-block-end-105">
+							<CodeBlock snippet={s['viewport-core']} />
+						</div>
+						<div class="margin-block-end-105">
+							<CodeBlock snippet={s['viewport-markup']} />
+						</div>
+						<p class="cw-measure--wide margin-block-end-1">Listen for changes directly on the element:</p>
 						<CodeBlock snippet={s['vanilla-event']} />
 					</zbk-panel>
 				</section>
 
 				<!-- API -->
-				<section id="api" class="margin-block-end-3">
+				<section id="api">
 					<zbk-heading level="2">API</zbk-heading>
 
 					<h3 class="font-lg margin-block-start-1 margin-block-end-05">
 						<code>createCanvasWatcher(options?)</code>
 					</h3>
-					<p class="cw-prose margin-block-end-1">
-						Returns a live watcher in the browser, or a no-op during SSR — so you never need to guard
-						<code>typeof window</code>.
+					<p class="cw-measure--wide margin-block-end-1">
+							Returns a live watcher in the browser, or a no-op during SSR — so you never need to guard
+							<code>typeof window</code>. Invalid thresholds, margins, selectors and class mappings
+							fail before any browser resources are allocated.
 					</p>
 
 					<div class="cw-table-scroll margin-block-end-105">
@@ -492,19 +594,27 @@
 							</tbody>
 						</table>
 					</div>
+					<p class="cw-measure--wide margin-block-end-105">
+						Every registration owns an independent disposer, even when an element or callback is
+						repeated. <code>destroy()</code> is terminal. Consumer listener errors are reported
+						without blocking healthy listeners or cleanup.
+					</p>
 
-					<p class="cw-prose margin-0">
-						The core also exports the pure helpers <code>overlapArea(a, b)</code> and
-						<code>resolveAppliedClass(triggerClass, opts)</code>, plus the shared-singleton helpers
-						<code>getSharedWatcher()</code> and <code>refreshCanvasWatch()</code> that the adapters
-						are built on.
+					<p class="cw-measure--wide margin-0">
+						The core also exports the pure helpers <code>overlapArea(a, b)</code>,
+						<code>resolveAppliedClass(triggerClass, opts)</code> and
+						<code>pickWinningClass(totals, area, threshold)</code> — the winner rule itself, depth and
+						all — plus <code>classifyViewportRect(rect, viewportTop, viewportBottom)</code> and the
+						shared-singleton helpers
+						<code>getSharedWatcher()</code> and <code>refreshCanvasWatch()</code> that the Svelte
+						adapter is built on.
 					</p>
 				</section>
 
 				<!-- How it works -->
-				<section id="how-it-works" class="margin-block-end-3">
+				<section id="how-it-works">
 					<zbk-heading level="2">How it works</zbk-heading>
-					<ol class="cw-prose margin-block-start-1 padding-inline-start-105">
+					<ol class="cw-measure--wide margin-block-start-1 padding-inline-start-105">
 						{#each steps as step (step.title)}
 							<li class="margin-block-end-1">
 								<strong>{step.title}.</strong>
@@ -515,12 +625,12 @@
 				</section>
 
 				<!-- Gotchas -->
-				<section id="gotchas" class="margin-block-end-3">
+				<section id="gotchas">
 					<zbk-heading level="2">Gotchas</zbk-heading>
 					<div class="margin-block-start-1">
 						{#each gotchas as gotcha (gotcha.title)}
 							<h3 class="font-lg margin-block-start-105 margin-block-end-05">{gotcha.title}</h3>
-							<p class="cw-prose margin-0">{gotcha.body}</p>
+							<p class="cw-measure--wide margin-0">{gotcha.body}</p>
 						{/each}
 					</div>
 					<div class="margin-block-start-105">
@@ -529,9 +639,9 @@
 				</section>
 
 				<!-- Accessibility -->
-				<section id="accessibility" class="margin-block-end-1">
+				<section id="accessibility">
 					<zbk-heading level="2">Accessibility</zbk-heading>
-					<div class="cw-prose margin-block-start-1">
+					<div class="cw-measure--wide margin-block-start-1">
 						<p class="margin-block-end-1">
 							canvas-watch is <strong>purely presentational</strong>. It adds and removes one class.
 							It adds no ARIA, announces nothing to assistive technology, and never alters content,
@@ -551,11 +661,12 @@
 						</p>
 						<p class="margin-0">
 							Under the hood it needs <code>IntersectionObserver</code>,
-							<code>ResizeObserver</code>, <code>requestAnimationFrame</code> and
-							<code>CustomEvent</code> — all available in every current evergreen browser. It is
+							<code>ResizeObserver</code>, <code>MutationObserver</code>,
+							<code>requestAnimationFrame</code> and <code>CustomEvent</code> — all available in
+							every current evergreen browser. It is
 							SSR-safe: <code>createCanvasWatcher</code> returns a no-op when
-							<code>window</code> and <code>document</code> are absent, and both adapters only run on
-							the client.
+							<code>window</code> and <code>document</code> are absent, and the Svelte adapter only
+							runs on the client.
 						</p>
 					</div>
 				</section>
@@ -568,23 +679,25 @@
 		id="get-started"
 		class="cw-zone canvas-accent-primary ink-accent-primary-inverse canvas-accent-primary-trigger"
 	>
-		<div class="cw-shell cw-prose">
-			<h2 class="font-xl margin-block-start-0 margin-block-end-1">One class. That's the API.</h2>
-			<p class="font-lg margin-block-end-2">
-				Mark your zones, register your floating element, and write the CSS you were going to write
-				anyway.
-			</p>
-			<div class="display-flex flex-wrap gap-1 align-items-center">
-				<zbk-link
-					href="https://github.com/mzebley/canvas-watch"
-					appearance="button"
-					variant="lg"
-					target="_blank"
-					rel="noopener"
-				>
-					Read the source
-				</zbk-link>
-				<zbk-link href="#install" appearance="button" variant="inverse lg">Install it</zbk-link>
+		<div class="cw-shell">
+			<div class="cw-measure">
+				<h2 class="font-xl margin-block-start-0 margin-block-end-1">One class. That's the API.</h2>
+				<p class="font-lg margin-block-end-2">
+					Mark your zones, register your floating element, and write the CSS you were going to write
+					anyway.
+				</p>
+				<div class="display-flex flex-wrap gap-1 align-items-center">
+					<zbk-link
+						href="https://github.com/mzebley/canvas-watch"
+						appearance="button"
+						variant="lg"
+						target="_blank"
+						rel="noopener"
+					>
+						Read the source
+					</zbk-link>
+					<zbk-link href="#install" appearance="button" variant="inverse lg">Install it</zbk-link>
+				</div>
 			</div>
 		</div>
 	</section>

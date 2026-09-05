@@ -10,9 +10,9 @@
     "$description": "Dark-mode raised card and code surface."
   },
   "canvas-muted": {
-    "$value": "{brand.800}",
+    "$value": "{color.dusk-900}",
     "$type": "color",
-    "$description": "Dark-mode recessed surface."
+    "$description": "Dark-mode recessed surface for inline code and table headers — neutral, matching the light theme's chrome."
   },
   "canvas-emphasis": {
     "$value": "{brand.900}",
@@ -30,8 +30,8 @@
     "$description": "Dark-mode secondary text."
   },
   "border": {
-    "$value": "{brand.600}",
+    "$value": "{color.dusk-600}",
     "$type": "color",
-    "$description": "Dark-mode borders and dividers."
+    "$description": "Dark-mode control borders — 3.6:1 against the dark card surface. Lighter than the light theme's step because the surface it sits on is dark."
   }
 }

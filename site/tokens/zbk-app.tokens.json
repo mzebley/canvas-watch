@@ -10,23 +10,23 @@
     "$description": "Raised surface for cards and code blocks."
   },
   "canvas-muted": {
-    "$value": "{brand.100}",
+    "$value": "{color.dusk-100}",
     "$type": "color",
-    "$description": "Recessed surface for inline code and table headers."
+    "$description": "Recessed surface for inline code and table headers. Neutral, not branded — tinted chrome makes the whole page read as one colour wash."
   },
   "ink": {
     "$value": "{brand.900}",
     "$type": "color",
-    "$description": "Body text."
+    "$description": "Body text (16.6:1 on the page canvas)."
   },
   "ink-muted": {
     "$value": "{brand.700}",
     "$type": "color",
-    "$description": "Secondary text and captions."
+    "$description": "Secondary text and captions (10.6:1 on the page canvas)."
   },
   "border": {
-    "$value": "{brand.400}",
+    "$value": "{color.dusk-500}",
     "$type": "color",
-    "$description": "Content borders and dividers."
+    "$description": "Neutral rather than branded, but still 3.4:1 against the card surface: components inherit this for control affordances (card, checkbox, dialog), so it has to clear the non-text threshold. The site's own decorative rules soften it via --cw-rule."
   }
 }

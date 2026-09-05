@@ -1,56 +1,56 @@
 {
   "50": {
-    "$value": "hsl(27, 74%, 98%)",
+    "$value": "hsl(330, 55%, 98%)",
     "$type": "color",
-    "$description": "For primary accent surfaces."
+    "$description": "High-prominence text on the accent canvas (9.4:1)."
   },
   "100": {
-    "$value": "hsl(27, 74%, 90%)",
+    "$value": "hsl(330, 60%, 92%)",
     "$type": "color",
-    "$description": "For primary accent surfaces."
+    "$description": "Body text on the accent canvas (7.9:1)."
   },
   "200": {
-    "$value": "hsl(27, 74%, 81%)",
+    "$value": "hsl(330, 58%, 85%)",
     "$type": "color",
     "$description": "For primary accent surfaces."
   },
   "300": {
-    "$value": "hsl(27, 74%, 68%)",
+    "$value": "hsl(329, 56%, 74%)",
     "$type": "color",
-    "$description": "For primary accent surfaces."
+    "$description": "Dark-mode accent text."
   },
   "400": {
-    "$value": "hsl(27, 74%, 56%)",
+    "$value": "hsl(328, 58%, 62%)",
     "$type": "color",
-    "$description": "For primary accent surfaces."
+    "$description": "Dark-mode table-of-contents labels."
   },
   "500": {
-    "$value": "hsl(27, 74%, 44%)",
+    "$value": "hsl(327, 62%, 50%)",
     "$type": "color",
-    "$description": "For primary accent surfaces."
+    "$description": "The accent at full strength."
   },
   "600": {
-    "$value": "hsl(27, 74%, 36%)",
+    "$value": "hsl(326, 66%, 39%)",
     "$type": "color",
     "$description": "For primary accent surfaces."
   },
   "700": {
-    "$value": "hsl(27, 74%, 28%)",
+    "$value": "hsl(325, 68%, 29%)",
     "$type": "color",
-    "$description": "For primary accent surfaces."
+    "$description": "Filled accent zone. Saturation climbs as lightness drops — held flat, this end of a warm ramp goes muddy."
   },
   "800": {
-    "$value": "hsl(27, 74%, 21%)",
+    "$value": "hsl(324, 70%, 21%)",
     "$type": "color",
-    "$description": "For primary accent surfaces."
+    "$description": "High-prominence accent zone."
   },
   "900": {
-    "$value": "hsl(27, 74%, 12%)",
+    "$value": "hsl(323, 66%, 12%)",
     "$type": "color",
-    "$description": "For primary accent surfaces."
+    "$description": "Dark-mode recessed accent surface."
   },
   "950": {
-    "$value": "hsl(27, 74%, 4%)",
+    "$value": "hsl(322, 60%, 6%)",
     "$type": "color",
     "$description": "For primary accent surfaces."
   },
@@ -67,11 +67,11 @@
   "ink-inverse": {
     "$value": "{accent-primary.100}",
     "$type": "color",
-    "$description": "Body text on the accent canvas (6.4:1)."
+    "$description": "Body text on the accent canvas (7.9:1)."
   },
   "ink-inverse-emphasis": {
     "$value": "{accent-primary.50}",
     "$type": "color",
-    "$description": "High-prominence text on the accent canvas (7.6:1)."
+    "$description": "High-prominence text on the accent canvas (9.4:1)."
   }
 }

@@ -1,56 +1,56 @@
 {
   "50": {
-    "$value": "hsl(186, 46%, 98%)",
+    "$value": "hsl(190, 50%, 97.5%)",
     "$type": "color",
-    "$description": "For secondary accent surfaces."
+    "$description": "High-prominence text on the secondary accent canvas (7.6:1)."
   },
   "100": {
-    "$value": "hsl(186, 46%, 90%)",
+    "$value": "hsl(190, 56%, 90%)",
     "$type": "color",
-    "$description": "For secondary accent surfaces."
+    "$description": "Body text on the secondary accent canvas (6.6:1)."
   },
   "200": {
-    "$value": "hsl(186, 46%, 81%)",
+    "$value": "hsl(190, 54%, 82%)",
     "$type": "color",
     "$description": "For secondary accent surfaces."
   },
   "300": {
-    "$value": "hsl(186, 46%, 68%)",
+    "$value": "hsl(190, 52%, 70%)",
     "$type": "color",
-    "$description": "For secondary accent surfaces."
+    "$description": "Dark-mode secondary accent text."
   },
   "400": {
-    "$value": "hsl(186, 46%, 56%)",
+    "$value": "hsl(191, 56%, 55%)",
     "$type": "color",
     "$description": "For secondary accent surfaces."
   },
   "500": {
-    "$value": "hsl(186, 46%, 44%)",
+    "$value": "hsl(192, 62%, 43%)",
     "$type": "color",
-    "$description": "For secondary accent surfaces."
+    "$description": "The secondary accent at full strength."
   },
   "600": {
-    "$value": "hsl(186, 46%, 36%)",
+    "$value": "hsl(193, 68%, 33%)",
     "$type": "color",
     "$description": "For secondary accent surfaces."
   },
   "700": {
-    "$value": "hsl(186, 46%, 28%)",
+    "$value": "hsl(194, 72%, 25%)",
     "$type": "color",
-    "$description": "For secondary accent surfaces."
+    "$description": "Filled secondary accent zone — a deep petrol teal, not a washed-out slate."
   },
   "800": {
-    "$value": "hsl(186, 46%, 21%)",
+    "$value": "hsl(195, 74%, 18%)",
     "$type": "color",
-    "$description": "For secondary accent surfaces."
+    "$description": "High-prominence secondary accent zone."
   },
   "900": {
-    "$value": "hsl(186, 46%, 12%)",
+    "$value": "hsl(196, 70%, 11%)",
     "$type": "color",
     "$description": "For secondary accent surfaces."
   },
   "950": {
-    "$value": "hsl(186, 46%, 4%)",
+    "$value": "hsl(197, 64%, 6%)",
     "$type": "color",
     "$description": "For secondary accent surfaces."
   },
@@ -67,11 +67,11 @@
   "ink-inverse": {
     "$value": "{accent-secondary.100}",
     "$type": "color",
-    "$description": "Body text on the secondary accent canvas (5.8:1)."
+    "$description": "Body text on the secondary accent canvas (6.6:1)."
   },
   "ink-inverse-emphasis": {
     "$value": "{accent-secondary.50}",
     "$type": "color",
-    "$description": "High-prominence text on the secondary accent canvas (6.7:1)."
+    "$description": "High-prominence text on the secondary accent canvas (7.6:1)."
   }
 }

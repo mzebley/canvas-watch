@@ -103,8 +103,19 @@
 
 		<div class="cw-header__spacer"></div>
 
+		<!--
+			The readout is watched on its own, not as part of the end group.
+
+			It is the widest run of text in the bar, and on a page this busy the
+			end group regularly spans two surfaces at once — a code block under
+			the readout, the page canvas under the icons. One element gets one
+			answer, so whichever zone wins leaves the other half on the wrong
+			background; measured as low as 1.02:1 that way. Narrowing the watched
+			element to the text itself is the documented fix, and it is the same
+			move the bar already makes between its two ends.
+		-->
 		<div
-			class="cw-header__group cw-header__group--end cw-tint"
+			class="cw-header__group cw-tint"
 			bind:this={endEl}
 			use:watchBgCanvas={{ onChange: (detail) => (endApplied = detail.appliedClass) }}
 		>
@@ -122,7 +133,9 @@
 								? 'missing'
 								: 'unknown'}
 			</p>
+		</div>
 
+		<div class="cw-header__group cw-header__group--end cw-tint" use:watchBgCanvas>
 			<zbk-link
 				href="https://github.com/mzebley/canvas-watch"
 				target="_blank"

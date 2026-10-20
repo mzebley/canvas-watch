@@ -1,25 +1,25 @@
 {
-  "canvas": {
+  "housing-canvas": {
     "$value": "{brand.700}",
     "$type": "color",
     "$description": "Dark-mode off-state track."
   },
-  "border-color": {
+  "housing-border-color": {
     "$value": "{brand.300}",
     "$type": "color",
     "$description": "Dark-mode off-track border, 3:1 against the track."
   },
-  "thumb-canvas": {
+  "actuator-canvas": {
     "$value": "{brand.100}",
     "$type": "color",
     "$description": "Dark-mode off-state thumb."
   },
-  "canvas-checked": {
+  "housing-canvas-checked": {
     "$value": "{brand.300}",
     "$type": "color",
     "$description": "Dark-mode on-state track."
   },
-  "thumb-canvas-checked": {
+  "actuator-canvas-checked": {
     "$value": "{brand.950}",
     "$type": "color",
     "$description": "Dark-mode on-state thumb."

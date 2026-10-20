@@ -73,13 +73,18 @@ function inspectArtifact() {
 	return manifest;
 }
 
+export function parseRegistryIntegrity(output) {
+	const parsed = JSON.parse(output);
+	const value = Array.isArray(parsed) && parsed.length === 1 ? parsed[0] : parsed;
+	assert.equal(typeof value, 'string', 'Registry omitted a single integrity value');
+	return value;
+}
+
 function registryIntegrity(manifest, registry) {
 	const result = spawnSync('npm', ['view', `${manifest.name}@${manifest.version}`, 'dist.integrity', '--json', `--registry=${registry}`, `--@mzebley:registry=${registry}`], { encoding: 'utf8' });
 	if (result.error) throw result.error;
 	if (result.status === 0) {
-		const value = JSON.parse(result.stdout);
-		assert.equal(typeof value, 'string', 'Registry omitted integrity');
-		return value;
+		return parseRegistryIntegrity(result.stdout);
 	}
 	if (/\bE404\b/.test(result.stderr)) return null;
 	throw new Error(`Registry lookup failed: ${result.stderr}`);

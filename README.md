@@ -48,10 +48,10 @@ peer dep** — install it only if you use it:
 
 ## Why not just IntersectionObserver?
 
-`IntersectionObserver` can only compare a target against its **scroll-ancestor
-or the viewport** — never against an arbitrary sibling element. "Is this
-floating card mostly over that background zone?" is a 2D overlap question
-between two unrelated elements, which IO cannot answer.
+`IntersectionObserver` measures a target against a root that must be one of its
+**ancestors**, or against the viewport — never against an arbitrary sibling
+element. "Is this floating card mostly over that background zone?" is a 2D
+overlap question between two unrelated elements, which IO cannot answer.
 
 So canvas-watch compares bounding rectangles. IntersectionObserver is still used
 — as a cheap **visibility gate** so the overlap math only runs for on-screen
@@ -74,12 +74,14 @@ maps to an `over-*` class by convention: strip the `-trigger` suffix, add the
 | `canvas-brand-emphasis-trigger` | `over-canvas-brand-emphasis` |
 | `canvas-danger-trigger`         | `over-canvas-danger`         |
 
-**Winner = majority overlap.** A watched element gets the class of the zone
-covering the largest share of *its own* area. If that share is below the
-threshold (default 50%), or it overlaps no zone, all `over-*` classes are
-removed. Repeated same-class rectangles count by their physical union, not by
-adding duplicate pixels; adjacent same-class zones still combine. Only one
-`over-*` class is applied at a time.
+**Winner = deepest, then majority overlap.** Only zones covering at least
+`threshold` of the watched element's *own* area are eligible (default 50%).
+Among those, the most deeply nested zone wins outright; among zones at the same
+depth, the one covering the largest share wins. If nothing clears the threshold,
+or the element overlaps no zone, all `over-*` classes are removed. Repeated
+same-class rectangles count by their physical union, not by adding duplicate
+pixels; adjacent same-class zones still combine. Only one `over-*` class is
+applied at a time.
 
 **Nesting wins.** A zone inside another zone is the more specific answer, so it
 beats its container outright — a dark band, or a block of big pale display type,
@@ -175,7 +177,8 @@ and won't automatically see a new page's trigger zones. Re-scan after navigation
 There is no Angular entry point to install — the core is enough. A standalone
 directive wraps it in about thirty lines, and because it registers on
 `getSharedWatcher()` it joins the same single rAF loop as every other watched
-element on the page. Own this file in your app:
+element on the page. This is code to own and adapt in your app, not a shipped
+adapter: the library's tests do not cover it.
 
 ```ts
 // canvas-watch.directive.ts
@@ -325,7 +328,7 @@ selectors valid, and class mappings single tokens.
 | `triggerSelector`   | `[class*="-trigger"]` | Coarse selector for trigger elements; refined in JS by `triggerSuffix`.     |
 | `triggerSuffix`     | `-trigger`            | Suffix that marks a class as a trigger.                                     |
 | `appliedPrefix`     | `over-`               | Prefix for the applied class.                                               |
-| `classMap`          | `{}`                  | Explicit `triggerClass → appliedClass` overrides; win over the convention.  |
+| `classMap`          | `undefined`           | Explicit `triggerClass → appliedClass` overrides; win over the convention.  |
 | `threshold`         | `0.5`                 | Fraction of the watched element's area that must overlap to count.          |
 | `triggerRootMargin` | `200`                 | Margin (px) around the viewport for keeping a trigger zone "active".        |
 
@@ -358,7 +361,9 @@ The core also exports the pure helpers `overlapArea(a, b)`,
 itself, taking a `Map<appliedClass, ZoneOverlap | ZoneOverlap[]>` so physical
 coverage can remain qualified by depth — plus
 `classifyViewportRect(rect, viewportTop, viewportBottom)`, and the
-shared-singleton helpers `getSharedWatcher()` / `refreshCanvasWatch()` that the
+shared-singleton helpers `getSharedWatcher()`, `refreshCanvasWatch()` and
+`scheduleRefresh()` — the last two being the same coalesced re-scan under two
+names — that the
 Svelte adapter and the Angular directive above are built on. ESM and CJS entries
 join the same live singleton in one JavaScript realm; destroying it makes the
 next call acquire a new watcher.
@@ -397,18 +402,22 @@ interface ViewportChangeDetail {
 3. **Read, commit, then notify.** Per frame, every unique element rect is read
    **once**. Classes, ownership, and observer targets are committed before any
    consumer callback runs, so reentrant teardown cannot resurrect stale work.
-4. **Minimal DOM churn.** A class is only added/removed when the winning zone
-   actually changes, so scrolling within one zone touches the DOM zero times.
-5. **Idle pages cost nothing.** With no visible overlap work and no viewport
-   registrations, scroll frames short-circuit before scheduling any work.
+4. **Minimal class churn.** A class is only added/removed when the winning zone
+   actually changes, so scrolling within one zone writes to the DOM zero times.
+   Rects are still read each frame.
+5. **Idle pages skip the measuring.** With no visible overlap work and no
+   viewport registrations, scroll frames short-circuit before scheduling any
+   work. The passive scroll and resize listeners stay attached — they are what
+   notices the page becoming busy again.
 
 ---
 
 ## Accessibility
 
-canvas-watch is **purely presentational** — it toggles a class and changes a
-shadow color. It adds no ARIA, announces nothing to assistive tech, and never
-alters content, focus order, or layout.
+canvas-watch is **purely presentational** — it adds and removes one class. It
+sets no ARIA attributes, announces nothing to assistive tech, and never alters
+content or focus order. Whether it changes layout is entirely down to what your
+`over-*` rules declare.
 
 - **Reduced motion** is the consumer's call: put any `transition` on the tinted
   property behind `@media (prefers-reduced-motion: reduce)`.
@@ -451,8 +460,8 @@ alters content, focus order, or layout.
 ## Browser support
 
 `IntersectionObserver`, `ResizeObserver`, `MutationObserver`,
-`requestAnimationFrame`, and `CustomEvent` — all supported in every current
-evergreen browser. SSR-safe:
+`requestAnimationFrame`, and `CustomEvent`. The test suite runs in headless
+Chromium; other engines are not covered by CI. SSR-safe:
 `createCanvasWatcher` returns a no-op when `window`/`document` are absent, and
 the Svelte adapter only runs on the client.
 

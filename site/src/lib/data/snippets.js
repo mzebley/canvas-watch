@@ -15,23 +15,6 @@ export const snippets = {
 		code: `npm install @mzebley/canvas-watch`
 	},
 
-	'install-npmrc': {
-		lang: 'ini',
-		label: '.npmrc',
-		code: `registry=https://registry.npmjs.org
-@mzebley:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=\${GITHUB_PACKAGES_TOKEN}`
-	},
-
-	'install-github': {
-		lang: 'bash',
-		label: 'shell',
-		code: `# One-time login with a classic token that has read:packages
-npm login --scope=@mzebley --auth-type=legacy --registry=https://npm.pkg.github.com
-
-npm install @mzebley/canvas-watch`
-	},
-
 	quickstart: {
 		lang: 'svelte',
 		label: 'Page.svelte',
@@ -276,7 +259,7 @@ stop();`
 	'gotcha-shadow': {
 		lang: 'css',
 		label: 'The composed-token trap',
-		code: `/* ✗ Does nothing. The nested var() is baked once, on :root. */
+		code: `/* Does nothing. The nested var() is baked once, on :root. */
 :root {
 	--shadow-color: 0deg 0% 0%;
 	--shadow-elevation: 0 10px 30px -8px hsl(var(--shadow-color) / 0.4);
@@ -284,11 +267,110 @@ stop();`
 .card { box-shadow: var(--shadow-elevation); }
 .card.over-canvas-brand-emphasis { --shadow-color: 243deg 55% 36%; }
 
-/* ✓ Re-declare the composite on the watched element so it re-bakes. */
+/* Works. Re-declare the composite on the watched element so it re-bakes. */
 .card {
 	--shadow-color: 0deg 0% 0%;
 	--shadow-elevation: 0 10px 30px -8px hsl(var(--shadow-color) / 0.4);
 	box-shadow: var(--shadow-elevation);
 }`
+	},
+
+	/* ── Code behind the two live demos on this page ─────────────────────────
+	 * These must stay in step with DemoStage.svelte and ViewportDemo.svelte.
+	 * They are trimmed of presentation detail, not of API detail.
+	 */
+
+	'demo-overlap-markup': {
+		lang: 'html',
+		label: 'The stage',
+		code: `<!-- One panel, one shadow, one glass surface — and three regions
+     that each resolve their own ink. Only the regions are watched;
+     the panel itself is not. -->
+<div class="cw-stage">
+	<div class="cw-stage__panel cw-glass cw-watched">
+		<div class="cw-stage__region cw-tint cw-demo-watch">…</div>
+		<div class="cw-stage__region cw-tint cw-demo-watch">…</div>
+		<div class="cw-stage__region cw-tint cw-demo-watch">…</div>
+	</div>
+
+	<!-- Zones vary across the row as well as down the stack, so a region
+	     at one end can be over a different colour from its neighbour. -->
+	<div class="cw-stage__row">
+		<div class="cw-stage__cell cw-band-indigo-demozone">…</div>
+		<div class="cw-stage__cell cw-band-butterfield-demozone">…</div>
+		<div class="cw-stage__cell cw-band-merlot-demozone">…</div>
+	</div>
+</div>`
+	},
+
+	'demo-overlap-js': {
+		lang: 'js',
+		label: 'DemoStage.svelte',
+		code: `import { createCanvasWatcher } from '@mzebley/canvas-watch';
+
+// This demo owns a watcher instead of the shared one, because the
+// threshold slider rebuilds it — threshold is a construction option.
+const watcher = createCanvasWatcher({
+	watchSelector: '.cw-demo-watch',
+	triggerSelector: '[class*="-demozone"]',
+	triggerSuffix: '-demozone',
+	appliedPrefix: 'over-',
+	threshold // 0.1 – 1, live from the slider
+});
+
+watcher.refresh();
+
+// cw-band-merlot-demozone  →  over-cw-band-merlot
+//
+// All three regions share this one watcher and resolve in the same
+// frame. Nothing coordinates them; each simply measures itself.`
+	},
+
+	'demo-overlap-css': {
+		lang: 'css',
+		label: 'app.css (abridged)',
+		code: `/* The card reads two variables; the winning class supplies them. */
+.cw-tint {
+	color: var(--cw-glass-ink, var(--zbk-app-ink));
+	transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cw-glass__surface::after {
+	background-color: color-mix(
+		in srgb,
+		var(--cw-glass-tint) var(--cw-glass-tint-strength, 14%),
+		transparent
+	);
+}
+
+/* One pairing per band. Dark band, light ink — and the reverse. */
+.cw-glass.over-cw-band-merlot,
+.cw-tint.over-cw-band-merlot {
+	--cw-glass-tint: hsl(320 55% 6%);
+	--cw-glass-ink: hsl(320 55% 96%);
+}
+
+.cw-glass.over-cw-band-butterfield,
+.cw-tint.over-cw-band-butterfield {
+	--cw-glass-tint: hsl(48 45% 94%);
+	--cw-glass-ink: hsl(48 70% 10%);
+}`
+	},
+
+	'demo-viewport': {
+		lang: 'svelte',
+		label: 'ViewportDemo.svelte',
+		code: `<script>
+	import { canvasWatch } from '@mzebley/canvas-watch/svelte';
+
+	// 'unknown' until the first client measurement, then
+	// 'above' | 'within' | 'below' | 'missing'.
+	const beacon = canvasWatch('#viewport-beacon');
+</script>
+
+<p>{beacon.state}</p>
+
+<!-- Remove this element and the state becomes 'missing'. -->
+<div id="viewport-beacon">Reference</div>`
 	}
 };

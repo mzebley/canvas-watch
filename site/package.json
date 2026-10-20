@@ -24,6 +24,6 @@
     "svelte": "^5.7.0",
     "tslib": "^2.8.1",
     "vite": "^7.3.6",
-    "zebkit": "npm:@mzebley/zebkit@0.11.1"
+    "zebkit": "npm:@mzebley/zebkit@^0.28.0"
   }
 }

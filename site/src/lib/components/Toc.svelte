@@ -4,7 +4,9 @@
 	/** @type {{ sections: { id: string, label: string }[] }} */
 	let { sections } = $props();
 
-	let activeId = $state(sections[0]?.id ?? '');
+	/** Empty until the observer reports; the first section stands in until then. */
+	let observedId = $state('');
+	const activeId = $derived(observedId || sections[0]?.id || '');
 
 	onMount(() => {
 		const order = new Map(sections.map((s, i) => [s.id, i]));
@@ -22,7 +24,7 @@
 					if (best === null || (order.get(id) ?? 0) < (order.get(best) ?? 0)) best = id;
 				}
 				// Nothing in the band (a very tall section) keeps the last answer.
-				if (best) activeId = best;
+				if (best) observedId = best;
 			},
 			{ rootMargin: '-15% 0px -70% 0px' }
 		);

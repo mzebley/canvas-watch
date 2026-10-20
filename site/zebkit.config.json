@@ -1,30 +1,36 @@
 {
   "$schema": "../node_modules/zebkit/dist/editor/schemas/zebkit.config.schema.json",
-  "configVersion": 1,
+  "configVersion": 3,
   "tokens": {
-     "fonts": { "strategy": "link" },
     "destinationPath": "./static",
     "assetFilePath": "/",
-    "basePreset": "default",
-    "tokenPath": "./tokens",
-    "themeName": "canvas-watch",
-    "overlays": [
-      {
-        "themeName": "dark",
-        "tokenPath": "./themes/dark"
-      }
-    ],
+    "minify": true,
     "prune": {
       "enabled": true,
       "content": ["./src/**/*.svelte", "./src/**/*.js", "./src/**/*.css", "./src/app.html"],
-      "safelist": ["/^zbk-/", "/^over-/", "/^cw-/"]
+      "safelist": ["/^zbk-/", "/^over-/", "/^cw-/"],
+      "output": { "mode": "replace" }
     }
   },
-  "context": {
-    "path": "./zebkit/context"
+  "theme": {
+    "name": "canvas-watch",
+    "preset": "default",
+    "tokenPath": "./tokens",
+    "options": { "colorScheme": "light" },
+    "fonts": { "strategy": "link" },
+    "overlays": [
+      {
+        "name": "dark",
+        "tokenPath": "./themes/dark",
+        "options": { "colorScheme": "dark" }
+      }
+    ]
   },
   "runtime": {
     "path": "./src/lib/zebkit/zebkit.runtime.js"
+  },
+  "context": {
+    "path": "./zebkit/context"
   },
   "check": {
     "content": ["./src/**/*.svelte", "./src/app.html"]
@@ -39,7 +45,7 @@
         { "id": "reflow", "width": 320, "height": 800, "reflow": true }
       ],
       "themes": [
-        { "id": "light", "selector": "html", "attribute": "data-zbk-theme" },
+        { "id": "light", "selector": "html", "attribute": "data-zbk-theme", "value": "light" },
         { "id": "dark", "selector": "html", "attribute": "data-zbk-theme", "value": "dark" }
       ]
     }

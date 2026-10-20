@@ -162,6 +162,71 @@ body {
 	inline-size: min(54rem, 100%);
 }
 
+/*
+ * Prose sitting on an inverse canvas.
+ *
+ * Nothing inherits `color` in zebkit — the base layer declares it on `p` and
+ * `h1`–`h6` from their own tokens, and a declared colour beats an inherited one
+ * regardless of cascade layer. So an `ink-*-inverse` utility on a section
+ * recolours the section element and nothing inside it, which left the hero's
+ * lede at 1.3:1 against its own canvas.
+ *
+ * `inherit` rather than a named token, so one rule serves every inverse zone.
+ * This is opt-in per container instead of a descendant rule on the zone,
+ * because the glass surfaces inside these sections carry their own adaptive
+ * ink and must keep it.
+ */
+.cw-inverse-prose :where(p, h2, h3, h4, h5, h6, li, dt, dd) {
+	color: inherit;
+}
+
+/*
+ * Focus ring contrast.
+ *
+ * The theme's focus colour is a cyan that measures 2.30:1 against the page
+ * canvas and 2.17:1 against the docs canvas — both under the 3:1 a focus
+ * indicator owes against what surrounds it. The action ink clears 10.64:1 and
+ * 10.02:1 on those two surfaces, and it is already the page's link colour, so
+ * the ring reads as part of the same system.
+ *
+ * Each zebkit component owns its own focus token rather than reading the app
+ * one, so every component in use is remapped, not just `app.focus-color`.
+ */
+:root {
+	--zbk-focus-color: var(--zbk-action-ink);
+	--zbk-link-focus-color: var(--zbk-action-ink);
+	--zbk-button-focus-color: var(--zbk-action-ink);
+	--zbk-radio-focus-color: var(--zbk-action-ink);
+	--zbk-toggle-focus-color: var(--zbk-action-ink);
+}
+
+/*
+ * The inverse zones have to re-declare all five, not just `--zbk-focus-color`.
+ * A var() inside a custom property resolves where that property is *declared*,
+ * so the aliases above are already baked to the light value by the time they
+ * inherit down here — the same composed-token trap this site documents under
+ * Limitations.
+ */
+.cw-zone:is(.ink-brand-inverse, .ink-accent-primary-inverse, .ink-accent-secondary-inverse) {
+	--zbk-focus-color: var(--zbk-color-global-white, #fff);
+	--zbk-link-focus-color: var(--zbk-color-global-white, #fff);
+	--zbk-button-focus-color: var(--zbk-color-global-white, #fff);
+	--zbk-radio-focus-color: var(--zbk-color-global-white, #fff);
+	--zbk-toggle-focus-color: var(--zbk-color-global-white, #fff);
+}
+
+/*
+ * The header is glass over whatever zone it is crossing, so no fixed ring
+ * colour works for it. Reuse the adaptive ink the bar's own text resolves to —
+ * it is already chosen per zone to contrast with that zone.
+ */
+.cw-header {
+	--zbk-focus-color: var(--cw-glass-ink, var(--zbk-app-ink));
+	--zbk-link-focus-color: var(--cw-glass-ink, var(--zbk-app-ink));
+	--zbk-button-focus-color: var(--cw-glass-ink, var(--zbk-app-ink));
+	--zbk-toggle-focus-color: var(--cw-glass-ink, var(--zbk-app-ink));
+}
+
 /* ── Hero ───────────────────────────────────────────────────────────────────── */
 
 .cw-hero {
@@ -225,45 +290,29 @@ body {
 	color: rgb(255 255 255 / 0.92);
 }
 
-/* ── Viewport state demo ───────────────────────────────────────────────────── */
+/* ── Instrument: the shared skin for both live demos ─────────────────────────
+ *
+ * The two demos show different features, but they are the same product and
+ * should read as siblings. This block owns everything they have in common —
+ * the dark instrument surface, the grid texture, the accent glow, the eyebrow,
+ * the display-type state line and the pill badges — and each demo adds only
+ * its own layout on top.
+ *
+ * Every declaration here was the viewport demo's, lifted verbatim so that demo
+ * renders exactly as before; the overlap demo now composes from the same rules
+ * rather than carrying a second, unrelated look.
+ */
 
-.cw-viewport-intro {
-	margin-block-end: clamp(2rem, 6vw, 4rem);
-}
-
-.cw-viewport-demo {
-	--cw-viewport-accent: #67e8f9;
-	--cw-viewport-accent-soft: rgb(103 232 249 / 0.22);
+.cw-instrument {
+	--cw-instrument-accent: #67e8f9;
+	--cw-instrument-accent-soft: rgb(103 232 249 / 0.22);
 	position: relative;
-	min-block-size: 300svh;
 	isolation: isolate;
-}
-
-.cw-viewport-demo[data-state='within'] {
-	--cw-viewport-accent: #fde047;
-	--cw-viewport-accent-soft: rgb(253 224 71 / 0.26);
-}
-
-.cw-viewport-demo[data-state='above'] {
-	--cw-viewport-accent: #f0abfc;
-	--cw-viewport-accent-soft: rgb(240 171 252 / 0.24);
-}
-
-.cw-viewport-demo[data-state='missing'] {
-	--cw-viewport-accent: #fb7185;
-	--cw-viewport-accent-soft: rgb(251 113 133 / 0.22);
-}
-
-.cw-viewport-demo__hud {
-	position: sticky;
-	inset-block-start: 5.25rem;
-	block-size: min(42rem, calc(100svh - 6.5rem));
-	min-block-size: 25rem;
 	overflow: hidden;
 	border: 1px solid rgb(255 255 255 / 0.24);
 	border-radius: clamp(1.25rem, 4vw, 2.5rem);
 	background:
-		radial-gradient(circle at 50% 50%, var(--cw-viewport-accent-soft), transparent 34%),
+		radial-gradient(circle at 50% 50%, var(--cw-instrument-accent-soft), transparent 34%),
 		linear-gradient(145deg, rgb(9 8 31 / 0.96), rgb(20 12 48 / 0.96));
 	box-shadow:
 		0 2rem 6rem -2rem rgb(4 2 18 / 0.8),
@@ -273,15 +322,10 @@ body {
 		border-color 420ms ease;
 }
 
-.cw-viewport-demo__grid,
-.cw-viewport-demo__glow,
-.cw-viewport-demo__frame {
+.cw-instrument__grid {
 	position: absolute;
-	pointer-events: none;
-}
-
-.cw-viewport-demo__grid {
 	inset: 0;
+	pointer-events: none;
 	background-image:
 		linear-gradient(rgb(255 255 255 / 0.055) 1px, transparent 1px),
 		linear-gradient(90deg, rgb(255 255 255 / 0.055) 1px, transparent 1px);
@@ -289,12 +333,159 @@ body {
 	mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
 }
 
+.cw-instrument__eyebrow {
+	margin: 0 0 0.35rem;
+	color: rgb(255 255 255 / 0.62);
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+}
+
+.cw-instrument__state {
+	margin: 0;
+	color: var(--cw-instrument-accent);
+	font-family: var(--zbk-font-family-heading);
+	font-weight: 760;
+	line-height: 0.84;
+	letter-spacing: -0.055em;
+	text-shadow: 0 0 2.5rem var(--cw-instrument-accent-soft);
+	transition: color 320ms ease;
+}
+
+.cw-instrument__description {
+	margin: 0.9rem 0 0;
+	color: rgb(255 255 255 / 0.76);
+	font-size: clamp(0.85rem, 2vw, 1rem);
+}
+
+.cw-instrument__badges {
+	display: grid;
+	gap: 0.4rem;
+	justify-items: end;
+}
+
+.cw-instrument__badge {
+	padding: 0.35rem 0.65rem;
+	border: 1px solid rgb(255 255 255 / 0.12);
+	border-radius: 999px;
+	background: rgb(3 2 18 / 0.44);
+	color: rgb(255 255 255 / 0.46);
+	font-family: var(--zbk-font-family-code);
+	font-size: 0.72rem;
+	white-space: nowrap;
+	transition:
+		color 240ms ease,
+		border-color 240ms ease,
+		background 240ms ease,
+		box-shadow 240ms ease;
+}
+
+.cw-instrument__badge.active {
+	border-color: var(--cw-instrument-accent);
+	background: var(--cw-instrument-accent-soft);
+	box-shadow: 0 0 1.5rem var(--cw-instrument-accent-soft);
+	color: var(--cw-instrument-accent);
+}
+
+/* The pill control both demos use for their own action. */
+.cw-instrument__control {
+	min-block-size: 2.75rem;
+	padding: 0.6rem 1rem;
+	border: 1px solid color-mix(in srgb, var(--cw-instrument-accent) 68%, white);
+	border-radius: 999px;
+	background: rgb(3 2 18 / 0.72);
+	box-shadow: 0 0 1.75rem var(--cw-instrument-accent-soft);
+	color: var(--cw-instrument-accent);
+	font: inherit;
+	font-size: 0.8rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition:
+		color 240ms ease,
+		border-color 240ms ease,
+		box-shadow 240ms ease,
+		transform 160ms ease;
+}
+
+.cw-instrument__control:hover {
+	transform: translateY(-2px);
+}
+
+.cw-instrument__control:focus-visible {
+	outline: 3px solid white;
+	outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cw-instrument,
+	.cw-instrument__state,
+	.cw-instrument__badge,
+	.cw-instrument__control {
+		transition: none;
+	}
+	.cw-instrument__control:hover {
+		transform: none;
+	}
+}
+
+/* ── Viewport state demo ───────────────────────────────────────────────────── */
+
+.cw-viewport-intro {
+	margin-block-end: clamp(2rem, 6vw, 4rem);
+}
+
+.cw-viewport-demo {
+	--cw-instrument-accent: #67e8f9;
+	--cw-instrument-accent-soft: rgb(103 232 249 / 0.22);
+	position: relative;
+	min-block-size: 300svh;
+	isolation: isolate;
+}
+
+.cw-viewport-demo[data-state='within'] {
+	--cw-instrument-accent: #fde047;
+	--cw-instrument-accent-soft: rgb(253 224 71 / 0.26);
+}
+
+.cw-viewport-demo[data-state='above'] {
+	--cw-instrument-accent: #f0abfc;
+	--cw-instrument-accent-soft: rgb(240 171 252 / 0.24);
+}
+
+.cw-viewport-demo[data-state='missing'] {
+	--cw-instrument-accent: #fb7185;
+	--cw-instrument-accent-soft: rgb(251 113 133 / 0.22);
+}
+
+/*
+ * Skin comes from `.cw-instrument`; this adds only the sticky geometry.
+ *
+ * The accent is explicitly inherited: the state-driven values live on
+ * `.cw-viewport-demo`, the parent, and `.cw-instrument` on this element would
+ * otherwise shadow them with its own default and freeze the HUD on cyan.
+ */
+.cw-viewport-demo__hud {
+	--cw-instrument-accent: inherit;
+	--cw-instrument-accent-soft: inherit;
+	position: sticky;
+	inset-block-start: 5.25rem;
+	block-size: min(42rem, calc(100svh - 6.5rem));
+	min-block-size: 25rem;
+}
+
+.cw-viewport-demo__glow,
+.cw-viewport-demo__frame {
+	position: absolute;
+	pointer-events: none;
+}
+
 .cw-viewport-demo__glow {
 	inline-size: min(72vw, 38rem);
 	aspect-ratio: 1;
 	inset: 50% auto auto 50%;
 	border-radius: 50%;
-	background: var(--cw-viewport-accent);
+	background: var(--cw-instrument-accent);
 	filter: blur(7rem);
 	opacity: 0.18;
 	transform: translate(-50%, -50%);
@@ -315,31 +506,10 @@ body {
 	max-inline-size: 30rem;
 }
 
-.cw-viewport-demo__eyebrow {
-	margin: 0 0 0.35rem;
-	color: rgb(255 255 255 / 0.62);
-	font-size: 0.72rem;
-	font-weight: 700;
-	letter-spacing: 0.16em;
-	text-transform: uppercase;
-}
-
+/* This demo's state word is the biggest thing on the page; the shared rule
+   carries everything but the size. */
 .cw-viewport-demo__state {
-	margin: 0;
-	color: var(--cw-viewport-accent);
-	font-family: var(--zbk-font-family-heading);
 	font-size: clamp(3rem, 10vw, 7.5rem);
-	font-weight: 760;
-	line-height: 0.84;
-	letter-spacing: -0.055em;
-	text-shadow: 0 0 2.5rem var(--cw-viewport-accent-soft);
-	transition: color 320ms ease;
-}
-
-.cw-viewport-demo__description {
-	margin: 0.9rem 0 0;
-	color: rgb(255 255 255 / 0.76);
-	font-size: clamp(0.85rem, 2vw, 1rem);
 }
 
 .cw-viewport-demo__readout {
@@ -347,31 +517,6 @@ body {
 	z-index: 3;
 	inset-block-start: clamp(1.25rem, 4vw, 2.25rem);
 	inset-inline-end: clamp(1.25rem, 4vw, 2.5rem);
-	display: grid;
-	gap: 0.4rem;
-	justify-items: end;
-}
-
-.cw-viewport-demo__readout span {
-	padding: 0.35rem 0.65rem;
-	border: 1px solid rgb(255 255 255 / 0.12);
-	border-radius: 999px;
-	background: rgb(3 2 18 / 0.44);
-	color: rgb(255 255 255 / 0.46);
-	font-family: var(--zbk-font-family-code);
-	font-size: 0.72rem;
-	transition:
-		color 240ms ease,
-		border-color 240ms ease,
-		background 240ms ease,
-		box-shadow 240ms ease;
-}
-
-.cw-viewport-demo__readout span.active {
-	border-color: var(--cw-viewport-accent);
-	background: var(--cw-viewport-accent-soft);
-	box-shadow: 0 0 1.5rem var(--cw-viewport-accent-soft);
-	color: var(--cw-viewport-accent);
 }
 
 .cw-viewport-demo__frame {
@@ -436,36 +581,12 @@ body {
 	block-size: 140%;
 }
 
+/* Appearance comes from `.cw-instrument__control`; this only places it. */
 .cw-viewport-demo__toggle {
 	position: absolute;
 	z-index: 4;
 	inset-inline-end: clamp(1.25rem, 4vw, 2.5rem);
 	inset-block-end: 1.25rem;
-	min-block-size: 2.75rem;
-	padding: 0.6rem 1rem;
-	border: 1px solid color-mix(in srgb, var(--cw-viewport-accent) 68%, white);
-	border-radius: 999px;
-	background: rgb(3 2 18 / 0.72);
-	box-shadow: 0 0 1.75rem var(--cw-viewport-accent-soft);
-	color: var(--cw-viewport-accent);
-	font: inherit;
-	font-size: 0.8rem;
-	font-weight: 700;
-	cursor: pointer;
-	transition:
-		color 240ms ease,
-		border-color 240ms ease,
-		box-shadow 240ms ease,
-		transform 160ms ease;
-}
-
-.cw-viewport-demo__toggle:hover {
-	transform: translateY(-2px);
-}
-
-.cw-viewport-demo__toggle:focus-visible {
-	outline: 3px solid white;
-	outline-offset: 3px;
 }
 
 .cw-viewport-demo__beacon {
@@ -485,7 +606,7 @@ body {
 		conic-gradient(from 215deg, #22d3ee, #fde047, #f472b6, #8b5cf6, #22d3ee);
 	box-shadow:
 		0 0 0 0.7rem rgb(255 255 255 / 0.07),
-		0 0 5rem 1.2rem var(--cw-viewport-accent-soft),
+		0 0 5rem 1.2rem var(--cw-instrument-accent-soft),
 		0 2.5rem 5rem -2rem rgb(0 0 0 / 0.8);
 	color: #120a2a;
 	text-align: center;
@@ -680,6 +801,18 @@ body {
 	margin-block-start: clamp(3rem, 6vw, 4.5rem);
 }
 
+/*
+ * Section headings in the docs column.
+ *
+ * These were `<zbk-heading level="2">` until zebkit 0.28 removed the component;
+ * a plain `<h2>` already picks up the h2 token scale from the base layer, so
+ * this only owns the rhythm the wrapper used to provide.
+ */
+.cw-docs-h2 {
+	margin-block: 0 var(--zbk-spacing-1, 1rem);
+	scroll-margin-block-start: 6rem;
+}
+
 /* ── Code blocks ────────────────────────────────────────────────────────────── */
 
 .cw-code {
@@ -808,16 +941,69 @@ code {
  * readout ~1000px apart with nothing between them.
  */
 
+/*
+ * One column, full content width, inside the shared instrument shell so it
+ * reads as a sibling of the viewport demo rather than a separate artefact.
+ * The stage used to sit in a narrow grid column beside its own explanation,
+ * which left the scroller a small target and gave the zones no horizontal
+ * room — and horizontal variation is the whole point now that the panel
+ * resolves three regions independently.
+ */
 .cw-demo {
 	display: grid;
-	gap: clamp(1.5rem, 3vw, 2.5rem);
-	align-items: start;
+	gap: clamp(1.25rem, 3vw, 1.75rem);
+	padding: clamp(1.25rem, 4vw, 2.25rem);
 }
 
-@media (min-width: 62rem) {
-	.cw-demo {
-		grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-	}
+.cw-demo__head {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1.25rem;
+	align-items: flex-start;
+	justify-content: space-between;
+	position: relative;
+	z-index: 2;
+}
+
+/* Smaller than the viewport demo's: that one is the whole screen, this one
+   shares its row with the badges. */
+.cw-demo__state {
+	font-size: clamp(2.25rem, 6vw, 4rem);
+}
+
+.cw-demo__controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: clamp(1rem, 3vw, 2rem);
+	align-items: flex-end;
+	justify-content: space-between;
+	position: relative;
+	z-index: 2;
+}
+
+.cw-demo__control {
+	flex: 1 1 18rem;
+	min-inline-size: 0;
+}
+
+.cw-demo__label {
+	display: block;
+	color: rgb(255 255 255 / 0.86);
+	font-family: var(--zbk-font-family-code);
+	font-size: 0.78rem;
+	font-weight: 600;
+}
+
+.cw-demo__hint {
+	margin: 0.5rem 0 0;
+	color: rgb(255 255 255 / 0.62);
+	font-size: 0.78rem;
+}
+
+.cw-demo__scrollers {
+	display: flex;
+	gap: 0.5rem;
+	flex: 0 0 auto;
 }
 
 .cw-panel {
@@ -827,36 +1013,77 @@ code {
 	background: var(--zbk-app-canvas-subtle);
 }
 
+/*
+ * Wrapper so the proxy strips can sit outside the scroller. Inside it they
+ * would be clipped and their rects would lie, which is the very problem they
+ * exist to solve.
+ */
+.cw-stage-wrap {
+	position: relative;
+}
+
+.cw-stage__proxies {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	pointer-events: none;
+	z-index: 0;
+}
+
+/* Deliberately paints nothing. It is a rect for the watcher, not a surface. */
+.cw-stage__proxy {
+	display: block;
+}
+
 .cw-stage {
 	position: relative;
-	block-size: min(30rem, 68vh);
+	z-index: 1;
+	block-size: min(30rem, 62vh);
 	overflow-y: auto;
 	/* Deliberately NOT overscroll-behavior: contain — that traps the wheel on a
 	   page-embedded demo. Default chaining hands scrolling back at the edges. */
-	border: 1px solid var(--cw-rule);
+	border: 1px solid rgb(255 255 255 / 0.16);
 	border-radius: 1rem;
-	background: var(--zbk-app-canvas);
+	background: rgb(3 2 18 / 0.5);
 }
 
-.cw-stage__zone {
-	min-block-size: 13rem;
+.cw-range {
+	accent-color: var(--cw-instrument-accent);
+}
+
+/* Zones vary on both axes, so a wide panel spans several colours at once. */
+.cw-stage__row {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cw-stage__cell {
+	min-block-size: 11rem;
 	display: flex;
 	align-items: flex-start;
-	justify-content: flex-start;
-	padding: 1.1rem 1.25rem;
-	font-size: 0.78rem;
+	padding: 0.85rem 1rem;
+	font-size: 0.72rem;
 	letter-spacing: 0.02em;
 	font-family: var(--zbk-font-family-code, ui-monospace, SFMono-Regular, Menlo, monospace);
+	overflow: hidden;
 }
 
-/* The demo's floating card sits above the scrolling zones, pinned to the stage. */
-.cw-stage__card {
+/*
+ * The floating panel. One glass surface and one shadow — both whole-panel
+ * properties — with the ink split across three independently watched regions,
+ * exactly as the site header does it.
+ */
+.cw-stage__panel {
 	position: sticky;
 	inset-block-start: 38%;
-	inline-size: min(22rem, 82%);
-	margin-inline: auto;
 	z-index: 2;
-	padding: 1rem 1.15rem;
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 0.5rem;
+	inline-size: min(52rem, 92%);
+	margin-inline: auto;
+	padding: 0.9rem 1rem;
 	border-radius: 0.9rem;
 	/* Width and style only — `border` shorthand would reset the tinted
 	   border-color that `.cw-watched` sets (same specificity, later in source). */
@@ -864,8 +1091,42 @@ code {
 	border-style: solid;
 }
 
+/*
+ * Each region is its own glass tile: `.cw-glass` needs a positioned host with
+ * a radius to hang its surface on, and giving each one its own means surface
+ * and ink stay a matched pair even when the three disagree.
+ */
+.cw-stage__region {
+	position: relative;
+	isolation: isolate;
+	min-inline-size: 0;
+	padding: 0.6rem 0.75rem;
+	border-radius: 0.6rem;
+}
+
 .cw-stage__spacer {
-	block-size: 7rem;
+	block-size: 9rem;
+}
+
+@media (max-width: 48rem) {
+	/* Two cells per row keeps each one wide enough for a region to resolve
+	   cleanly rather than straddling everything at once. */
+	.cw-stage__row,
+	.cw-stage__proxies {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.cw-stage__row > :nth-child(3),
+	.cw-stage__proxies > :nth-child(3) {
+		display: none;
+	}
+	.cw-stage__panel {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	/* Region C is hidden here, so its badge would read a permanent "none". */
+	.cw-stage__panel > :nth-child(3),
+	.cw-demo .cw-instrument__badges > :nth-child(3) {
+		display: none;
+	}
 }
 
 .cw-range {
@@ -1185,6 +1446,35 @@ code {
  * rather than an opacity, because on a near-transparent surface there is no
  * headroom to spend on fading text out.
  */
+/*
+ * Code blocks that sit inside a dark zone (see `isZone` in CodeBlock.svelte).
+ * Unlike the bands and the beacon, this surface is theme-aware: it is painted
+ * from `app.canvas-subtle`, so the pairing is expressed in the same tokens and
+ * flips with the theme on its own.
+ */
+.cw-glass.over-cw-code,
+.cw-tint.over-cw-code {
+	--cw-glass-tint: var(--zbk-app-canvas-subtle);
+	--cw-glass-ink: var(--zbk-app-ink);
+	--cw-glass-label: var(--zbk-app-ink-muted);
+	--cw-glass-accent: var(--zbk-action-ink);
+}
+
+/*
+ * The viewport demo's beacon. It is decoration, but it is decoration the
+ * floating header physically passes over — a bright conic gradient of cyan,
+ * yellow, pink and violet, under which the header's light ink measured 1.2:1.
+ * Theme-independent for the same reason the bands are: the beacon's own
+ * colours do not change between light and dark.
+ */
+.cw-glass.over-cw-beacon,
+.cw-tint.over-cw-beacon {
+	--cw-glass-tint: hsl(0 0% 100%);
+	--cw-glass-ink: hsl(245 40% 12%);
+	--cw-glass-label: hsl(245 25% 28%);
+	--cw-glass-accent: hsl(262 60% 36%);
+}
+
 .cw-glass.over-cw-band-indigo,
 .cw-tint.over-cw-band-indigo {
 	--cw-glass-tint: hsl(243 55% 6%);
@@ -1310,6 +1600,26 @@ code {
  * The bar's content clusters. Each is its own watched element, so each resolves
  * its own zone and its own ink — see the note on `.cw-tint`.
  */
+/*
+ * Each group resolves its own ink, and inherits nobody else's.
+ *
+ * The pairing rules below set `--cw-glass-ink` on `.cw-glass` as well as on
+ * `.cw-tint`, because most glass surfaces are both. The header is not: it is
+ * `.cw-glass` alone, and its groups are the `.cw-tint`s. So the whole-bar
+ * answer was setting an ink that inherited straight into every group —
+ * including groups that had resolved *no* zone of their own, which then wore
+ * the bar's light ink over a white panel at 1.13:1.
+ *
+ * Resetting here makes `var(--cw-glass-ink, …)` fall back to the page ink for
+ * a group with no answer. A group that does have one still wins: its
+ * `.cw-tint.over-*` rule is two classes to this one.
+ */
+.cw-header__group,
+.cw-stage__region {
+	--cw-glass-ink: initial;
+	--cw-glass-label: initial;
+}
+
 .cw-header__group {
 	display: inline-flex;
 	align-items: center;
@@ -1376,9 +1686,11 @@ code {
 }
 
 /* The live readout is the nicest thing in the header, but on a phone the
-   controls need the room more. It is aria-hidden either way. */
+   controls need the room more. It is aria-hidden either way. Hiding the group
+   rather than the paragraph also takes the watched element out of play, so the
+   watcher is not resolving a zero-area box. */
 @media (max-width: 34rem) {
-	.cw-header__group--end .cw-readout {
+	.cw-header__group:has(> .cw-readout) {
 		display: none;
 	}
 }

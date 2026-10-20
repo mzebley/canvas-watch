@@ -17,7 +17,6 @@ export async function defineZebkit() {
 	applyZebkitConfig();
 
 	components.defineZbkButton();
-	components.defineZbkHeading();
 	components.defineZbkLink();
 	components.defineZbkPanel();
 	components.defineZbkRadio();

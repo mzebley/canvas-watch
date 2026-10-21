@@ -1654,11 +1654,16 @@ code {
 	--zbk-toggle-thumb-canvas-hover: var(--cw-accent);
 }
 
-/* The mark's bars are drawn with currentColor, so this tints the icon without
+/* The mark's zones are drawn with currentColor, so this tints the icon without
    touching the wordmark beside it — that stays app ink, where it can be held to
-   the 4.5:1 text threshold regardless of what's behind the bar. */
-.cw-mark svg {
+   the 4.5:1 text threshold regardless of what's behind the bar.
+
+   The capsule's light half is cut from `--cw-mark-paper`: here that is the
+   winning zone's own canvas, the colour this group's ink was chosen against. So
+   the glyph re-tints with the bar, in the same frame, from the same answer. */
+.cw-mark__glyph {
 	color: var(--cw-accent);
+	--cw-mark-paper: var(--cw-glass-tint, var(--zbk-app-canvas));
 	transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -1669,7 +1674,7 @@ code {
    consumer API. */
 
 @media (prefers-reduced-motion: reduce) {
-	.cw-mark svg {
+	.cw-mark__glyph {
 		transition: none;
 	}
 }
@@ -1710,6 +1715,65 @@ code {
 	inset-block-start: 0.75rem;
 }
 
+/* ── Footer ─────────────────────────────────────────────────────────────────── */
+
+/* Same shape as the dynamowaves and dynamoblobs footers: the project mark beside
+   its two package links, attribution on the far end. Full-bleed and un-shelled on
+   purpose — it is the one band that doesn't ride the content rail. */
+.cw-footer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: var(--zbk-spacing-2);
+	padding: var(--zbk-spacing-2) clamp(var(--zbk-spacing-105), 5vw, var(--zbk-spacing-card))
+		var(--zbk-spacing-1);
+	background: var(--zbk-brand-canvas-muted);
+	color: var(--zbk-brand-ink-emphasis);
+}
+
+.cw-footer p {
+	margin: 0;
+	font-size: var(--zbk-font-size-sm);
+	color: inherit;
+}
+
+.cw-footer__project {
+	display: flex;
+	align-items: flex-end;
+	gap: var(--zbk-spacing-1);
+}
+
+/* The footer's pair: the brand canvas as ink, the band it sits on as paper. The
+   mark's light half is that ink at 30%, so both halves stay legible on it. */
+.cw-footer__mark {
+	flex: none;
+	inline-size: var(--zbk-spacing-5);
+	block-size: var(--zbk-spacing-5);
+	color: var(--zbk-brand-canvas);
+	--cw-mark-paper: var(--zbk-brand-canvas-muted);
+}
+
+/* In dark the footer band is brand.800 and `brand-canvas` sits only 2.4:1 off
+   it — enough for a silhouette, not enough for the capsule crossing it. The
+   same step the header's accent takes in dark clears 3:1 against the band. */
+[data-zbk-theme='dark'] .cw-footer__mark {
+	color: var(--zbk-brand-300);
+}
+
+.cw-footer__links {
+	display: flex;
+	flex-direction: column;
+}
+
+@media (max-width: 40rem) {
+	.cw-footer,
+	.cw-footer__links {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}
+
 /* ── Mark ───────────────────────────────────────────────────────────────────── */
 
 .cw-mark {
@@ -1723,6 +1787,8 @@ code {
 	white-space: nowrap;
 }
 
-.cw-mark svg {
+.cw-mark__glyph {
 	flex: none;
+	inline-size: 1.375rem;
+	block-size: 1.375rem;
 }

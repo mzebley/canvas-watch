@@ -64,6 +64,43 @@
 	});
 </script>
 
+<!--
+	The mark is the library's own demo, drawn at 24px.
+
+	Two zones meeting on a hard seam, and one rounded element floating across it —
+	carrying the dark ink where it crosses the light zone and the light ink where
+	it crosses the dark one. The capsule is two half-outlines rather than one
+	stroked rect, because the whole point is that its ink is not constant.
+
+	Both colours come from a pair the context has already guaranteed contrasts:
+	`currentColor` is the ink, `--cw-mark-paper` the surface it was chosen for.
+	Nothing here is a fixed hue, so the mark survives the header floating it over
+	every band on the page.
+-->
+{#snippet markGlyph(className)}
+	<svg class={className} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+		<path
+			d="M 3.5 3 H 20.5 A 2.5 2.5 0 0 1 23 5.5 V 12 H 1 V 5.5 A 2.5 2.5 0 0 1 3.5 3 Z"
+			fill="currentColor"
+			opacity="0.3"
+		/>
+		<path
+			d="M 1 12 H 23 V 18.5 A 2.5 2.5 0 0 1 20.5 21 H 3.5 A 2.5 2.5 0 0 1 1 18.5 Z"
+			fill="currentColor"
+		/>
+		<path
+			d="M 5.5 12 V 10 A 2.5 2.5 0 0 1 8 7.5 H 16 A 2.5 2.5 0 0 1 18.5 10 V 12"
+			stroke="currentColor"
+			stroke-width="1.6"
+		/>
+		<path
+			d="M 5.5 12 V 14 A 2.5 2.5 0 0 0 8 16.5 H 16 A 2.5 2.5 0 0 0 18.5 14 V 12"
+			stroke="var(--cw-mark-paper, var(--zbk-app-canvas))"
+			stroke-width="1.6"
+		/>
+	</svg>
+{/snippet}
+
 <GlassFilters />
 
 <div class="cw-page">
@@ -83,20 +120,7 @@
 		     watcher puts on it. Only the readout needs the value in JS. -->
 		<div class="cw-header__group cw-tint" use:watchBgCanvas>
 			<a class="cw-mark" href="#top">
-				<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none">
-					<rect x="1" y="3" width="22" height="8" rx="2" fill="currentColor" opacity="0.28" />
-					<rect x="1" y="13" width="22" height="8" rx="2" fill="currentColor" opacity="0.55" />
-					<rect
-						x="5.5"
-						y="8"
-						width="13"
-						height="8"
-						rx="2.5"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.5"
-					/>
-				</svg>
+				{@render markGlyph('cw-mark__glyph')}
 				canvas-watch
 			</a>
 		</div>
@@ -164,29 +188,33 @@
 
 	{@render children()}
 
-	<footer class="canvas-brand-muted ink-brand padding-block-2 padding-inline-105">
-		<div
-			class="cw-shell display-flex flex-wrap gap-1 align-items-center justify-content-between"
-		>
-			<p class="font-sm margin-0">
-				<strong>canvas-watch</strong> — ISC licensed, by
-				<zbk-link href="https://markzebley.com" target="_blank" rel="noopener">Mark Zebley</zbk-link>
-			</p>
-			<div class="display-flex gap-1 flex-wrap align-items-center">
-				<zbk-link href="https://github.com/mzebley/canvas-watch" target="_blank" rel="noopener">
+	<footer class="cw-footer">
+		<div class="cw-footer__project">
+			{@render markGlyph('cw-footer__mark')}
+			<nav aria-label="Project links" class="cw-footer__links">
+				<zbk-link
+					href="https://github.com/mzebley/canvas-watch"
+					target="_blank"
+					rel="noopener"
+					variant="subtle sm"
+				>
 					GitHub
 				</zbk-link>
 				<zbk-link
 					href="https://www.npmjs.com/package/@mzebley/canvas-watch"
 					target="_blank"
 					rel="noopener"
+					variant="subtle sm"
 				>
 					npm
 				</zbk-link>
-				<zbk-link href="https://dynamowaves.markzebley.com" target="_blank" rel="noopener">
-					dynamowaves
-				</zbk-link>
-			</div>
+			</nav>
 		</div>
+		<p>
+			An idea by
+			<zbk-link href="https://markzebley.com" target="_blank" rel="noopener" variant="subtle">
+				Mark Zebley
+			</zbk-link>.
+		</p>
 	</footer>
 </div>

@@ -1,0 +1,29 @@
+{
+  "border-color": {
+    "$value": "{brand.400}"
+  },
+  "summary-canvas": {
+    "$value": "{brand.800}"
+  },
+  "summary-canvas-hover": {
+    "$value": "{brand.700}"
+  },
+  "summary-canvas-expanded": {
+    "$value": "{brand.800}"
+  },
+  "summary-canvas-expanded-hover": {
+    "$value": "{brand.700}"
+  },
+  "summary-ink": {
+    "$value": "{brand.100}"
+  },
+  "summary-ink-hover": {
+    "$value": "{brand.100}"
+  },
+  "summary-ink-expanded-hover": {
+    "$value": "{brand.100}"
+  },
+  "indicator-ink": {
+    "$value": "{brand.200}"
+  }
+}

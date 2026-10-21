@@ -17,18 +17,20 @@
     }
   },
   "alt": {
-    "$value": "Outfit",
+    "$value": "Fraunces",
     "$type": "fontFamily",
     "$extensions": {
       "dev.zebkit": {
         "font": {
           "source": "google",
-          "fallback": "sans",
+          "fallback": "serif",
           "styles": [
-            "normal",
-            "italic"
+            "normal"
           ],
-          "weights": "300..900"
+          "weights": "600..800",
+          "axes": {
+            "opsz": "9..144"
+          }
         }
       }
     }

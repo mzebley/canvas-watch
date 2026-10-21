@@ -1,0 +1,492 @@
+{
+  "reviewId": "canvas-watch-site",
+  "title": "canvas-watch site copy",
+  "description": "Round three. Every user-visible string on the rebuilt page, rewritten. Round one mostly approved the copy as it stood, which was the wrong call: the page runs 64 em dashes across 181 sentences and uses the word \"but\" once, so clauses get severed with punctuation where they should be joined with a conjunction. This round rewrites for that, and picks up the two entries you sent back. Your five approvals are untouched. \"Current\" is still the wording in the working tree, so keeping current ships the version you already have. Inline code is shown in backticks, approving wording does not approve markup, and nothing here publishes.",
+  "items": [
+    {
+      "id": "meta-title",
+      "surface": "Head",
+      "title": "Page title",
+      "status": "Refine",
+      "current": "canvas-watch — which background is your floating element over?",
+      "proposed": "canvas-watch · which background is your floating element over?",
+      "reason": "Same words, with the dash swapped for the interpunct the footer and header readout already use. One less dash on a page that has 64 of them.",
+      "body": "Previous wording: canvas-watch — floating elements that know what they're over"
+    },
+    {
+      "id": "meta-description",
+      "surface": "Head",
+      "title": "Meta description",
+      "status": "Refine",
+      "current": "A small library that works out which background zone a floating element is sitting over and puts that answer on the element as a class. Framework-agnostic core, optional Svelte adapter.",
+      "proposed": "Work out which background zone a floating element is sitting over, and get that answer as a class you can style however you like. Framework-agnostic, with an optional Svelte adapter.",
+      "reason": "The live string is 181 characters and search results cut off around 155. This one is 179, which is still long, so tell me if you want it under the fold and I will cut the second sentence down to \"Framework-agnostic core.\"",
+      "note": "Unresolved: I have not checked how your other sites handle description length, so I am treating 155 as the target rather than a rule you have already settled."
+    },
+    {
+      "id": "meta-og-description",
+      "surface": "Head",
+      "title": "Open Graph description",
+      "status": "Refine",
+      "current": "Work out which background zone a floating element sits over, and get that answer as a class. What you restyle with it is up to you.",
+      "proposed": "Tell a floating element which background it's over, and get that answer as a class. The styling is yours.",
+      "reason": "You sent the old version back without a note, so I rebuilt it on the one line you did approve, the headline. Same construction, then a short second sentence that sets the scope. 103 characters, which is comfortable for a social card.",
+      "note": "A guess at what you wanted, since there was no note. If the problem was the angle rather than the wording, say which way to take it and I'll redraft instead of nudging this one."
+    },
+    {
+      "id": "hero-eyebrow",
+      "surface": "Hero",
+      "title": "Eyebrow above the headline",
+      "status": "Remove",
+      "current": "Framework-agnostic core · optional Svelte adapter · ISC",
+      "proposed": "(Remove the eyebrow. No replacement line above the headline.)",
+      "reason": "Acting on your note from the last round. The three facts in it survive elsewhere: framework-agnostic core and the optional Svelte adapter are both in the meta description and spelled out in the Install table, and ISC is in the footer. So nothing above the fold is lost that isn't said again lower down.",
+      "note": "One consequence worth knowing: with the eyebrow gone, the headline becomes the first thing in the hero and the licence no longer appears until the footer. Tell me if you want ISC kept somewhere higher and I'll find it a home."
+    },
+    {
+      "id": "hero-h1",
+      "surface": "Hero",
+      "title": "Headline",
+      "status": "Keep",
+      "current": "Tell a floating element which background it's over.",
+      "proposed": "Tell a floating element which background it's over.",
+      "reason": "Says what you can do with the library rather than making a joke about it. The old line leaned on the pun and left you to work out the feature.",
+      "body": "Previous wording: Floating elements that know where they're at."
+    },
+    {
+      "id": "hero-lede",
+      "surface": "Hero",
+      "title": "Lede paragraph",
+      "status": "Refine",
+      "current": "A sticky header crosses a dark hero, then a white section, then a photo. canvas-watch works out which zone it is currently sitting over and puts that answer on the element as a class.",
+      "proposed": "A sticky header crosses a dark hero, then a white section, then a photo. canvas-watch works out which zone it's sitting over and puts that answer on it as a class.",
+      "reason": "\"Currently\" is doing nothing the next paragraph doesn't do better, and \"the element\" repeats a subject we already named. The concrete opener is the good part and it stays.",
+      "body": "Previous wording: Sticky nav bars, docked players, and cards drift over backgrounds that keep changing. canvas-watch works out which zone an element is currently sitting over and puts that answer on the element as a class."
+    },
+    {
+      "id": "hero-support",
+      "surface": "Hero",
+      "title": "Supporting paragraph",
+      "status": "Refine",
+      "current": "That's the whole library — one class, kept in step as things move. Re-tint a shadow, flip ink from dark to light, swap a border, invert the entire panel. The styling is yours.",
+      "proposed": "That's the whole library, and it's one class that stays in step as things move. Re-tint a shadow, flip ink from dark to light, swap a border, or invert the whole panel. The styling is yours.",
+      "reason": "The dash was standing in for \"and\", so I used \"and\". The list gets an \"or\" before its last item, which stops it reading like a spec sheet.",
+      "body": "Previous wording: What you do with that class is entirely yours. Re-tint a shadow, flip dark text to light, swap a border, invert the whole panel — the library only ever swaps the class."
+    },
+    {
+      "id": "hero-ctas",
+      "surface": "Hero",
+      "title": "Hero buttons",
+      "status": "Keep",
+      "current": "Try it\nSource on GitHub",
+      "proposed": "Try it\nSource on GitHub",
+      "reason": "\"Try it\" jumps to the playground and \"Source on GitHub\" leaves the site. Both labels match what happens.",
+      "body": "The second button replaced \"See viewport tracking\", which no longer matches the section order."
+    },
+    {
+      "id": "hero-figure-label",
+      "surface": "Hero",
+      "title": "Diagram label",
+      "status": "Keep",
+      "current": "largest overlap wins",
+      "proposed": "largest overlap wins",
+      "reason": "The old \"62% overlap wins\" quoted a number the static diagram never measures. This says the rule instead.",
+      "body": "Previous wording: 62% overlap wins"
+    },
+    {
+      "id": "hero-figure-caption",
+      "surface": "Hero",
+      "title": "Diagram caption",
+      "status": "Refine",
+      "current": "The card straddles two zones. The one covering most of it wins, and its name lands on the card as a class. The bar at the top of this page is doing it for real — scroll, and read the class it's wearing.",
+      "proposed": "The card straddles two zones. The one covering most of it wins, and its name lands on the card as a class. The bar at the top of this page is doing this for real, so scroll and read the class it's wearing.",
+      "reason": "\"So\" carries the invitation better than a dash, and it loses the stray comma before \"and read\". The caption has to work on its own because the diagram is hidden from assistive tech, and it still does."
+    },
+    {
+      "id": "tryit-intro",
+      "surface": "Try it",
+      "title": "Playground introduction",
+      "status": "Refine",
+      "current": "Try it\n\nScroll inside the frame. The floating panel holds three regions, each one separately watched, and the cells behind them change colour across the row as well as down the stack. Wherever the panel spans a boundary, its regions disagree — each takes the ink of whatever is under it.",
+      "proposed": "Try it\n\nScroll inside the frame. The floating panel holds three regions, each one separately watched, and the cells behind them change colour across the row as well as down the stack. Wherever the panel spans a boundary its regions disagree, because each one takes the ink of whatever is under it.",
+      "reason": "The dash was hiding a \"because\". Saying it out loud makes the cause and effect explicit, which is the whole thing you want someone to notice before they scroll.",
+      "body": "\"Under it\" is italicised in the page."
+    },
+    {
+      "id": "tryit-second",
+      "surface": "Try it",
+      "title": "Second paragraph above the playground",
+      "status": "Refine",
+      "current": "That is the whole trick behind the bar at the top of this page, and it needs nothing from the library beyond registering each region: one watcher resolves them all in the same frame.",
+      "proposed": "It needs nothing from the library beyond registering each region, because one watcher resolves them all in the same frame.",
+      "reason": "Two changes. The colon becomes \"because\", and the opening clause goes, because the page tells you the header does this four separate times: here, the hero caption, the note below the playground, and the \"One element gets one answer\" limitation. This is the mention that adds least.",
+      "note": "I am trimming two of those four mentions, this one and demo-note-primary. The hero caption keeps its version as the invitation, and the limitation keeps its version as the payoff."
+    },
+    {
+      "id": "demo-instrument-readout",
+      "surface": "Playground",
+      "title": "Live state readout",
+      "status": "Refine",
+      "current": "Live overlap signal\n\nNo class / One ink / Two inks / Three inks\n\nNo zone covers enough of any region to clear the threshold.\nAll three regions resolved the same zone.\nThe panel spans a boundary, so its regions disagree — 2 different answers at once.",
+      "proposed": "Live overlap signal\n\nNo class / One ink / Two inks / Three inks\n\nNo zone covers enough of any region to clear the threshold.\nAll three regions resolved the same zone.\nThe panel spans a boundary, so its regions disagree and you get 2 different answers at once.",
+      "reason": "Only the third description changes, and only to finish its sentence instead of appending the count after a dash. The count is read live, not fixed.",
+      "body": "Four states. The last description interpolates the actual number, either 2 or 3."
+    },
+    {
+      "id": "demo-controls",
+      "surface": "Playground",
+      "title": "Threshold control and scroll buttons",
+      "status": "Refine",
+      "current": "threshold — 0.50\nHow much of a region must sit over a cell before that cell's class applies.\n\nScroll up\nScroll down",
+      "proposed": "threshold 0.50\nHow much of a region must sit over a cell before that cell's class applies.\n\nScroll up\nScroll down",
+      "reason": "The dash between a label and its value is not doing anything a space won't do. The hint and the button labels are unchanged, because they already say what they do.",
+      "note": "This one is cosmetic. If the dash reads better to you in the actual control, keep current and I will leave it."
+    },
+    {
+      "id": "demo-stage-label",
+      "surface": "Playground",
+      "title": "Accessible name for the scrollable frame",
+      "status": "Keep",
+      "current": "Scrollable zone demo",
+      "proposed": "Scrollable zone demo",
+      "reason": "The frame is a focusable scroll region, so its name has to explain why it is a tab stop. \"Scrollable\" first is the part that does that."
+    },
+    {
+      "id": "demo-note-primary",
+      "surface": "Playground",
+      "title": "Note under the playground",
+      "status": "Refine",
+      "current": "Three regions, one panel, one scroll position — and wherever the panel spans a colour boundary they disagree, because each one resolved against the cell under itself. Nothing coordinates them: they are three watched elements sharing a watcher, resolving in the same frame. The site header does exactly this with its wordmark, readout and controls.",
+      "proposed": "Nothing coordinates those three regions. They're three watched elements sharing one watcher, and each one resolved against the cell under itself, in the same frame.",
+      "reason": "The opening was a three-beat fragment plus a dash, and it repeated the introduction directly above the playground almost word for word. The last sentence was the fourth mention of the header. What's left is the part the introduction doesn't cover, which is that nothing is coordinating anything."
+    },
+    {
+      "id": "demo-note-secondary",
+      "surface": "Playground",
+      "title": "Threshold and proxy aside",
+      "status": "Refine",
+      "current": "Drag the threshold to 1.00 and a region has to sit entirely within one cell before it takes anything, so any region straddling a boundary falls back to no class at all. The cells cannot be page-level triggers, incidentally: they are inside a scroller, and a clipped cell still reports a full-size rect. Invisible proxy strips outside the scroller carry the trigger instead, one per column, relabelled as you scroll — the same proxy any zone inside a scroller needs.",
+      "proposed": "Drag the threshold to 1.00 and a region has to sit entirely within one cell before it takes anything, so any region straddling a boundary falls back to no class at all. The cells can't be page-level triggers, incidentally, because they're inside a scroller and a clipped cell still reports a full-size rect. Invisible proxy strips outside the scroller carry the trigger instead, one per column, relabelled as you scroll.",
+      "reason": "The colon becomes \"because\" and the closing dash goes with its clause, which was the \"Neither is clipping\" limitation said a second time. The \"incidentally\" aside stays, because it's the honest answer to why the demo isn't using the page's own watcher, and it stops once it has made its point."
+    },
+    {
+      "id": "demo-code-intro",
+      "surface": "Try it",
+      "title": "Introduction to the demo source",
+      "status": "Refine",
+      "current": "The code running above\n\nThis demo builds its own watcher rather than joining the shared one, because threshold is set at construction and the slider changes it. Its selectors are deliberately distinct — -demozone, not -trigger — so the page's own watcher never resolves these bands and the header stays out of it.",
+      "proposed": "The code running above\n\nThis demo builds its own watcher rather than joining the shared one, because threshold is set at construction and the slider changes it. Its selectors are deliberately distinct (-demozone rather than -trigger) so the page's own watcher never resolves these bands, and the header stays out of it.",
+      "reason": "A pair of dashes around an interruption is the one place a parenthesis does the same job more quietly, and you use parentheses that way yourself."
+    },
+    {
+      "id": "demo-disclosure",
+      "surface": "Try it",
+      "title": "Disclosure button for markup and CSS",
+      "status": "Keep",
+      "current": "Show the markup and CSS",
+      "proposed": "Show the markup and CSS",
+      "reason": "Says what appears when you press it."
+    },
+    {
+      "id": "why-io-heading-lede",
+      "surface": "Why not IntersectionObserver",
+      "title": "Section heading and lede",
+      "status": "Refine",
+      "current": "Why not just use an IntersectionObserver?\n\nBecause it cannot answer this question — and because canvas-watch is already using one for the part it is good at.",
+      "proposed": "Why not just use an IntersectionObserver?\n\nBecause it can't answer this question, and because canvas-watch is already using one for the part it is good at.",
+      "reason": "Two \"because\" clauses joined by \"and\" need a comma, not a dash. \"Cannot\" also sat two lines above a subheading that says \"can't\", which read like a different writer.",
+      "body": "\"Is\" is italicised in the page. Previous lede: Because it can't answer this question. IntersectionObserver compares a target against its scroll-ancestor or the viewport — never against an arbitrary sibling element."
+    },
+    {
+      "id": "why-io-cant",
+      "surface": "Why not IntersectionObserver",
+      "title": "What IntersectionObserver can't do",
+      "status": "Refine",
+      "current": "What IntersectionObserver can't do\n\nAn IntersectionObserver measures a target against a root, and that root has to be an ancestor of the target, or the viewport. That is the whole model.\n\n\"Is this floating card mostly over that background band?\" involves two elements with no ancestor relationship at all — they are siblings, or cousins, or in unrelated parts of the tree. There is no root you can pass that expresses it, and no threshold array that recovers it. The answer you want is the overlap of two arbitrary rectangles, which is a different question from the one IO was built to answer.",
+      "proposed": "What IntersectionObserver can't do\n\nAn IntersectionObserver measures a target against a root, and that root has to be an ancestor of the target, or the viewport. That's the whole model.\n\n\"Is this floating card mostly over that background band?\" involves two elements with no ancestor relationship at all. They're siblings, or cousins, or in unrelated parts of the tree. There's no root you can pass that expresses it, and no threshold array that recovers it. The answer you want is the overlap of two arbitrary rectangles, which is a different question from the one IO was built to answer.",
+      "reason": "The dash became a full stop, which the sentence wanted anyway. Contractions throughout, since the section is answering an objection in conversation and the formal register made it sound defensive.",
+      "body": "New section this round. The old version made the same point in two sentences and got the relationship slightly wrong, calling the root a \"scroll-ancestor\"."
+    },
+    {
+      "id": "why-io-instead",
+      "surface": "Why not IntersectionObserver",
+      "title": "So what does it do instead?",
+      "status": "Refine",
+      "current": "So what does it do instead?\n\nIt compares getBoundingClientRect() on the watched element and on each candidate zone, takes the area of the intersection as a fraction of the watched element's own area, and applies the threshold and nesting rules. Plain geometry, once per frame.",
+      "proposed": "So what does it do instead?\n\nIt compares getBoundingClientRect() on the watched element and on each candidate zone, takes the area of the intersection as a fraction of the watched element's own area, and applies the threshold and nesting rules. It's plain geometry, run once per frame.",
+      "reason": "\"Plain geometry, once per frame\" was a verbless fragment doing a job a short sentence does without sounding clipped. It still lands last and still lands short."
+    },
+    {
+      "id": "why-io-expensive-half",
+      "surface": "Why not IntersectionObserver",
+      "title": "IntersectionObserver still does the expensive half",
+      "status": "Refine",
+      "current": "IntersectionObserver still does the expensive half\n\nRectangle math is cheap; doing it for every element on a long page, every frame, is not. So canvas-watch keeps two IntersectionObservers whose only job is to decide what is worth measuring:\n\n[table] Observer / Watches / Effect\nElement gate — Every watched element — An element off screen is dropped from the measured set entirely. Its rect is never read and its class is cleared.\nZone gate — Every trigger zone, with a triggerRootMargin of 200px by default — Only zones near the viewport stay candidates, so a page with two hundred zones compares against the handful currently in play.\n\nThe result is that per-frame cost tracks what is on screen rather than how long the document is, and a page with nothing visible to resolve schedules no work at all. IO is doing what it is genuinely good at — cheap, off-main-thread visibility signals — and the rectangle comparison only runs on what survives that filter.",
+      "proposed": "IntersectionObserver still does the expensive half\n\nRectangle math is cheap, but doing it for every element on a long page, every frame, is not. So canvas-watch keeps two IntersectionObservers whose only job is to decide what is worth measuring:\n\n[table] Observer / Watches / Effect\nElement gate — Every watched element — An element off screen is dropped from the measured set entirely. Its rect is never read and its class is cleared.\nZone gate — Every trigger zone, with a triggerRootMargin of 200px by default — Only zones near the viewport stay candidates, so a page with two hundred zones compares against the handful currently in play.\n\nThe result is that per-frame cost tracks what is on screen rather than how long the document is, and a page with nothing visible to resolve schedules no work at all. IO does what it's genuinely good at, which is cheap off-main-thread visibility signals, and the rectangle comparison only runs on what survives that filter.",
+      "reason": "The semicolon in the first line is a \"but\", and that turn is the whole argument of the section, so it should be a word. The paired dashes at the end become a relative clause.",
+      "body": "The table's own dashes are column separators in this plain-text rendering, not punctuation in the copy. Rows are reviewed as one block because the header and cells only make sense together."
+    },
+    {
+      "id": "viewport-intro",
+      "surface": "Viewport state",
+      "title": "Section heading and lede",
+      "status": "Refine",
+      "current": "Or track one reference crossing the viewport.\n\nThe library's second job, unrelated to overlap. Point it at an element and it reports whether that element is above the viewport, inside it, below it, or missing from the document entirely.",
+      "proposed": "Or track one reference crossing the viewport.\n\nThis is the library's second job, and it has nothing to do with overlap. Point it at an element and it reports whether that element is above the viewport, inside it, below it, or missing from the document entirely.",
+      "reason": "\"The library's second job, unrelated to overlap.\" has no verb in it, and a headless fragment opening a section is the single biggest source of the choppiness. Saying it as a sentence costs four words.",
+      "note": "The heading stays. Starting on \"Or\" is what flags the gear change, and it earns the informality."
+    },
+    {
+      "id": "viewport-instructions",
+      "surface": "Viewport state",
+      "title": "Instructions for the beacon demo",
+      "status": "Refine",
+      "current": "Keep scrolling. The beacon starts below you, burns bright while any part of it is in view, then leaves above. Remove the reference to see missing, then restore it and continue the flight.",
+      "proposed": "Keep scrolling. The beacon starts below you, burns bright while any part of it is in view, then leaves above. Remove the reference to see missing, then restore it.",
+      "reason": "\"Continue the flight\" switches the beacon into an aircraft and adds a step nobody needs told. The sentence already gave its instruction, so it stops there.",
+      "note": "\"Burns bright, then leaves above\" stays. It's describing what you'll actually see, so it's doing work rather than decorating."
+    },
+    {
+      "id": "viewport-demo-readout",
+      "surface": "Viewport demo",
+      "title": "Live state readout and toggle",
+      "status": "Keep",
+      "current": "Live viewport signal\n\nIn view / Above / Below / Missing / Resolving\n\nThe reference intersects the viewport now.\nIts bottom edge has crossed the viewport top.\nIts top edge has not reached the viewport bottom yet.\nThe ID is absent from the document.\nWaiting for the first client measurement.\n\nRemove the reference\nRestore the reference",
+      "proposed": "Live viewport signal\n\nIn view / Above / Below / Missing / Resolving\n\nThe reference intersects the viewport now.\nIts bottom edge has crossed the viewport top.\nIts top edge has not reached the viewport bottom yet.\nThe ID is absent from the document.\nWaiting for the first client measurement.\n\nRemove the reference\nRestore the reference",
+      "reason": "Five plain sentences, no dashes, and each names the edge that decided the state. \"Resolving\" is honest about the pre-measurement state rather than guessing one. The two toggle labels match what pressing it does.",
+      "body": "The frame labels \"viewport top\" and \"viewport bottom\" are decorative and hidden from assistive tech."
+    },
+    {
+      "id": "viewport-code-intro",
+      "surface": "Viewport state",
+      "title": "Introduction to the viewport snippet",
+      "status": "Keep",
+      "current": "That readout is the real Svelte API, watching #viewport-beacon:",
+      "proposed": "That readout is the real Svelte API, watching #viewport-beacon:",
+      "reason": "Confirms the demo isn't a mock-up, which is the only question it needs to answer."
+    },
+    {
+      "id": "concepts-definitions",
+      "surface": "Docs / Concepts",
+      "title": "Watched element and trigger zone",
+      "status": "Refine",
+      "current": "Watched element\n\nA floating element you tag with watch-bg-canvas (or register through an adapter). It receives an over-* class describing the zone it currently sits over.\n\nTrigger zone\n\nA background element tagged with a *-trigger class. Each maps to an over-* class by convention: strip the -trigger suffix, add the over- prefix.",
+      "proposed": "Watched element\n\nA floating element you tag with watch-bg-canvas (or register through an adapter). It receives an over-* class describing the zone it currently sits over.\n\nTrigger zone\n\nA background element tagged with a *-trigger class. Each one maps to an over-* class by convention, so you strip the -trigger suffix and add the over- prefix.",
+      "reason": "The colon plus comma made the convention read like two disconnected instructions. \"So you strip X and add Y\" is one move, which is what it is."
+    },
+    {
+      "id": "concepts-winner",
+      "surface": "Docs / Concepts",
+      "title": "Winner rule",
+      "status": "Refine",
+      "current": "Winner = deepest, then majority overlap\n\nOnly zones covering at least threshold of the watched element's own area are eligible — 50% by default. Among those, the most deeply nested zone wins outright; among zones at the same depth, the largest overlap wins. If nothing clears the threshold, every over-* class is removed.\n\nNesting beats area because a zone inside another zone is the more specific answer — otherwise a container could never be overridden, since its overlap is by definition at least its children's. Depth only reorders zones that already clear the threshold, so a nested zone that barely clips the element can't hijack it. Same-class rectangles count by their physical union, so duplicate pixels are never counted twice, and coverage stays paired with its depth so a tiny nested zone cannot promote a same-class ancestor. The heading at the top of this page is a zone of its own inside the hero's: the bar takes dark ink while it is crossing those pale letters, and the hero's light ink everywhere else.",
+      "proposed": "The winner is the deepest zone, then the largest overlap\n\nOnly zones covering at least threshold of the watched element's own area are eligible, which is 50% by default. Among those the most deeply nested zone wins outright, and among zones at the same depth the largest overlap wins. If nothing clears the threshold, every over-* class is removed.\n\nNesting beats area because a zone inside another zone is the more specific answer. Otherwise a container could never be overridden, since its overlap is by definition at least its children's. Depth only reorders zones that already clear the threshold, so a nested zone that barely clips the element can't hijack it. Same-class rectangles count by their physical union, so duplicate pixels are never counted twice, and coverage stays paired with its depth so a tiny nested zone can't promote a same-class ancestor. The heading at the top of this page is a zone of its own inside the hero's, so the bar takes dark ink while it's crossing those pale letters and the hero's light ink everywhere else.",
+      "reason": "Four fixes. The heading loses its \"=\" and becomes readable English. The first dash becomes \"which is\", the semicolon becomes \"and\", and the dash in paragraph two becomes a full stop, which lets \"Otherwise\" start its own sentence and actually be heard.",
+      "note": "This is the longest block on the page that isn't a code sample, and I would still keep it whole. Every sentence in paragraph two closes off a different way of getting the rule wrong, so splitting it would leave half the misreadings open."
+    },
+    {
+      "id": "concepts-event",
+      "surface": "Docs / Concepts",
+      "title": "The canvaschange event",
+      "status": "Refine",
+      "current": "Most restyling needs no JavaScript at all — write CSS for the over-* class and you're done. When you need more, each change dispatches a canvaschange CustomEvent with detail: { appliedClass, previousClass } (each string | null): swap an icon set, re-render a chart's palette, announce something. The Svelte adapter surfaces it as onChange.",
+      "proposed": "Most restyling needs no JavaScript at all, so write CSS for the over-* class and you're done. When you need more, each change dispatches a canvaschange CustomEvent whose detail carries { appliedClass, previousClass }, each either a string or null. Use it to swap an icon set, re-render a chart's palette, or announce something. The Svelte adapter surfaces it as onChange.",
+      "reason": "The second sentence had two colons in it, one for the type and one introducing the uses, which made the type signature and the examples run together. Now the signature finishes its own sentence and the uses get theirs."
+    },
+    {
+      "id": "install-note",
+      "surface": "Docs / Install",
+      "title": "Install note and entry point table",
+      "status": "Refine",
+      "current": "The Svelte adapter ships as a subpath entry point and pulls in an optional peer dependency — install it only if you use it.\n\n[table] Import / What you get / Peer dependency\n@mzebley/canvas-watch — Framework-agnostic core (createCanvasWatcher) — none\n@mzebley/canvas-watch/svelte — watchBgCanvas action and reactive canvasWatch state — svelte >= 5.7",
+      "proposed": "The Svelte adapter ships as a subpath entry point and pulls in an optional peer dependency, so install it only if you use it.\n\n[table] Import / What you get / Peer dependency\n@mzebley/canvas-watch — Framework-agnostic core (createCanvasWatcher) — none\n@mzebley/canvas-watch/svelte — Svelte adapter (watchBgCanvas action and reactive canvasWatch state) — svelte >= 5.7",
+      "reason": "Dash to \"so\" in the sentence. In the table, the second row listed two exports without saying what they are, while the first row names its contents, so naming the adapter makes both rows answer the same question.",
+      "note": "Two separate changes in one entry. If you want the sentence but not the table cell, say so in a note and I'll split them next round."
+    },
+    {
+      "id": "usage-intro",
+      "surface": "Docs / Usage",
+      "title": "Usage introduction",
+      "status": "Keep",
+      "current": "The shape is the same everywhere: mark the background zones, register the floating element, and write CSS for the over-* classes.",
+      "proposed": "The shape is the same everywhere: mark the background zones, register the floating element, and write CSS for the over-* classes.",
+      "reason": "The colon here is introducing an actual list of three steps, which is what colons are for, and they run in the order the code samples below follow."
+    },
+    {
+      "id": "usage-svelte",
+      "surface": "Docs / Usage",
+      "title": "Svelte panel prose",
+      "status": "Refine",
+      "current": "The action shares one watcher across the whole app and cleans up on destroy. class=\"watch-bg-canvas\" is optional when you use the action — it registers the node directly — but keeping it makes the intent obvious in markup.\n\nViewport state\n\ncanvasWatch('#hero') exposes reactive aboveViewport, inViewport, belowViewport and missing properties. The full state starts as unknown; a missing ID becomes missing only after client resolution. Read these properties in a template or tracked effect; imperative callers should use observeViewport.\n\nElements that outlive a page — a layout-level nav or player — are registered once and won't automatically see a new page's trigger zones. Re-scan after navigation:",
+      "proposed": "The action shares one watcher across the whole app and cleans up on destroy. class=\"watch-bg-canvas\" is optional when you use the action, since the action registers the node directly, but keeping it makes the intent obvious in markup.\n\nViewport state\n\ncanvasWatch('#hero') exposes reactive aboveViewport, inViewport, belowViewport and missing properties. The full state starts as unknown, and a missing ID becomes missing only after client resolution. Read these properties in a template or tracked effect. If you're calling imperatively, use observeViewport instead.\n\nElements that outlive a page, like a layout-level nav or player, are registered once and won't automatically see a new page's trigger zones. Re-scan after navigation:",
+      "reason": "Three dashes and two semicolons out of one panel. \"Imperative callers should use observeViewport\" also addressed a category of person rather than the reader, so it now says \"if you're calling imperatively\".",
+      "body": "Each paragraph here pre-empts a real bug: a class that looks redundant, state read too early, and a nav that silently stops updating after client-side navigation. That structure is unchanged."
+    },
+    {
+      "id": "usage-angular",
+      "surface": "Docs / Usage",
+      "title": "Angular panel prose",
+      "status": "Refine",
+      "current": "There is no Angular entry point to install — the core is enough. A standalone directive wraps it in about thirty lines, and because it registers on getSharedWatcher(), it joins the same single rAF loop as every other watched element on the page. This is code to own and adapt in your app, not a shipped adapter: the library's tests do not cover it.\n\nThe runOutsideAngular wrapper is the part worth keeping. The watcher's scroll listener and rAF loop would otherwise be zone-patched, and every scroll frame app-wide would trigger change detection. Re-entering the zone only when a class actually changes keeps that cost off the scroll path.\n\nElements that outlive a route — a layout-level nav or player — are registered once and won't automatically see the next page's trigger zones. Re-scan after navigation:",
+      "proposed": "There's no Angular entry point to install, because the core is enough. A standalone directive wraps it in about fifty lines including imports, and because it registers on getSharedWatcher() it joins the same single rAF loop as every other watched element on the page. This is code to own and adapt in your app rather than a shipped adapter, and the library's tests don't cover it.\n\nThe runOutsideAngular wrapper is the part worth keeping. The watcher's scroll listener and rAF loop would otherwise be zone-patched, and every scroll frame app-wide would trigger change detection. Re-entering the zone only when a class actually changes keeps that cost off the scroll path.\n\nElements that outlive a route, like a layout-level nav or player, are registered once and won't automatically see the next page's trigger zones. Re-scan after navigation:",
+      "reason": "The snippet immediately below this is 52 lines, so \"about thirty\" is a count a reader can see is wrong. Fifty including imports matches what's on screen. Also two dashes and a colon out, contractions in to match the Svelte panel.",
+      "note": "Still your call on the count. If you'd rather keep \"about thirty\" and have it describe the directive class on its own, leave me a note and I'll word it that way instead of changing the number."
+    },
+    {
+      "id": "usage-vanilla",
+      "surface": "Docs / Usage",
+      "title": "Vanilla panel prose",
+      "status": "Keep",
+      "current": "Vanilla, or any framework\n\nThe core has no framework dependencies. Tag the elements in markup, then create a watcher and refresh it.\n\nViewport state\n\nSubscribe in JavaScript, or let HTML own one default state class. ID resolution, late insertion, removal and relevant attribute changes share one coalesced MutationObserver per watcher. Unrelated classes are untouched.\n\nThe declarative form applies exactly one of these four classes to the element carrying the attribute, and removes the other three. An attribute value that is not an #id resolves to missing rather than throwing.\n\nListen for changes directly on the element:",
+      "proposed": "Vanilla, or any framework\n\nThe core has no framework dependencies. Tag the elements in markup, then create a watcher and refresh it.\n\nViewport state\n\nSubscribe in JavaScript, or let HTML own one default state class. ID resolution, late insertion, removal and relevant attribute changes share one coalesced MutationObserver per watcher. Unrelated classes are untouched.\n\nThe declarative form applies exactly one of these four classes to the element carrying the attribute, and removes the other three. An attribute value that is not an #id resolves to missing rather than throwing.\n\nListen for changes directly on the element:",
+      "reason": "The one panel that already reads the way the rest should. No dashes, no semicolons, full sentences. \"Unrelated classes are untouched\" and \"resolves to missing rather than throwing\" are both answers to a real worry about handing class management to a library."
+    },
+    {
+      "id": "api-create-watcher",
+      "surface": "Docs / API",
+      "title": "createCanvasWatcher description and option table",
+      "status": "Refine",
+      "current": "Returns a live watcher in the browser, or a no-op during SSR — so you never need to guard typeof window. Invalid thresholds, margins, selectors and class mappings fail before any browser resources are allocated.\n\nwatchSelector — Selector for elements to watch.\ntriggerSelector — Coarse selector for trigger elements; refined in JS by triggerSuffix.\ntriggerSuffix — Suffix that marks a class as a trigger.\nappliedPrefix — Prefix for the applied class.\nclassMap — Explicit triggerClass → appliedClass overrides; these win over the convention.\nthreshold — Fraction of the watched element's own area that must overlap to count.\ntriggerRootMargin — Margin in px around the viewport for keeping a trigger zone \"active\".",
+      "proposed": "Returns a live watcher in the browser, or a no-op during SSR, so you never need to guard typeof window. Invalid thresholds, margins, selectors and class mappings fail before any browser resources are allocated.\n\nwatchSelector — Selector for elements to watch.\ntriggerSelector — Coarse selector for trigger elements, refined in JS by triggerSuffix.\ntriggerSuffix — Suffix that marks a class as a trigger.\nappliedPrefix — Prefix for the applied class.\nclassMap — Explicit triggerClass → appliedClass overrides, which win over the convention.\nthreshold — Fraction of the watched element's own area that must overlap to count.\ntriggerRootMargin — Margin in px around the viewport for keeping a trigger zone \"active\".",
+      "reason": "A dash before \"so\" in the first line, and two semicolons in the option descriptions where a comma does the job. Both sentences in the intro remove a guard you would otherwise write, which is why they're worth the space.",
+      "body": "The dashes between option name and description are column separators in this plain-text rendering, not punctuation in the copy."
+    },
+    {
+      "id": "api-watcher-methods",
+      "surface": "Docs / API",
+      "title": "Watcher methods, helpers and validation",
+      "status": "Refine",
+      "current": "refresh() — Re-scan watch, trigger and declarative viewport elements.\nwatch(el) — Register one overlap owner. Returns an idempotent unwatch() function.\nobserveViewport(reference, listener) — Subscribe one owner to vertical viewport state. Returns an idempotent unsubscribe function.\nschedule() — Force a recompute on the next frame.\ndestroy() — Terminally cancel work, disconnect observers and remove owned classes.\n\nEvery registration owns an independent disposer, even when an element or callback is repeated. destroy() is terminal. A consumer listener that throws is reported through reportError without blocking healthy listeners or cleanup.\n\nShared watcher and pure helpers\n\ngetSharedWatcher() — The realm-wide singleton the Svelte adapter uses. Join it to share one rAF loop.\nrefreshCanvasWatch() — Re-scan the shared watcher. Call after client-side navigation.\nscheduleRefresh() — The same coalesced re-scan; refreshCanvasWatch() is a named alias for it.\noverlapArea(a, b) — Intersection area of two rects, or 0. Pure.\npickWinningClass(totals, area, threshold) — The winner rule itself, depth and all. Pure.\nresolveAppliedClass(triggerClass, opts) — One trigger class to its applied class, or null. Pure.\nclassifyViewportRect(rect, top, bottom) — A rect's vertical state against two bounds. Pure.\n\nValidation errors\n\nBad configuration throws immediately rather than failing quietly on the first frame.",
+      "proposed": "refresh() — Re-scan watch, trigger and declarative viewport elements.\nwatch(el) — Register one overlap owner. Returns an idempotent unwatch() function.\nobserveViewport(reference, listener) — Subscribe one owner to vertical viewport state. Returns an idempotent unsubscribe function.\nschedule() — Force a recompute on the next frame.\ndestroy() — Terminally cancel work, disconnect observers and remove owned classes.\n\nEvery registration owns an independent disposer, even when an element or callback is repeated. destroy() is terminal. A consumer listener that throws is reported through reportError without blocking healthy listeners or cleanup.\n\nShared watcher and pure helpers\n\ngetSharedWatcher() — The realm-wide singleton the Svelte adapter uses. Join it to share one rAF loop.\nrefreshCanvasWatch() — Re-scan the shared watcher. Call after client-side navigation.\nscheduleRefresh() — The same coalesced re-scan. refreshCanvasWatch() is a named alias for it.\noverlapArea(a, b) — Intersection area of two rects, or 0. Pure.\npickWinningClass(totals, area, threshold) — The winner rule itself, depth and all. Pure.\nresolveAppliedClass(triggerClass, opts) — One trigger class to its applied class, or null. Pure.\nclassifyViewportRect(rect, top, bottom) — A rect's vertical state against two bounds. Pure.\n\nValidation errors\n\nBad configuration throws immediately rather than failing quietly on the first frame.",
+      "reason": "One semicolon becomes a full stop. Otherwise this table stands: the helper list is new this round and covers every non-method export, so the page no longer documents a partial API, and \"Pure\" four times is a signal rather than a tic because it tells you which of these you can call in a test with no DOM.",
+      "body": "Column separators are rendered as dashes here. The validation-error rows are option names and thrown types, so they read as code rather than copy."
+    },
+    {
+      "id": "how-it-works",
+      "surface": "Docs / How it works",
+      "title": "Per-frame walkthrough",
+      "status": "Refine",
+      "current": "The short version of why this isn't an IntersectionObserver, plus what happens on each frame.\n\nVisibility gate. Each watched element is tracked by an IntersectionObserver, so only on-screen elements are ever measured. A second observer tracks trigger zones with a root margin, so only zones near the viewport are considered.\n\nOne rAF loop. Scroll, resize, DOM mutation, ResizeObserver and observer callbacks all funnel into one coalesced requestAnimationFrame. Overlap and viewport registrations share that loop.\n\nRead, commit, then notify. Per frame, every unique element rect is read once. Classes, ownership and observer targets are committed before consumer callbacks, so reentrant teardown cannot resurrect stale work.\n\nMinimal class churn. A class is added or removed only when the winning zone actually changes, so scrolling within one zone writes to the DOM zero times. Rects are still read each frame.\n\nIdle pages skip the measuring. With no visible overlap work and no viewport registrations, a scroll frame returns before scheduling anything. The passive scroll and resize listeners stay attached — they are what notices the page becoming busy again.",
+      "proposed": "The short version of why this isn't an IntersectionObserver, plus what happens on each frame.\n\nVisibility gate. Each watched element is tracked by an IntersectionObserver, so only on-screen elements are ever measured. A second observer tracks trigger zones with a root margin, so only zones near the viewport are considered.\n\nOne rAF loop. Scroll, resize, DOM mutation, ResizeObserver and observer callbacks all funnel into one coalesced requestAnimationFrame. Overlap and viewport registrations share that loop.\n\nRead, commit, then notify. Per frame, every unique element rect is read once. Classes, ownership and observer targets are committed before consumer callbacks, so reentrant teardown can't resurrect stale work.\n\nMinimal class churn. A class is added or removed only when the winning zone actually changes, so scrolling within one zone writes to the DOM zero times. Rects are still read each frame.\n\nIdle pages skip the measuring. With no visible overlap work and no viewport registrations, a scroll frame returns before scheduling anything. The passive scroll and resize listeners stay attached, because they're what notices the page becoming busy again.",
+      "reason": "One dash in the last step becomes \"because\", which is the relationship it was standing for. The steps themselves already run on \"so\", which is why this section reads better than most of the page.",
+      "body": "Two steps were renamed earlier this round to stop overclaiming. Previous titles and bodies: \"Minimal DOM churn — A class is added or removed only when the winning zone actually changes, so scrolling within one zone touches the DOM zero times.\" and \"Idle pages cost nothing — With no visible overlap work and no viewport registrations, scroll frames short-circuit before any work is scheduled.\" Both are narrower now, and both are true."
+    },
+    {
+      "id": "limitations-intro",
+      "surface": "Docs / Limitations",
+      "title": "Section heading and introduction",
+      "status": "Keep",
+      "current": "Limitations\n\nThe things that cost an afternoon if you meet them cold.",
+      "proposed": "Limitations\n\nThe things that cost an afternoon if you meet them cold.",
+      "reason": "Renamed from \"Gotchas\", which undersold a section full of real constraints. The introduction says why to read it in one line and earns its aside, so I left it alone.",
+      "body": "Previous section label and heading: Gotchas"
+    },
+    {
+      "id": "limitation-composed-token",
+      "surface": "Docs / Limitations",
+      "title": "Overriding a composed token",
+      "status": "Refine",
+      "current": "If the property you're changing is a variable that itself references another one — a shadow composite, a gradient, a border shorthand — declared on :root, then overriding the inner variable from an over-* class does nothing. CSS bakes the nested var() once, where the composite is declared, and the result inherits down. Re-declare the composite on the watched element so it re-bakes against that element's value.",
+      "proposed": "Say the property you're changing is a variable that references another variable (a shadow composite, a gradient, a border shorthand) and the composite is declared on :root. Overriding the inner variable from an over-* class does nothing. CSS bakes the nested var() once, where the composite is declared, and the result inherits down. Re-declare the composite on the watched element so it re-bakes against that element's value.",
+      "reason": "This was the hardest sentence on the page to read: a conditional with a dashed list dropped into the middle of it, so \"declared on :root\" arrived seven words after the noun it modifies. Setting up the situation first, then stating what happens, costs one extra sentence and makes it followable.",
+      "note": "Biggest structural change in this round. The three technical sentences after it are untouched."
+    },
+    {
+      "id": "limitation-sticky-stacking",
+      "surface": "Docs / Limitations",
+      "title": "Sticky overflow and stacking",
+      "status": "Keep",
+      "current": "position: sticky and overflow\n\nA sticky watched element won't stick if an ancestor has overflow: hidden, auto, or scroll. Put clipping on a sibling layer, not an ancestor of the sticky element.\n\nStacking is not considered\n\nOverlap ignores z-index. At one nesting depth the larger physical coverage wins, which may not be the element actually painted on top.",
+      "proposed": "position: sticky and overflow\n\nA sticky watched element won't stick if an ancestor has overflow: hidden, auto, or scroll. Put clipping on a sibling layer, not an ancestor of the sticky element.\n\nStacking is not considered\n\nOverlap ignores z-index. At one nesting depth the larger physical coverage wins, which may not be the element actually painted on top.",
+      "reason": "Two short entries, no dashes, and each names a limit plus the workaround where one exists. No workaround is invented for z-index, because there isn't one."
+    },
+    {
+      "id": "limitation-clipping",
+      "surface": "Docs / Limitations",
+      "title": "Neither is clipping",
+      "status": "Refine",
+      "current": "getBoundingClientRect reports where an element would be, not what's visible. A trigger zone inside a scrolling container still reports a full-size rect once it has scrolled out of view, so a watched element outside that container can pick up a zone nobody can see. When your zones live in a scroller, put the trigger class on the scroller itself — its rect is the visible box — and relabel it from script as its content scrolls.",
+      "proposed": "getBoundingClientRect reports where an element would be, not what's visible. A trigger zone inside a scrolling container still reports a full-size rect once it has scrolled out of view, so a watched element outside that container can pick up a zone nobody can see. When your zones live in a scroller, put the trigger class on the scroller itself, whose rect is the visible box, and relabel it from script as its content scrolls.",
+      "reason": "Paired dashes become a relative clause. The fix sentence now reads as one instruction rather than an instruction with an interruption wedged into it.",
+      "body": "Earlier this round the entry gained \"outside that container\" and \"from script\", both of which were needed, since the old wording implied any watched element was at risk and made the relabelling sound automatic. It also dropped \"The playground on this page does exactly that\", which stopped being true once the playground moved to per-column proxy strips."
+    },
+    {
+      "id": "limitation-one-answer",
+      "surface": "Docs / Limitations",
+      "title": "One element gets one answer",
+      "status": "Refine",
+      "current": "Majority overlap resolves per watched element, so a wide element spanning two zones takes a single class — and half of it ends up styled for the wrong background. A bar across the full content width hits this constantly. The fix is not in the library: watch the regions instead of the container. Wrap each cluster of content in its own watched element and each resolves its own zone, in the same frame, from the same watcher. The header on this page does exactly that — its left and right ends carry different classes whenever they sit over different zones. Nesting is safe because a watched element only ever resolves against elements carrying a trigger class, so the container it sits inside is invisible to it.",
+      "proposed": "Majority overlap resolves per watched element, so a wide element spanning two zones takes a single class and half of it ends up styled for the wrong background. A bar across the full content width hits this constantly. The fix isn't in the library. Watch the regions instead of the container: wrap each cluster of content in its own watched element, and each one resolves its own zone, in the same frame, from the same watcher. The header on this page does exactly that, so its left and right ends carry different classes whenever they sit over different zones. Nesting is safe because a watched element only ever resolves against elements carrying a trigger class, so the container it sits inside is invisible to it.",
+      "reason": "\"The fix isn't in the library\" now gets its own full stop, which is where the honesty lands, and the instruction that follows it starts clean. Two dashes out. The colon stays because it introduces the how.",
+      "note": "This is the mention of the header I'd keep, and it's why I'm trimming the ones in tryit-second and demo-note-primary. If you'd rather cut here instead, say so and I'll move the trims next round."
+    },
+    {
+      "id": "limitation-refresh-schedule",
+      "surface": "Docs / Limitations",
+      "title": "refresh(), schedule() and vertical-only viewport state",
+      "status": "Refine",
+      "current": "Dynamic triggers need refresh()\n\nTrigger zones are indexed on refresh() — at adapter mount, or via refreshCanvasWatch() — not continuously observed for class changes. Adding a zone, or changing an existing zone's trigger class, needs a re-scan.\n\nUnobservable motion needs schedule()\n\nScroll, resize, relevant DOM mutations, target resizing and viewport-boundary crossings invalidate geometry. Call schedule() after motion that changes geometry without producing one of those signals.\n\nViewport state is vertical only\n\nobserveViewport and canvasWatch classify a reference against the viewport's top and bottom edges. Horizontal position is deliberately ignored, so an element parked far off to the side still reports within.",
+      "proposed": "Dynamic triggers need refresh()\n\nTrigger zones are indexed on refresh(), either at adapter mount or via refreshCanvasWatch(), rather than continuously observed for class changes. Adding a zone, or changing an existing zone's trigger class, needs a re-scan.\n\nUnobservable motion needs schedule()\n\nScroll, resize, relevant DOM mutations, target resizing and viewport-boundary crossings invalidate geometry. Call schedule() after motion that changes geometry without producing one of those signals.\n\nViewport state is vertical only\n\nobserveViewport and canvasWatch classify a reference against the viewport's top and bottom edges. Horizontal position is deliberately ignored, so an element parked far off to the side still reports within.",
+      "reason": "The dashes in the first entry hid the contrast the sentence is making, so \"either X or Y, rather than Z\" now says it. The other two entries had no dashes and are unchanged.",
+      "body": "The vertical-only entry is new this round. It says the behaviour is deliberate and then gives the surprising case plainly, rather than leaving you to find it."
+    },
+    {
+      "id": "accessibility-presentational",
+      "surface": "Docs / Accessibility",
+      "title": "Purely presentational",
+      "status": "Keep",
+      "current": "canvas-watch is purely presentational. It adds and removes one class. It sets no ARIA attributes, announces nothing to assistive technology, and never alters content or focus order. Whether it changes layout is entirely down to what your over-* rules declare.",
+      "proposed": "canvas-watch is purely presentational. It adds and removes one class. It sets no ARIA attributes, announces nothing to assistive technology, and never alters content or focus order. Whether it changes layout is entirely down to what your over-* rules declare.",
+      "reason": "Four sentences, no dashes. It says what the library doesn't do, specifically, then hands back the one thing it can't control."
+    },
+    {
+      "id": "accessibility-contrast",
+      "surface": "Docs / Accessibility",
+      "title": "Contrast warning",
+      "status": "Refine",
+      "current": "Contrast is your responsibility, and it matters more the more you restyle. A shadow that misses 3:1 is cosmetic; text that lands at 2:1 because the panel behind it changed is a WCAG 1.4.3 failure. If your over-* rules touch text, border, or icon colour, check every zone — the library only tells you which one you're over, it has no idea whether the result is legible.",
+      "proposed": "Contrast is your responsibility, and it matters more the more you restyle. A shadow that misses 3:1 is cosmetic, but text that lands at 2:1 because the panel behind it changed is a WCAG 1.4.3 failure. If your over-* rules touch text, border, or icon colour, check every zone. The library only tells you which one you're over, and it has no idea whether the result is legible.",
+      "reason": "The semicolon was a \"but\", and that contrast is the entire point of the sentence, so it should be a word. The dash becomes a full stop and the comma splice after it goes, which leaves the last line landing on its own.",
+      "note": "The 3:1, 2:1 and 1.4.3 references are untouched. They're what make the warning actionable."
+    },
+    {
+      "id": "accessibility-motion-support",
+      "surface": "Docs / Accessibility",
+      "title": "Reduced motion and browser support",
+      "status": "Refine",
+      "current": "Reduced motion is the consumer's call. Put any transition on the properties you change behind @media (prefers-reduced-motion: reduce).\n\nUnder the hood it needs IntersectionObserver, ResizeObserver, MutationObserver, requestAnimationFrame and CustomEvent. The test suite runs in headless Chromium; other engines are not covered by CI. It is SSR-safe: createCanvasWatcher returns a no-op when window and document are absent, and the Svelte adapter only runs on the client.",
+      "proposed": "Reduced motion is your call. Put any transition on the properties you change behind @media (prefers-reduced-motion: reduce).\n\nUnder the hood it needs IntersectionObserver, ResizeObserver, MutationObserver, requestAnimationFrame and CustomEvent. The test suite runs in headless Chromium, and other engines aren't covered by CI. It's SSR-safe, so createCanvasWatcher returns a no-op when window and document are absent, and the Svelte adapter only runs on the client.",
+      "reason": "Semicolon to \"and\", colon to \"so\". \"The consumer's call\" also named the reader in the third person while every other line here says \"you\", so it now says \"your call\".",
+      "note": "\"Other engines aren't covered by CI\" is the sentence most libraries leave out, and stating the tested engine instead of claiming broad support is the accurate version. Worth keeping even though it reads as a negative."
+    },
+    {
+      "id": "closing-cta",
+      "surface": "Closing",
+      "title": "Closing section",
+      "status": "Keep",
+      "current": "One class. That's the API.\n\nMark your zones, register your floating element, and write the CSS you were going to write anyway.\n\nRead the source\nInstall it",
+      "proposed": "One class. That's the API.\n\nMark your zones, register your floating element, and write the CSS you were going to write anyway.\n\nRead the source\nInstall it",
+      "reason": "Two short sentences in the heading, and they're short on purpose rather than clipped by punctuation. \"The CSS you were going to write anyway\" is the actual argument for adopting it, and both buttons go where they say."
+    },
+    {
+      "id": "layout-chrome",
+      "surface": "Layout",
+      "title": "Header, footer and navigation labels",
+      "status": "Keep",
+      "current": "Skip to content\ncanvas-watch\nover: canvas-brand-emphasis · hero: within\ncanvas-watch on GitHub\nDark\nOn this page\nConcepts / Install / Usage / API / How it works / Limitations / Accessibility\ncanvas-watch — ISC licensed, by Mark Zebley\nGitHub / npm / dynamowaves",
+      "proposed": "Skip to content\ncanvas-watch\nover: canvas-brand-emphasis · hero: within\ncanvas-watch on GitHub\nDark\nOn this page\nConcepts / Install / Usage / API / How it works / Limitations / Accessibility\ncanvas-watch — ISC licensed, by Mark Zebley\nGitHub / npm / dynamowaves",
+      "reason": "The header readout doubles as the live demo the hero points at, so it stays in the library's own vocabulary rather than being prettified. The footer dash is a byline separator, not prose, so I left it.",
+      "body": "\"canvas-watch on GitHub\" is the visually hidden name on the icon link, and \"Dark\" labels the theme switch. Toc labels changed this round: \"Viewport demo\" was dropped and \"Gotchas\" became \"Limitations\"."
+    },
+    {
+      "id": "codeblock-copy",
+      "surface": "Code blocks",
+      "title": "Copy button",
+      "status": "Keep",
+      "current": "Copy\nCopied\n[visually hidden] shell to clipboard",
+      "proposed": "Copy\nCopied\n[visually hidden] shell to clipboard",
+      "reason": "The hidden half completes the visible label into \"Copy shell to clipboard\", so every code block on the page gets a distinct accessible name. \"Copied\" says what happened and reverts after two seconds.",
+      "note": "If the clipboard write fails the button just doesn't change, so there's no error copy to review. The code stays selectable either way, so there's nothing to recover from."
+    }
+  ]
+}

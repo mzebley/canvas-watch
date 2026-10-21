@@ -1,83 +1,24 @@
 <script>
-	import { onMount, tick } from 'svelte';
-	import { canvasWatch, refreshCanvasWatch } from '@mzebley/canvas-watch/svelte';
-
-	const beacon = canvasWatch('#viewport-beacon');
+	import { canvasWatch } from '@mzebley/canvas-watch/svelte';
 	let showBeacon = $state(true);
-
-	/**
-	 * The beacon is a bright conic gradient that physically scrolls behind the
-	 * floating header, where the header's light ink drops to roughly 1.2:1. It
-	 * is a background the bar passes over, so it gets a trigger class like any
-	 * other — and because it is added and removed by the toggle below, the
-	 * shared watcher has to re-index each time.
-	 */
-	onMount(refreshCanvasWatch);
-
-	async function toggleBeacon() {
-		showBeacon = !showBeacon;
-		await tick();
-		refreshCanvasWatch();
-	}
-
-	const stateLabel = $derived(
-		beacon.state === 'within'
-			? 'In view'
-			: beacon.state === 'above'
-				? 'Above'
-				: beacon.state === 'below'
-					? 'Below'
-					: beacon.state === 'missing'
-						? 'Missing'
-						: 'Resolving'
-	);
-
-	const stateDescription = $derived(
-		beacon.state === 'within'
-			? 'The reference intersects the viewport now.'
-			: beacon.state === 'above'
-				? 'Its bottom edge has crossed the viewport top.'
-				: beacon.state === 'below'
-					? 'Its top edge has not reached the viewport bottom yet.'
-					: beacon.state === 'missing'
-						? 'The ID is absent from the document.'
-						: 'Waiting for the first client measurement.'
-	);
+	const beacon = canvasWatch('#viewport-beacon');
+	const labels = { unknown: 'Waiting for a measurement', missing: 'Reference removed', above: 'Above the viewport', within: 'Inside the viewport', below: 'Below the viewport' };
 </script>
 
 <div class="cw-viewport-demo" data-state={beacon.state}>
-	<div class="cw-viewport-demo__hud cw-instrument">
-		<div class="cw-instrument__grid" aria-hidden="true"></div>
-		<div class="cw-viewport-demo__glow" aria-hidden="true"></div>
-
-		<div class="cw-viewport-demo__status">
-			<p class="cw-instrument__eyebrow">Live viewport signal</p>
-			<p class="cw-instrument__state cw-viewport-demo__state">{stateLabel}</p>
-			<p class="cw-instrument__description">{stateDescription}</p>
+	<div class="example-bar"><span class="live-label"><span class="live-dot" aria-hidden="true"></span>Live example</span><span>This page's actual viewport</span></div>
+	<div class="viewport-demo__body">
+		<div class="viewport-demo__state">
+			<span class="eyebrow">#viewport-beacon</span>
+			<p class="viewport-value" aria-live="polite">{labels[beacon.state]}</p>
+			<div class="viewport-states" aria-label="Reference state">{#each ['below', 'within', 'above', 'missing'] as state}<span class:active={beacon.state === state} aria-current={beacon.state === state ? 'true' : undefined}>{state}</span>{/each}</div>
+			<p class="small-copy">Scroll past the striped reference, or remove it. The state follows its position in this page.</p>
+			<!-- svelte-ignore a11y_click_events_have_key_events (Zebkit renders a native keyboard-operable button.) -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<zbk-button class="cw-viewport-demo__toggle" variant="outline sm" onclick={() => showBeacon = !showBeacon}>{showBeacon ? 'Remove the reference' : 'Restore the reference'}</zbk-button>
 		</div>
-
-		<div class="cw-viewport-demo__readout cw-instrument__badges" aria-hidden="true">
-			<span class="cw-instrument__badge" class:active={beacon.aboveViewport}>aboveViewport</span>
-			<span class="cw-instrument__badge" class:active={beacon.inViewport}>inViewport</span>
-			<span class="cw-instrument__badge" class:active={beacon.belowViewport}>belowViewport</span>
-			<span class="cw-instrument__badge" class:active={beacon.missing}>missing</span>
+		<div class="viewport-demo__reference-area">
+			{#if showBeacon}<div id="viewport-beacon" class="viewport-beacon"><span class="eyebrow">The reference</span><strong>Here I am.</strong><code>#viewport-beacon</code></div>{:else}<div class="viewport-missing"><span aria-hidden="true">−</span><p>The reference is out of the DOM.</p></div>{/if}
 		</div>
-
-		<div class="cw-viewport-demo__frame" aria-hidden="true">
-			<span class="cw-viewport-demo__edge cw-viewport-demo__edge--top">viewport top</span>
-			<span class="cw-viewport-demo__crosshair"></span>
-			<span class="cw-viewport-demo__edge cw-viewport-demo__edge--bottom">viewport bottom</span>
-		</div>
-
-		<button type="button" class="cw-viewport-demo__toggle cw-instrument__control" onclick={toggleBeacon}>
-			{showBeacon ? 'Remove the reference' : 'Restore the reference'}
-		</button>
 	</div>
-
-	{#if showBeacon}
-		<div id="viewport-beacon" class="cw-viewport-demo__beacon cw-beacon-trigger">
-			<span>Reference</span>
-			<code>#viewport-beacon</code>
-		</div>
-	{/if}
 </div>

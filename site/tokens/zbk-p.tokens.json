@@ -1,0 +1,8 @@
+{
+  "font-size": {
+    "$value": "{font-size.md}"
+  },
+  "line-height": {
+    "$value": "{line-height.4}"
+  }
+}

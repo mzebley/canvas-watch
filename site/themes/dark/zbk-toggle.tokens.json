@@ -15,13 +15,61 @@
     "$description": "Dark-mode off-state thumb."
   },
   "housing-canvas-checked": {
-    "$value": "{brand.300}",
+    "$value": "{brand.200}",
     "$type": "color",
     "$description": "Dark-mode on-state track."
   },
   "actuator-canvas-checked": {
-    "$value": "{brand.950}",
+    "$value": "{brand.900}",
     "$type": "color",
     "$description": "Dark-mode on-state thumb."
+  },
+  "housing-canvas-hover": {
+    "$value": "{brand.600}"
+  },
+  "housing-canvas-active": {
+    "$value": "{brand.700}"
+  },
+  "housing-border-color-hover": {
+    "$value": "{brand.200}"
+  },
+  "housing-border-color-active": {
+    "$value": "{brand.200}"
+  },
+  "housing-canvas-checked-hover": {
+    "$value": "{brand.100}"
+  },
+  "housing-canvas-checked-active": {
+    "$value": "{brand.200}"
+  },
+  "housing-border-color-checked": {
+    "$value": "{brand.200}"
+  },
+  "housing-border-color-checked-hover": {
+    "$value": "{brand.100}"
+  },
+  "housing-border-color-checked-active": {
+    "$value": "{brand.200}"
+  },
+  "actuator-canvas-hover": {
+    "$value": "{brand.100}"
+  },
+  "actuator-canvas-checked-hover": {
+    "$value": "{brand.900}"
+  },
+  "actuator-canvas-checked-active": {
+    "$value": "{brand.900}"
+  },
+  "actuator-border-color": {
+    "$value": "{brand.100}"
+  },
+  "actuator-border-color-checked": {
+    "$value": "{brand.900}"
+  },
+  "actuator-border-color-checked-hover": {
+    "$value": "{brand.900}"
+  },
+  "actuator-border-color-checked-active": {
+    "$value": "{brand.900}"
   }
 }

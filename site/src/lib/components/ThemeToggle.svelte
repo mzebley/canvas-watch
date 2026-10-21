@@ -18,4 +18,4 @@
 	}
 </script>
 
-<zbk-toggle bind:this={el} variant="sm" {onchange}>Dark</zbk-toggle>
+<zbk-toggle bind:this={el} {onchange}>Dark mode</zbk-toggle>

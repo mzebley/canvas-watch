@@ -1,6 +1,6 @@
 {
   "housing-border-color": {
-    "$value": "{brand.400}",
+    "$value": "{brand.600}",
     "$type": "color",
     "$description": "Off-track border against the track surface."
   },
@@ -10,7 +10,7 @@
     "$description": "Off-state thumb against the light track."
   },
   "actuator-canvas-checked": {
-    "$value": "{color.global-white}",
+    "$value": "{brand.50}",
     "$type": "color",
     "$description": "On-state thumb against the filled track."
   },
@@ -18,5 +18,71 @@
     "$value": "{neutral.900}",
     "$type": "color",
     "$description": "Disabled thumb against the disabled track."
+  },
+  "font-size": {
+    "$value": "{font-size.xs}"
+  },
+  "housing-inline-size": {
+    "$value": "{spacing.205}"
+  },
+  "housing-block-size": {
+    "$value": "{spacing.105}"
+  },
+  "housing-border-width": {
+    "$value": "{border.width-sm}"
+  },
+  "housing-canvas": {
+    "$value": "{brand.300}"
+  },
+  "housing-canvas-hover": {
+    "$value": "{brand.200}"
+  },
+  "housing-canvas-active": {
+    "$value": "{brand.400}"
+  },
+  "housing-border-color-hover": {
+    "$value": "{brand.700}"
+  },
+  "housing-border-color-active": {
+    "$value": "{brand.700}"
+  },
+  "housing-canvas-checked": {
+    "$value": "{brand.700}"
+  },
+  "housing-canvas-checked-hover": {
+    "$value": "{brand.800}"
+  },
+  "housing-canvas-checked-active": {
+    "$value": "{brand.700}"
+  },
+  "housing-border-color-checked": {
+    "$value": "{brand.700}"
+  },
+  "housing-border-color-checked-hover": {
+    "$value": "{brand.800}"
+  },
+  "housing-border-color-checked-active": {
+    "$value": "{brand.700}"
+  },
+  "actuator-canvas-hover": {
+    "$value": "{brand.700}"
+  },
+  "actuator-canvas-checked-hover": {
+    "$value": "{brand.50}"
+  },
+  "actuator-canvas-checked-active": {
+    "$value": "{brand.50}"
+  },
+  "actuator-border-color": {
+    "$value": "{brand.700}"
+  },
+  "actuator-border-color-checked": {
+    "$value": "{brand.50}"
+  },
+  "actuator-border-color-checked-hover": {
+    "$value": "{brand.50}"
+  },
+  "actuator-border-color-checked-active": {
+    "$value": "{brand.50}"
   }
 }

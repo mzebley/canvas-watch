@@ -1,24 +1,25 @@
-/**
- * Browser-only zebkit registration.
- *
- * Zebkit components are Lit custom elements, so they can only be defined where
- * `customElements` exists — the site is prerendered, so this must be imported
- * dynamically from `onMount`, never at module scope.
- *
- * `applyZebkitConfig()` carries this project's component options and variant
- * vocabulary into the browser and must run *before* any element upgrades.
- */
+/** Browser-only definitions. Apply the generated vocabulary before upgrade. */
 export async function defineZebkit() {
-	const [{ applyZebkitConfig }, components] = await Promise.all([
+	const [
+		{ applyZebkitConfig },
+		{ defineZbkButton },
+		{ defineZbkToggle },
+		{ defineZbkCodeBlock },
+		{ defineZbkTabs },
+		{ defineZbkDisclosure }
+	] = await Promise.all([
 		import('./zebkit.runtime.js'),
-		import('zebkit/components')
+		import('zebkit/components/button'),
+		import('zebkit/components/toggle'),
+		import('zebkit/components/code-block'),
+		import('zebkit/components/tabs'),
+		import('zebkit/components/disclosure')
 	]);
 
 	applyZebkitConfig();
-
-	components.defineZbkButton();
-	components.defineZbkLink();
-	components.defineZbkPanel();
-	components.defineZbkRadio();
-	components.defineZbkToggle();
+	defineZbkButton();
+	defineZbkToggle();
+	defineZbkTabs();
+	defineZbkDisclosure();
+	defineZbkCodeBlock();
 }

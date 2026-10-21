@@ -1,0 +1,75 @@
+{
+  "border-width": {
+    "$value": "{border.width-sm}",
+    "$type": "dimension"
+  },
+  "border-radius": {
+    "$value": "{border.radius-md}",
+    "$type": "dimension"
+  },
+  "summary-font-size": {
+    "$value": "{font-size.sm}",
+    "$type": "cssDimension"
+  },
+  "summary-padding-inline": {
+    "$value": "{spacing.1}",
+    "$type": "dimension"
+  },
+  "summary-padding-block": {
+    "$value": "{spacing.05}",
+    "$type": "dimension"
+  },
+  "summary-min-height": {
+    "$value": "{spacing.3}",
+    "$type": "cssDimension"
+  },
+  "indicator-inline-size": {
+    "$value": "{spacing.1}",
+    "$type": "cssDimension"
+  },
+  "indicator-block-size": {
+    "$value": "{spacing.1}",
+    "$type": "cssDimension"
+  },
+  "panel-padding-inline": {
+    "$value": "{spacing.1}",
+    "$type": "dimension"
+  },
+  "panel-padding-block": {
+    "$value": "{spacing.1}",
+    "$type": "dimension"
+  },
+  "canvas": {
+    "$value": "{app.canvas-subtle}"
+  },
+  "border-color": {
+    "$value": "{brand.600}"
+  },
+  "summary-canvas": {
+    "$value": "{brand.200}"
+  },
+  "summary-canvas-hover": {
+    "$value": "{brand.300}"
+  },
+  "summary-canvas-expanded": {
+    "$value": "{brand.200}"
+  },
+  "summary-canvas-expanded-hover": {
+    "$value": "{brand.300}"
+  },
+  "summary-ink": {
+    "$value": "{brand.900}"
+  },
+  "summary-ink-hover": {
+    "$value": "{brand.900}"
+  },
+  "summary-ink-expanded-hover": {
+    "$value": "{brand.900}"
+  },
+  "summary-font-weight": {
+    "$value": "{font-weight.semibold}"
+  },
+  "indicator-ink": {
+    "$value": "{brand.700}"
+  }
+}

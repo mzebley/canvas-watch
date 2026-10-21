@@ -7,22 +7,22 @@
   "font-size": {
     "$value": "{font-size.3xl}",
     "$type": "cssDimension",
-    "$description": "Font size for H1 elements — Carbon fluid heading (~42px)."
+    "$description": "font-size for H1 prose headings."
   },
   "font-weight": {
-    "$value": "{font-weight.black}",
+    "$value": "{font-weight.bold}",
     "$type": "fontWeight",
-    "$description": "Font weight for H1 — Carbon expressive uses Light at the largest sizes."
+    "$description": "Shared library-site heading weight."
   },
   "line-height": {
     "$value": "{line-height.1}",
     "$type": "number",
-    "$description": "Line height for H1 elements with .prose applied directly or that are a child of a .prose container."
+    "$description": "line-height for H1 prose headings."
   },
   "letter-spacing": {
     "$value": "{letter-spacing.tighter}",
     "$type": "dimension",
-    "$description": "Tracking for H1 — Carbon fluid-display roles use -0.64px tracking."
+    "$description": "letter-spacing for H1 prose headings."
   },
   "measure": {
     "$value": "{text-measure.4}",
@@ -42,7 +42,7 @@
   "color": {
     "$value": "currentColor",
     "$type": "color",
-    "$description": "Color of H1 elements with .prose applied directly or that are a child of a .prose container."
+    "$description": "Brand heading ink."
   },
   "font-style": {
     "$value": "normal",

@@ -1,0 +1,5 @@
+{
+  "canvas": { "$value": "{brand.200}" },
+  "ink": { "$value": "{brand.900}" },
+  "font-size": { "$value": "{font-size.xs}" }
+}

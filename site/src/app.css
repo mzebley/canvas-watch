@@ -1,1794 +1,294 @@
-/*
- * Site styles for canvas-watch.
- *
- * Everything colour-, type-, and spacing-related comes from zebkit tokens and
- * utilities. This file holds only what a utility layer can't express: the tint
- * system canvas-watch drives, the glass treatment, and a few page-level layout
- * primitives.
- */
-
-/* ── The tint system ──────────────────────────────────────────────────────────
- *
- * `.cw-watched` is a floating element registered with canvas-watch. It composes
- * its shadow from a single `--cw-shadow-color`, declared *on the element* — not
- * on `:root` — so that an `over-*` class can re-bake it. (See the "composed
- * shadow token" gotcha in the docs: CSS resolves a nested var() once, where the
- * composite is declared.)
- */
-.cw-watched {
-	--cw-shadow-color: var(--zbk-app-ink);
-	--cw-shadow-strength: 1;
-	/* The accent handed to non-shadow details — the mark, the theme switch.
-	   Resolved on this element, so the over-* override above it applies. */
-	--cw-accent: var(--cw-shadow-color);
-	border-color: color-mix(in srgb, var(--cw-shadow-color) 28%, transparent);
-	box-shadow:
-		0 1px 2px
-			color-mix(
-				in srgb,
-				var(--cw-shadow-color) calc(14% * var(--cw-shadow-strength)),
-				transparent
-			),
-		0 10px 30px -8px
-			color-mix(
-				in srgb,
-				var(--cw-shadow-color) calc(46% * var(--cw-shadow-strength)),
-				transparent
-			);
-	transition:
-		box-shadow 400ms cubic-bezier(0.22, 1, 0.36, 1),
-		border-color 400ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* Zone → tint. These class names are the whole API surface of canvas-watch:
-   a `canvas-brand-emphasis-trigger` zone applies `over-canvas-brand-emphasis`. */
-.cw-watched.over-canvas-brand-emphasis {
-	--cw-shadow-color: var(--zbk-brand-canvas-emphasis);
-	--cw-shadow-strength: 1.5;
-}
-.cw-watched.over-canvas-brand-subtle {
-	--cw-shadow-color: var(--zbk-brand-canvas-emphasis);
-	--cw-shadow-strength: 0.85;
-}
-.cw-watched.over-canvas-accent-primary {
-	--cw-shadow-color: var(--zbk-accent-primary-canvas);
-	--cw-shadow-strength: 1.6;
-}
-.cw-watched.over-canvas-accent-secondary {
-	--cw-shadow-color: var(--zbk-accent-secondary-canvas);
-	--cw-shadow-strength: 1.6;
-}
-
-/* On a dark canvas the tint has to read as a glow, so it moves up the ramp —
- * a 700-step shadow on a 950-step page is invisible.
- */
-[data-zbk-theme='dark'] .cw-watched {
-	--cw-shadow-color: var(--zbk-brand-400);
-	/* The accent sits a step lighter than the glow: it has to clear 3:1 against
-	   the dark header surface *and* against the toggle's dark track. */
-	--cw-accent: var(--zbk-brand-300);
-}
-[data-zbk-theme='dark'] .cw-watched.over-canvas-brand-emphasis {
-	--cw-shadow-color: var(--zbk-brand-400);
-	--cw-accent: var(--zbk-brand-300);
-	--cw-shadow-strength: 1.4;
-}
-[data-zbk-theme='dark'] .cw-watched.over-canvas-brand-subtle {
-	--cw-shadow-color: var(--zbk-brand-500);
-	--cw-accent: var(--zbk-brand-300);
-	--cw-shadow-strength: 1;
-}
-[data-zbk-theme='dark'] .cw-watched.over-canvas-accent-primary {
-	--cw-shadow-color: var(--zbk-accent-primary-400);
-	--cw-accent: var(--zbk-accent-primary-300);
-	--cw-shadow-strength: 1.5;
-}
-[data-zbk-theme='dark'] .cw-watched.over-canvas-accent-secondary {
-	--cw-shadow-color: var(--zbk-accent-secondary-400);
-	--cw-accent: var(--zbk-accent-secondary-300);
-	--cw-shadow-strength: 1.5;
-}
-
-/* Motion is the consumer's call — canvas-watch itself only toggles a class. */
-@media (prefers-reduced-motion: reduce) {
-	.cw-watched {
-		transition: none;
-	}
-}
-
-/* ── Page scaffolding ───────────────────────────────────────────────────────── */
-
+/* Page composition and demo geometry. Colors and control treatments stay in Zebkit. */
 :root {
-	/*
-	 * The site's own decorative rules: table dividers, container edges, the TOC
-	 * rail. These are not control affordances, so they need not clear the 3:1
-	 * non-text threshold that `--zbk-app-border` has to hold for the components
-	 * that inherit it — at full strength a 3.4:1 grey reads as a heavy box around
-	 * every table cell. Mixing it back toward the canvas keeps the hairline quiet
-	 * without lowering the token components depend on.
-	 */
-	--cw-rule: color-mix(in srgb, var(--zbk-app-border) 45%, var(--zbk-app-canvas));
-}
-
-html {
-	scroll-behavior: smooth;
-	/* The sticky header must not cover the heading an anchor link lands on. */
-	scroll-padding-block-start: 6rem;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	html {
-		scroll-behavior: auto;
-	}
-}
-
-body {
-	margin: 0;
-	overflow-x: hidden;
-}
-
-/* Full-bleed zone sections. Each one is a canvas-watch trigger. */
-.cw-zone {
-	position: relative;
-	padding-block: clamp(4.5rem, 10vw, 7.5rem);
-	padding-inline: 1.5rem;
-}
-
-.cw-zone--hero {
-	min-block-size: min(100svh, 52rem);
-	display: flex;
-	align-items: center;
-	padding-block-start: clamp(6rem, 14vh, 9rem);
-}
-
-/*
- * The single content rail.
- *
- * `.cw-shell` is the *only* element on the page allowed to centre itself. Width
- * constraints on prose use `.cw-measure`, which narrows without re-centring —
- * combining `margin-inline: auto` with a narrower measure is what made the
- * content column's left edge jump from section to section.
- */
-.cw-shell {
-	inline-size: min(72rem, 100%);
-	margin-inline: auto;
-}
-
-.cw-measure {
-	inline-size: min(42rem, 100%);
-}
-
-.cw-measure--wide {
-	inline-size: min(54rem, 100%);
-}
-
-/*
- * Prose sitting on an inverse canvas.
- *
- * Nothing inherits `color` in zebkit — the base layer declares it on `p` and
- * `h1`–`h6` from their own tokens, and a declared colour beats an inherited one
- * regardless of cascade layer. So an `ink-*-inverse` utility on a section
- * recolours the section element and nothing inside it, which left the hero's
- * lede at 1.3:1 against its own canvas.
- *
- * `inherit` rather than a named token, so one rule serves every inverse zone.
- * This is opt-in per container instead of a descendant rule on the zone,
- * because the glass surfaces inside these sections carry their own adaptive
- * ink and must keep it.
- */
-.cw-inverse-prose :where(p, h2, h3, h4, h5, h6, li, dt, dd) {
-	color: inherit;
-}
-
-/*
- * Focus ring contrast.
- *
- * The theme's focus colour is a cyan that measures 2.30:1 against the page
- * canvas and 2.17:1 against the docs canvas — both under the 3:1 a focus
- * indicator owes against what surrounds it. The action ink clears 10.64:1 and
- * 10.02:1 on those two surfaces, and it is already the page's link colour, so
- * the ring reads as part of the same system.
- *
- * Each zebkit component owns its own focus token rather than reading the app
- * one, so every component in use is remapped, not just `app.focus-color`.
- */
-:root {
+	--cw-rule: color-mix(in srgb, var(--zbk-app-border) 28%, var(--zbk-app-canvas));
+	--cw-demo-paper: var(--zbk-brand-50);
+	--cw-demo-rose: var(--zbk-accent-primary-100);
+	--cw-demo-ink: var(--zbk-brand-800);
+	--cw-demo-dark-text: var(--zbk-brand-900);
+	--cw-demo-light-text: var(--zbk-brand-100);
 	--zbk-focus-color: var(--zbk-action-ink);
-	--zbk-link-focus-color: var(--zbk-action-ink);
 	--zbk-button-focus-color: var(--zbk-action-ink);
-	--zbk-radio-focus-color: var(--zbk-action-ink);
+	--zbk-link-focus-color: var(--zbk-action-ink);
 	--zbk-toggle-focus-color: var(--zbk-action-ink);
 }
+html { scroll-behavior: smooth; scroll-padding-block-start: 2rem; font-synthesis: none; }
+html[data-zbk-theme='light'] { color-scheme: light; }
+html[data-zbk-theme='dark'] { color-scheme: dark; }
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; min-inline-size: 0; background: var(--zbk-app-canvas); color: var(--zbk-app-ink); }
+a { color: var(--zbk-action-ink); text-underline-offset: .2em; text-decoration-thickness: .065em; }
+a:hover { color: var(--zbk-action-ink-emphasis); }
+:focus-visible { outline: 3px solid var(--zbk-focus-color); outline-offset: 4px; }
+button, summary, input[type='range'], a { cursor: pointer; }
+img, svg { max-inline-size: 100%; }
+::selection { background: var(--zbk-brand-200); color: var(--zbk-brand-900); }
+.visually-hidden { position: absolute !important; inline-size: 1px !important; block-size: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip-path: inset(50%) !important; white-space: nowrap !important; border: 0 !important; }
+.skip-link { position: fixed; inset: 1rem auto auto 1rem; z-index: 100; padding: .75rem 1rem; max-inline-size: calc(100% - 2rem); background: var(--zbk-app-canvas); transform: translateY(-200%); border: 2px solid currentColor; border-radius: var(--zbk-border-radius-sm); }
+.skip-link:focus { transform: none; }
 
-/*
- * The inverse zones have to re-declare all five, not just `--zbk-focus-color`.
- * A var() inside a custom property resolves where that property is *declared*,
- * so the aliases above are already baked to the light value by the time they
- * inherit down here — the same composed-token trap this site documents under
- * Limitations.
- */
-.cw-zone:is(.ink-brand-inverse, .ink-accent-primary-inverse, .ink-accent-secondary-inverse) {
-	--zbk-focus-color: var(--zbk-color-global-white, #fff);
-	--zbk-link-focus-color: var(--zbk-color-global-white, #fff);
-	--zbk-button-focus-color: var(--zbk-color-global-white, #fff);
-	--zbk-radio-focus-color: var(--zbk-color-global-white, #fff);
-	--zbk-toggle-focus-color: var(--zbk-color-global-white, #fff);
-}
+/* The same masthead rhythm as the Dynamo library sites, in canvas-watch colors. */
+.masthead { padding: 1rem clamp(1rem, 4vw, 4rem) 1.5rem; background: var(--zbk-brand-100); border-block-end: 1px solid var(--cw-rule); }
+.header-tools { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; max-inline-size: 78rem; margin-inline: auto; }
+.header-tools > :last-child { justify-self: end; }
+.signature-link { inline-size: 2.25rem; block-size: 2.25rem; color: var(--zbk-brand-700); }
+.signature-link svg { display: block; inline-size: 100%; block-size: 100%; }
+.font-control { display: flex; align-items: center; gap: .25rem; color: var(--zbk-brand-700); }
+.font-control > span { font-size: 1.15rem; min-inline-size: 1.7rem; text-align: center; }
+.font-control__small { font-size: .75em; }
+.brand-intro { max-inline-size: 56rem; margin: 1rem auto 1.5rem; text-align: center; }
+.eyebrow, .section-index { display: block; font-family: var(--zbk-font-family-code); font-size: var(--zbk-font-size-2xs); font-weight: 500; letter-spacing: .075em; line-height: 1.7; text-transform: uppercase; }
+.wordmark { margin: 0; color: var(--zbk-brand-700); font-family: var(--zbk-font-family-primary); font-size: clamp(2.5rem, 7.3vw, 5rem); font-weight: 800; letter-spacing: -.065em; line-height: 1.12; }
+.wordmark__part { display: inline-block; }
+.wordmark__hyphen { color: var(--zbk-accent-primary-700); padding-inline: .025em; }
+.hero-description { margin: 1rem auto 0; max-inline-size: 42rem; color: var(--zbk-brand-700); font-size: var(--zbk-font-size-md); line-height: 1.6; }
+.hero-description strong { font-weight: 750; color: var(--zbk-brand-800); }
+.hero-example { max-inline-size: 58rem; margin-inline: auto; }
+.hero-caption { text-align: center; font-size: var(--zbk-font-size-xs); line-height: 1.7; color: var(--zbk-brand-700); margin: 1.25rem 0 0; }
 
-/*
- * The header is glass over whatever zone it is crossing, so no fixed ring
- * colour works for it. Reuse the adaptive ink the bar's own text resolves to —
- * it is already chosen per zone to contrast with that zone.
- */
-.cw-header {
-	--zbk-focus-color: var(--cw-glass-ink, var(--zbk-app-ink));
-	--zbk-link-focus-color: var(--cw-glass-ink, var(--zbk-app-ink));
-	--zbk-button-focus-color: var(--cw-glass-ink, var(--zbk-app-ink));
-	--zbk-toggle-focus-color: var(--cw-glass-ink, var(--zbk-app-ink));
-}
+/* A quiet reading column and the familiar right-side quick links. */
+.docs-layout { display: grid; grid-template-columns: minmax(0, 1fr) 14rem; grid-template-areas: 'content rail'; gap: clamp(2rem, 5.5vw, 5rem); inline-size: min(100%, 78rem); margin-inline: auto; padding: 3.5rem clamp(1rem, 4vw, 3rem) 5rem; align-items: start; }
+.docs-column { grid-area: content; min-inline-size: 0; }
+.docs-rail { grid-area: rail; align-self: stretch; }
+.rail-sticky { position: sticky; top: 2rem; display: flex; flex-direction: column; gap: 1.75rem; }
+.quick-links { padding: 1.25rem 1.15rem; border: 1px solid var(--cw-rule); border-radius: var(--zbk-border-radius-lg); background: var(--zbk-app-canvas-subtle); box-shadow: .4rem .4rem 0 var(--zbk-brand-100); }
+.quick-links h2 { margin: 0 0 .875rem; color: var(--zbk-brand-700); font-family: var(--zbk-font-family-heading); font-size: var(--zbk-h3-font-size); font-weight: 700; line-height: 1.3; }
+.cw-toc > p { display: none; }
+.cw-toc ul { display: flex; flex-direction: column; gap: .55rem; padding: 0; margin: 0; list-style: none; }
+.cw-toc a { display: block; font-size: var(--zbk-font-size-sm); line-height: 1.6; text-decoration-color: color-mix(in srgb, var(--zbk-action-ink) 35%, transparent); }
+.cw-toc a[aria-current='true'] { font-weight: 800; text-decoration-thickness: .15em; }
+.project-links { display: flex; flex-direction: column; gap: .5rem; margin-block-start: 1rem; padding-block-start: 1rem; border-block-start: 1px solid var(--cw-rule); font-size: var(--zbk-font-size-sm); }
+.back-to-top { align-self: start; font-size: var(--zbk-font-size-sm); }
+.mobile-docs-nav { display: none; }
+.mobile-docs-nav zbk-disclosure { margin: 0; }
+.capability-intro { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; padding-block-end: 2rem; border-block-end: 1px solid var(--cw-rule); margin-block-end: 3rem; }
+.capability-intro h2 { font-family: var(--zbk-font-family-heading); font-size: 1.55rem; font-weight: 700; color: var(--zbk-brand-700); line-height: 1.3; margin: 0 0 .6rem; }
+.capability-intro p { font-size: var(--zbk-p-font-size); line-height: var(--zbk-p-line-height); margin: 0; }
+.docs-section { scroll-margin-block-start: 2rem; }
+.docs-section + .docs-section { padding-block-start: 3rem; margin-block-start: 3rem; border-block-start: 1px solid var(--cw-rule); }
+.docs-section .section-index { color: var(--zbk-accent-primary-700); margin: 0 0 .5rem; }
+.docs-section > h2 { margin-block: 0 1.25rem; }
+.prose h3 > code { font-size: inherit; }
+.docs-section > h3 { margin-block: 2rem .75rem; }
+.docs-section > p { margin-block: .875rem 1.25rem; }
+:where(.prose, .lab-readout) :not(pre) > code { background: var(--zbk-prose-code-canvas); color: var(--zbk-prose-code-ink); border: var(--zbk-border-width-xs) solid var(--zbk-info-border); border-radius: var(--zbk-prose-code-inline-border-radius); padding: .1em .3em; font-size: var(--zbk-prose-code-font-size); overflow-wrap: anywhere; box-decoration-break: clone; }
+.import-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-block: 1.75rem; }
+.import-grid h3 { font-family: var(--zbk-font-family-heading); color: var(--zbk-brand-700); font-size: var(--zbk-h3-font-size); margin: 0 0 .5rem; }
+.import-grid > div { min-inline-size: 0; }
+.import-grid > div > code { font-size: var(--zbk-font-size-xs); }
+.import-grid p { font-size: var(--zbk-p-font-size); margin: .6rem 0 0; line-height: var(--zbk-p-line-height); }
+.prose .note { padding: 1.25rem; border: 1px solid var(--zbk-info-border); border-inline-start-width: 3px; border-radius: var(--zbk-border-radius-md); background: var(--zbk-info-canvas-subtle); color: var(--zbk-info-ink); font-size: var(--zbk-p-font-size); }
+.class-convention { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; margin-block: 1.5rem; }
+.class-convention > code { padding: .5rem .75rem; font-size: var(--zbk-font-size-xs); }
+.small-copy { font-size: var(--zbk-font-size-xs); color: var(--zbk-app-ink-muted); line-height: 1.75; }
+.shiki, .shiki span { color: var(--shiki-light); }
+[data-zbk-theme='dark'] .shiki, [data-zbk-theme='dark'] .shiki span { color: var(--shiki-dark); }
+zbk-code-block { display: block; min-inline-size: 0; margin-block: 1rem; }
+zbk-tabs section { min-inline-size: 0; }
+zbk-tabs section > p { font-size: var(--zbk-p-font-size); line-height: var(--zbk-p-line-height); }
+zbk-disclosure { display: block; margin-block: .75rem; }
+.example-heading { margin-block: 2.75rem 1rem; }
+.example-heading h3 { color: var(--zbk-brand-700); font-family: var(--zbk-font-family-heading); font-size: var(--zbk-h3-font-size); font-weight: 700; line-height: 1.4; margin: 0; }
+.example-heading p { font-size: var(--zbk-p-font-size); margin: .6rem 0 0; line-height: var(--zbk-p-line-height); }
+.rule-note { border: 1px solid var(--zbk-info-border); border-inline-start-width: 3px; padding: 1.25rem; margin-block-start: 1.75rem; border-radius: var(--zbk-border-radius-md); background: var(--zbk-info-canvas-subtle); color: var(--zbk-info-ink); }
+.rule-note strong { font-family: var(--zbk-font-family-heading); font-size: var(--zbk-h3-font-size); color: inherit; }
+.rule-note p { color: inherit; font-size: var(--zbk-p-font-size); margin: .5rem 0 0; line-height: var(--zbk-p-line-height); }
 
-/* ── Hero ───────────────────────────────────────────────────────────────────── */
+/* Original, measurable geometry for the examples. */
+.overlap-lab, .cw-viewport-demo { border: 1px solid var(--cw-rule); border-radius: var(--zbk-border-radius-lg); background: var(--zbk-app-canvas-subtle); }
+.cw-viewport-demo { container-type: inline-size; }
+.example-bar { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1rem; padding: .75rem 1rem; color: var(--zbk-app-ink-muted); border-block-end: 1px solid var(--cw-rule); font-size: var(--zbk-font-size-2xs); font-family: var(--zbk-font-family-code); border-radius: var(--zbk-border-radius-lg) var(--zbk-border-radius-lg) 0 0; }
+.live-label { display: inline-flex; align-items: center; gap: .4rem; font-family: var(--zbk-font-family-code); font-size: var(--zbk-font-size-2xs); color: var(--zbk-app-ink-muted); line-height: 1.6; }
+.live-dot { inline-size: .4rem; block-size: .4rem; border-radius: 100%; background: var(--zbk-accent-secondary-600); flex: 0 0 auto; }
+.lab-scene { position: relative; min-block-size: 15rem; display: flex; isolation: isolate; }
+.lab-zone { position: absolute; inset-block: 0; inline-size: 33.334%; color: var(--cw-demo-dark-text); }
+.lab-zone--paper { inset-inline-start: 0; background: var(--cw-demo-paper); }
+.lab-zone--rose { inset-inline-start: 33.333%; background: var(--cw-demo-rose); }
+.lab-zone--ink { inset-inline-start: 66.666%; background: var(--cw-demo-ink); color: var(--cw-demo-light-text); }
+.zone-caption { display: block; padding: 1rem; font-size: var(--zbk-font-size-2xs); font-family: var(--zbk-font-family-code); letter-spacing: .025em; overflow-wrap: anywhere; }
+.lab-track { position: absolute; inset-block-start: 55%; inset-inline: 5%; border-block-start: 1px dashed var(--zbk-brand-400); opacity: .4; pointer-events: none; }
+.lab-target, .lab-secondary { --target-ink: var(--cw-demo-dark-text); position: absolute; display: flex; align-items: center; justify-content: center; gap: .75rem; padding: 1rem 1.25rem; border: 1px solid currentColor; color: var(--target-ink); background: var(--cw-demo-paper); border-radius: var(--zbk-border-radius-md); transform: translate(-50%, -50%); line-height: 1.4; font-size: var(--zbk-font-size-xs); font-weight: 700; }
+.lab-target > :last-child, .lab-secondary > :last-child { min-inline-size: 0; overflow-wrap: anywhere; }
+.target-type, .secondary-mark { flex: 0 0 auto; white-space: nowrap; }
+.lab-target { inset-block-start: 55%; inset-inline-start: calc(19% + var(--position) * .62%); inline-size: 15rem; max-inline-size: 38%; }
+.lab-target:is(.over-rose,.on-rose) { --target-ink: var(--zbk-accent-primary-800); background: var(--cw-demo-rose); }
+.lab-target:is(.over-ink,.on-ink), .lab-secondary.over-ink { --target-ink: var(--cw-demo-light-text); background: var(--cw-demo-ink); }
+.target-type { font-family: var(--zbk-font-family-heading); font-size: 2rem; line-height: 1; }
+.target-caption { display: block; margin-block-start: .2rem; font-family: var(--zbk-font-family-code); font-weight: 400; font-size: var(--zbk-font-size-2xs); overflow-wrap: anywhere; }
+.lab-secondary { inset-block-start: 76%; inset-inline-start: calc(78% - var(--position) * .56%); font-size: var(--zbk-font-size-2xs); gap: .6rem; padding: .6rem .85rem; max-inline-size: 38%; }
+.lab-secondary.over-rose { --target-ink: var(--zbk-accent-primary-800); background: var(--cw-demo-rose); }
+.secondary-mark { font-size: 1.4rem; }
+.lab-zone--outer, .lab-zone--empty { inset-inline: 0; inline-size: 100%; background: var(--cw-demo-paper); }
+.lab-zone--nested { inset: 18% 28%; inline-size: 44%; background: var(--cw-demo-ink); color: var(--cw-demo-light-text); border-radius: var(--zbk-border-radius-md); }
+.lab-zone--half { inset-block: 25% 15%; inline-size: 22%; background: var(--cw-demo-rose); }
+.lab-zone--half-a { inset-inline-start: 28%; border-radius: .5rem 0 0 .5rem; }
+.lab-zone--half-b { inset-inline-start: 50%; border-inline-start: 1px dashed var(--zbk-accent-primary-400); border-radius: 0 .5rem .5rem 0; }
+.lab-zone--half-b .zone-caption { text-align: end; }
+.lab-zone--duplicate { background: repeating-linear-gradient(135deg,transparent 0 8px,color-mix(in srgb,var(--zbk-accent-primary-400) 30%,transparent) 8px 9px); border: 1px dashed var(--zbk-accent-primary-700); }
+.lab-workspace { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-areas: 'scene scene' 'movement threshold' 'position threshold'; gap: 0 1.5rem; }
+.lab-scene { grid-area: scene; }
+.movement-label { grid-area: movement; margin: 1rem 0 .5rem 1.15rem; }
+.position-control { grid-area: position; margin: 0 0 .65rem 1.15rem; }
+.threshold-control { grid-area: threshold; align-self: center; padding: 1rem 1.15rem .65rem 0; }
+.range-field { min-inline-size: 0; }
+.range-field label, .movement-label { display: flex; justify-content: space-between; gap: .5rem; font-size: var(--zbk-font-size-sm); font-weight: 600; line-height: 1.7; color: var(--zbk-app-ink); }
+.range-field label { margin-block-end: .5rem; }
+.range-field output { font-family: var(--zbk-font-family-code); font-size: var(--zbk-font-size-2xs); white-space: nowrap; }
+.range-field input { display: block; inline-size: 100%; min-inline-size: 0; block-size: 1.75rem; margin: 0; accent-color: var(--zbk-brand-600); }
+.lab-readout { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem 1.5rem; padding: .75rem 1.15rem 1.25rem; font-size: var(--zbk-font-size-xs); color: var(--zbk-app-ink-muted); }
+.lab-readout > div { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; min-inline-size: 0; }
+.lab-readout code { padding: .25rem .5rem; }
+.lab-extra { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; padding: .25rem 1.15rem 1rem; }
+.lab-extra > span { font-size: var(--zbk-font-size-2xs); color: var(--zbk-app-ink-muted); }
+.event-detail pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--zbk-font-size-xs); line-height: 1.7; }
+.overlap-lab--compact { box-shadow: 0 .5rem 0 color-mix(in srgb,var(--zbk-brand-700) 5%,transparent); }
+.overlap-lab--compact .lab-scene { min-block-size: 14rem; }
+.overlap-lab--compact .lab-target { inset-block-start: 38%; }
+.overlap-lab--compact .lab-secondary { inset-block-start: 78%; }
+.overlap-lab--compact .lab-workspace { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'scene' 'movement' 'position'; }
+.overlap-lab--compact :is(.movement-label,.position-control) { inline-size: min(100% - 2.3rem, 25rem); justify-self: center; margin-inline: 0; }
+.overlap-lab--compact .lab-readout { justify-content: center; }
+.lab-target--shadow { --shadow-color: var(--zbk-brand-700); background: var(--cw-demo-paper) !important; --target-ink: var(--cw-demo-dark-text) !important; box-shadow: 0 12px 32px -8px color-mix(in srgb,var(--shadow-color) 60%,transparent); border-color: color-mix(in srgb,var(--shadow-color) 40%,transparent); }
+.lab-target--shadow svg { inline-size: 1.5rem; flex: 0 0 auto; }
+.lab-target--shadow.over-rose { --shadow-color: var(--zbk-accent-primary-600); }
+.lab-target--shadow.over-ink { --shadow-color: var(--zbk-brand-300); }
 
-.cw-hero {
-	display: grid;
-	gap: clamp(2.5rem, 5vw, 4.5rem);
-	align-items: center;
-}
+/* Viewport state is measured against this page, never a simulated rectangle. */
+.viewport-demo__body { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.5rem; padding: 1.5rem; align-items: center; }
+.viewport-demo__state .eyebrow { color: var(--zbk-app-ink-muted); font-size: var(--zbk-font-size-2xs); }
+.viewport-demo__state .viewport-value { color: var(--zbk-brand-700); font-family: var(--zbk-font-family-heading); font-size: var(--zbk-h3-font-size); font-weight: 700; line-height: 1.3; margin: .6rem 0 1rem; }
+.viewport-states { display: flex; flex-wrap: wrap; gap: .35rem; }
+.viewport-states > span { font-family: var(--zbk-font-family-code); font-size: var(--zbk-font-size-2xs); border: 1px solid var(--cw-rule); padding: .25rem .4rem; border-radius: .25rem; }
+.viewport-states > span.active { color: var(--zbk-brand-100); background: var(--zbk-brand-700); border-color: var(--zbk-brand-700); font-weight: 700; }
+.viewport-demo__state .small-copy { font-size: var(--zbk-font-size-xs); }
+.viewport-demo__reference-area { min-inline-size: 0; padding: 1rem; background: repeating-linear-gradient(-45deg,var(--zbk-brand-100) 0 6px,var(--zbk-app-canvas-subtle) 6px 12px); border: 1px solid var(--cw-rule); border-radius: var(--zbk-border-radius-md); }
+.viewport-beacon { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .8rem; padding: 2rem .5rem; min-block-size: 14rem; background: var(--zbk-accent-secondary-100); border: 1px solid var(--zbk-accent-secondary-600); border-radius: .25rem; color: var(--zbk-accent-secondary-900); }
+.viewport-beacon strong { font-family: var(--zbk-font-family-heading); font-size: 1.8rem; }
+.viewport-beacon code { font-size: var(--zbk-font-size-2xs); background: transparent; }
+.viewport-missing { display: grid; place-content: center; text-align: center; min-block-size: 14rem; }
+.viewport-missing > span { font-family: var(--zbk-font-family-heading); font-size: 3rem; color: var(--zbk-app-ink-muted); }
+.viewport-missing p { font-size: var(--zbk-font-size-xs); }
+.declarative-example { padding: 1rem 1.25rem; display: flex; flex-wrap: wrap; gap: .5rem 1rem; justify-content: space-between; border: 1px solid var(--cw-rule); border-radius: .4rem; font-size: var(--zbk-font-size-xs); }
+.declarative-state { font-family: var(--zbk-font-family-code); font-weight: 700; }
+.cw-reference-above .declarative-state::after { content: 'cw-reference-above'; }
+.cw-reference-within .declarative-state::after { content: 'cw-reference-within'; }
+.cw-reference-below .declarative-state::after { content: 'cw-reference-below'; }
+.cw-reference-missing .declarative-state::after { content: 'cw-reference-missing'; }
+
+.table-scroll { overflow-x: auto; margin-block: 1.5rem; max-inline-size: 100%; border: 1px solid var(--cw-rule); border-radius: .5rem; }
+.table-scroll table { inline-size: 100%; border-collapse: collapse; font-size: var(--zbk-font-size-xs); line-height: 1.8; }
+.table-scroll caption { text-align: start; padding: .75rem 1rem; background: var(--zbk-brand-100); font-family: var(--zbk-font-family-code); font-size: var(--zbk-font-size-2xs); }
+.table-scroll th, .table-scroll td { text-align: start; vertical-align: top; padding: .875rem 1rem; border-block-end: 1px solid var(--cw-rule); }
+.table-scroll thead th { font-size: var(--zbk-font-size-xs); color: var(--zbk-app-ink-muted); font-weight: 600; }
+.table-scroll tbody th { inline-size: 40%; font-weight: 500; }
+.table-scroll tbody tr:last-child > * { border-block-end: 0; }
+.table-default { display: block; font-family: var(--zbk-font-family-code); font-size: var(--zbk-font-size-2xs); margin-block-start: .4rem; color: var(--zbk-app-ink-muted); overflow-wrap: anywhere; }
+.api-list { margin: 1rem 0; }
+.api-list > div { padding-block: 1rem; border-block-end: 1px solid var(--cw-rule); }
+.api-list dt { font-size: var(--zbk-font-size-sm); font-weight: 600; }
+.api-list dt code { font-size: inherit; }
+.api-list dd { margin: .5rem 0 0; font-size: var(--zbk-p-font-size); line-height: var(--zbk-p-line-height); }
+.how-it-works { padding-inline-start: 1.4rem; }
+.how-it-works li { margin-block: 1rem; padding-inline-start: .4rem; font-size: var(--zbk-p-font-size); line-height: var(--zbk-p-line-height); }
+.limits-list { margin-block: 1.5rem; }
+.limits-list > div { padding-block: 1.25rem; border-block-start: 1px solid var(--cw-rule); }
+.limits-list dt { font-family: var(--zbk-font-family-heading); font-size: var(--zbk-h3-font-size); font-weight: 700; color: var(--zbk-brand-700); }
+.limits-list dd { margin: .5rem 0 0; font-size: var(--zbk-p-font-size); line-height: var(--zbk-p-line-height); }
+.prose .closing-copy { font-family: var(--zbk-font-family-heading); font-size: 1.75rem; font-weight: 700; color: var(--zbk-brand-700); margin-block: 3rem 0; }
+.closing-copy a { display: inline-block; font-family: var(--zbk-font-family-primary); font-size: var(--zbk-font-size-xs); font-weight: 500; margin-block-start: .75rem; }
+.site-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; padding: 1.5rem clamp(1rem, 5vw, 4.5rem); background: var(--zbk-brand-200); color: var(--zbk-brand-800); font-size: var(--zbk-font-size-2xs); line-height: 1.6; }
+.site-footer a { color: inherit; font-size: inherit; }
+.footer-project { display: flex; align-items: center; gap: 1rem; }
+.footer-mark { inline-size: 2.5rem; block-size: 2.5rem; }
+.footer-project nav { display: flex; flex-wrap: wrap; gap: 1rem; }
+.footer-project nav a { display: inline-flex; align-items: center; gap: .25em; min-block-size: 2.75rem; }
+.site-footer > p { margin: 0; font-size: inherit; line-height: inherit; }
+
+[data-zbk-theme='dark'] .masthead { background: var(--zbk-brand-900); }
+[data-zbk-theme='dark'] :is(.hero-description,.hero-caption,.signature-link,.font-control,.wordmark) { color: var(--zbk-brand-200); }
+[data-zbk-theme='dark'] .hero-description strong { color: var(--zbk-brand-100); }
+[data-zbk-theme='dark'] .wordmark__hyphen { color: var(--zbk-accent-primary-300); }
+[data-zbk-theme='dark'] :is(.quick-links h2,.capability-intro h2,.import-grid h3,.example-heading h3,.viewport-demo__state .viewport-value,.limits-list dt,.prose .closing-copy) { color: var(--zbk-brand-200); }
+[data-zbk-theme='dark'] :is(.section-index,.docs-section .section-index) { color: var(--zbk-accent-primary-300); }
+[data-zbk-theme='dark'] .quick-links { box-shadow: .4rem .4rem 0 var(--zbk-brand-800); }
+[data-zbk-theme='dark'] .table-scroll caption { background: var(--zbk-brand-800); }
+[data-zbk-theme='dark'] .viewport-demo__reference-area { background: repeating-linear-gradient(-45deg,var(--zbk-brand-800) 0 6px,var(--zbk-app-canvas-subtle) 6px 12px); }
+[data-zbk-theme='dark'] .site-footer { background: var(--zbk-brand-900); color: var(--zbk-brand-200); }
 
 @media (min-width: 62rem) {
-	.cw-hero {
-		grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
-	}
+	.docs-rail { grid-row: 1; }
+}
+@media (max-width: 58rem) {
+	.docs-layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'rail' 'content'; gap: 2.5rem; padding-block-start: 2rem; }
+	.desktop-docs-nav { display: none; }
+	.mobile-docs-nav { display: block; }
+}
+@media (max-width: 38rem) {
+	.masthead { padding-block: 1rem 2rem; }
+	.header-tools { grid-template-columns: 1fr 1fr; gap: .5rem; }
+	.font-control { justify-self: end; gap: 0; }
+	.header-theme { grid-column: 1 / -1; }
+	.font-control > span { font-size: 1rem; min-inline-size: 1rem; }
+	.signature-link { inline-size: 1.75rem; block-size: 1.75rem; }
+	.brand-intro { margin-block: 2.5rem 2rem; }
+	.desktop-break { display: none; }
+	.hero-caption { font-size: var(--zbk-font-size-2xs); padding-inline: .5rem; }
+	.example-bar { font-size: var(--zbk-font-size-2xs); padding: .65rem .75rem; }
+	.example-bar > :last-child { font-size: var(--zbk-font-size-2xs); }
+	.capability-intro { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+	.capability-intro h2 { font-size: 1.3rem; }
+	.capability-intro p { font-size: var(--zbk-p-font-size); }
+	.import-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+	.example-heading h3 { font-size: var(--zbk-h3-font-size); }
+	.table-scroll th, .table-scroll td { padding-inline: .75rem; }
+	.site-footer { padding-block: 1.25rem; gap: .75rem; }
 }
 
-/*
- * The hero diagram: a static miniature of what the playground does live, so the
- * concept is legible above the fold without waiting for a scroll. Decorative —
- * the figure is aria-hidden and the caption below carries the same information
- * in prose.
- */
-.cw-hero-figure {
-	position: relative;
-	border-radius: 1.25rem;
-	overflow: hidden;
-	border: 1px solid color-mix(in srgb, var(--zbk-brand-ink-inverse) 22%, transparent);
-	box-shadow: 0 24px 60px -24px rgb(0 0 0 / 0.55);
+/* The same measured rectangles become bands when a demo cannot fit side by side. */
+.overlap-lab--vertical { --cw-stage-size: 22rem; }
+.overlap-lab--vertical .lab-workspace { grid-template-columns: minmax(0, 1fr) 44px; grid-template-areas: 'movement movement' 'scene position' 'threshold threshold'; gap: 8px; padding: 12px 12px 8px; }
+.overlap-lab--vertical .movement-label { inline-size: 100%; margin: 0; }
+.overlap-lab--vertical .position-control { display: flex; align-items: center; justify-content: center; margin: 0; inline-size: auto; min-block-size: 0; }
+.overlap-lab--vertical .position-control input { writing-mode: vertical-lr; direction: ltr; width: 44px; height: var(--cw-stage-size); touch-action: none; }
+.overlap-lab--vertical .threshold-control { padding: .25rem 0 0; }
+.overlap-lab--vertical .lab-scene { min-block-size: var(--cw-stage-size); border: 1px solid var(--cw-rule); border-radius: var(--zbk-border-radius-md); }
+.overlap-lab--vertical .lab-zone { inset-inline: 0; inline-size: 100%; block-size: 33.334%; }
+.overlap-lab--vertical .lab-zone--paper { inset-block: 0 auto; }
+.overlap-lab--vertical .lab-zone--rose { inset-block: 33.333% auto; }
+.overlap-lab--vertical .lab-zone--ink { inset-block: 66.666% auto; }
+.overlap-lab--vertical .zone-caption { padding: .65rem .75rem; }
+.overlap-lab--vertical .lab-track { inset-block: 5%; inset-inline: 50% auto; border-block-start: 0; border-inline-start: 1px dashed var(--zbk-brand-400); }
+.overlap-lab--vertical .lab-target { inset-block-start: calc(17% + var(--position) * .66%); inset-inline-start: 50%; inline-size: 15rem; max-inline-size: 88%; flex-direction: column; text-align: center; padding: 12px; gap: 8px; font-size: var(--zbk-font-size-xs); }
+.overlap-lab--vertical .lab-target--shadow svg { display: none; }
+.overlap-lab--vertical .lab-target .target-caption { display: none; } /* The full class stays in the readout below. */
+.overlap-lab--vertical .target-type { font-size: 1.75rem; }
+.overlap-lab--vertical .lab-zone--outer, .overlap-lab--vertical .lab-zone--empty { inset: 0; block-size: 100%; }
+.overlap-lab--vertical .lab-zone--nested { inset: 28% 8%; inline-size: 84%; block-size: 44%; }
+.overlap-lab--vertical .lab-zone--half { inset-inline: 8%; inline-size: 84%; block-size: 22%; }
+.overlap-lab--vertical .lab-zone--half-a { inset-block: 28% auto; border-radius: .5rem .5rem 0 0; }
+.overlap-lab--vertical .lab-zone--half-b { inset-block: 50% auto; border-inline-start: 0; border-block-start: 1px dashed var(--zbk-accent-primary-400); border-radius: 0 0 .5rem .5rem; }
+.overlap-lab--vertical .lab-zone--half-b .zone-caption { text-align: end; }
+.overlap-lab--vertical.overlap-lab--compact .lab-target { inset-inline-start: 26%; max-inline-size: 42%; min-block-size: 4rem; padding: .5rem .25rem; }
+.overlap-lab--vertical.overlap-lab--compact .lab-target .target-type { font-size: min(1.5rem, 8vw); }
+.overlap-lab--vertical.overlap-lab--compact .target-copy { display: none; }
+.overlap-lab--vertical.overlap-lab--compact .lab-secondary { inset-inline-start: 74%; inset-block-start: calc(83% - var(--position) * .66%); inline-size: 42%; max-inline-size: 42%; min-block-size: 4rem; padding: .5rem .25rem; }
+.overlap-lab--vertical.overlap-lab--compact .lab-track { display: none; }
+.overlap-lab--vertical .lab-readout { gap: 8px 16px; padding: 8px 12px 12px; }
+.overlap-lab--vertical .lab-extra { align-items: stretch; flex-direction: column; gap: .5rem; padding: 0 12px 12px; }
+
+@container (max-width: 35rem) {
+	.viewport-demo__body { grid-template-columns: minmax(0, 1fr); padding: .75rem; gap: .75rem; }
+	.viewport-demo__reference-area { padding: .5rem; }
+	.viewport-beacon { min-block-size: 6rem; padding-block: .75rem; gap: .5rem; }
+	.viewport-demo__state zbk-button { display: block; }
 }
-
-.cw-hero-figure__band {
-	display: flex;
-	align-items: center;
-	padding: 0.85rem 1.1rem;
-	min-block-size: 5.5rem;
-	font-size: 0.75rem;
-	letter-spacing: 0.04em;
-	font-family: var(--zbk-font-family-code, ui-monospace, SFMono-Regular, Menlo, monospace);
+@media (prefers-reduced-motion: no-preference) {
+	.lab-target--shadow { transition: box-shadow 180ms ease, border-color 180ms ease; }
 }
-
-.cw-hero-figure__card {
-	position: absolute;
-	inset-inline: clamp(1.5rem, 8%, 3.5rem);
-	inset-block-start: 38%;
-	z-index: 2;
-	padding: 0.85rem 1rem;
-	border-radius: 0.85rem;
-	border: 1px solid color-mix(in srgb, var(--cw-glass-ink) 30%, transparent);
-	box-shadow: 0 12px 32px -10px rgb(0 0 0 / 0.5);
-}
-
-.cw-hero-figure__overlap {
-	position: absolute;
-	inset-inline-end: 0.75rem;
-	inset-block-start: 0.75rem;
-	z-index: 3;
-	padding: 0.15rem 0.5rem;
-	border-radius: 999px;
-	font-size: 0.65rem;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
-	background: color-mix(in srgb, var(--zbk-color-global-black) 45%, transparent);
-	color: rgb(255 255 255 / 0.92);
-}
-
-/* ── Instrument: the shared skin for both live demos ─────────────────────────
- *
- * The two demos show different features, but they are the same product and
- * should read as siblings. This block owns everything they have in common —
- * the dark instrument surface, the grid texture, the accent glow, the eyebrow,
- * the display-type state line and the pill badges — and each demo adds only
- * its own layout on top.
- *
- * Every declaration here was the viewport demo's, lifted verbatim so that demo
- * renders exactly as before; the overlap demo now composes from the same rules
- * rather than carrying a second, unrelated look.
- */
-
-.cw-instrument {
-	--cw-instrument-accent: #67e8f9;
-	--cw-instrument-accent-soft: rgb(103 232 249 / 0.22);
-	position: relative;
-	isolation: isolate;
-	overflow: hidden;
-	border: 1px solid rgb(255 255 255 / 0.24);
-	border-radius: clamp(1.25rem, 4vw, 2.5rem);
-	background:
-		radial-gradient(circle at 50% 50%, var(--cw-instrument-accent-soft), transparent 34%),
-		linear-gradient(145deg, rgb(9 8 31 / 0.96), rgb(20 12 48 / 0.96));
-	box-shadow:
-		0 2rem 6rem -2rem rgb(4 2 18 / 0.8),
-		inset 0 1px rgb(255 255 255 / 0.16);
-	transition:
-		background 420ms ease,
-		border-color 420ms ease;
-}
-
-.cw-instrument__grid {
-	position: absolute;
-	inset: 0;
-	pointer-events: none;
-	background-image:
-		linear-gradient(rgb(255 255 255 / 0.055) 1px, transparent 1px),
-		linear-gradient(90deg, rgb(255 255 255 / 0.055) 1px, transparent 1px);
-	background-size: 2.25rem 2.25rem;
-	mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
-}
-
-.cw-instrument__eyebrow {
-	margin: 0 0 0.35rem;
-	color: rgb(255 255 255 / 0.62);
-	font-size: 0.72rem;
-	font-weight: 700;
-	letter-spacing: 0.16em;
-	text-transform: uppercase;
-}
-
-.cw-instrument__state {
-	margin: 0;
-	color: var(--cw-instrument-accent);
-	font-family: var(--zbk-font-family-heading);
-	font-weight: 760;
-	line-height: 0.84;
-	letter-spacing: -0.055em;
-	text-shadow: 0 0 2.5rem var(--cw-instrument-accent-soft);
-	transition: color 320ms ease;
-}
-
-.cw-instrument__description {
-	margin: 0.9rem 0 0;
-	color: rgb(255 255 255 / 0.76);
-	font-size: clamp(0.85rem, 2vw, 1rem);
-}
-
-.cw-instrument__badges {
-	display: grid;
-	gap: 0.4rem;
-	justify-items: end;
-}
-
-.cw-instrument__badge {
-	padding: 0.35rem 0.65rem;
-	border: 1px solid rgb(255 255 255 / 0.12);
-	border-radius: 999px;
-	background: rgb(3 2 18 / 0.44);
-	color: rgb(255 255 255 / 0.46);
-	font-family: var(--zbk-font-family-code);
-	font-size: 0.72rem;
-	white-space: nowrap;
-	transition:
-		color 240ms ease,
-		border-color 240ms ease,
-		background 240ms ease,
-		box-shadow 240ms ease;
-}
-
-.cw-instrument__badge.active {
-	border-color: var(--cw-instrument-accent);
-	background: var(--cw-instrument-accent-soft);
-	box-shadow: 0 0 1.5rem var(--cw-instrument-accent-soft);
-	color: var(--cw-instrument-accent);
-}
-
-/* The pill control both demos use for their own action. */
-.cw-instrument__control {
-	min-block-size: 2.75rem;
-	padding: 0.6rem 1rem;
-	border: 1px solid color-mix(in srgb, var(--cw-instrument-accent) 68%, white);
-	border-radius: 999px;
-	background: rgb(3 2 18 / 0.72);
-	box-shadow: 0 0 1.75rem var(--cw-instrument-accent-soft);
-	color: var(--cw-instrument-accent);
-	font: inherit;
-	font-size: 0.8rem;
-	font-weight: 700;
-	cursor: pointer;
-	transition:
-		color 240ms ease,
-		border-color 240ms ease,
-		box-shadow 240ms ease,
-		transform 160ms ease;
-}
-
-.cw-instrument__control:hover {
-	transform: translateY(-2px);
-}
-
-.cw-instrument__control:focus-visible {
-	outline: 3px solid white;
-	outline-offset: 3px;
-}
-
 @media (prefers-reduced-motion: reduce) {
-	.cw-instrument,
-	.cw-instrument__state,
-	.cw-instrument__badge,
-	.cw-instrument__control {
-		transition: none;
-	}
-	.cw-instrument__control:hover {
-		transform: none;
-	}
+	html { scroll-behavior: auto; }
 }
-
-/* ── Viewport state demo ───────────────────────────────────────────────────── */
-
-.cw-viewport-intro {
-	margin-block-end: clamp(2rem, 6vw, 4rem);
-}
-
-.cw-viewport-demo {
-	--cw-instrument-accent: #67e8f9;
-	--cw-instrument-accent-soft: rgb(103 232 249 / 0.22);
-	position: relative;
-	min-block-size: 300svh;
-	isolation: isolate;
-}
-
-.cw-viewport-demo[data-state='within'] {
-	--cw-instrument-accent: #fde047;
-	--cw-instrument-accent-soft: rgb(253 224 71 / 0.26);
-}
-
-.cw-viewport-demo[data-state='above'] {
-	--cw-instrument-accent: #f0abfc;
-	--cw-instrument-accent-soft: rgb(240 171 252 / 0.24);
-}
-
-.cw-viewport-demo[data-state='missing'] {
-	--cw-instrument-accent: #fb7185;
-	--cw-instrument-accent-soft: rgb(251 113 133 / 0.22);
-}
-
-/*
- * Skin comes from `.cw-instrument`; this adds only the sticky geometry.
- *
- * The accent is explicitly inherited: the state-driven values live on
- * `.cw-viewport-demo`, the parent, and `.cw-instrument` on this element would
- * otherwise shadow them with its own default and freeze the HUD on cyan.
- */
-.cw-viewport-demo__hud {
-	--cw-instrument-accent: inherit;
-	--cw-instrument-accent-soft: inherit;
-	position: sticky;
-	inset-block-start: 5.25rem;
-	block-size: min(42rem, calc(100svh - 6.5rem));
-	min-block-size: 25rem;
-}
-
-.cw-viewport-demo__glow,
-.cw-viewport-demo__frame {
-	position: absolute;
-	pointer-events: none;
-}
-
-.cw-viewport-demo__glow {
-	inline-size: min(72vw, 38rem);
-	aspect-ratio: 1;
-	inset: 50% auto auto 50%;
-	border-radius: 50%;
-	background: var(--cw-instrument-accent);
-	filter: blur(7rem);
-	opacity: 0.18;
-	transform: translate(-50%, -50%);
-	transition:
-		background 420ms ease,
-		opacity 420ms ease;
-}
-
-.cw-viewport-demo[data-state='within'] .cw-viewport-demo__glow {
-	opacity: 0.34;
-}
-
-.cw-viewport-demo__status {
-	position: absolute;
-	z-index: 3;
-	inset-block-start: clamp(1.25rem, 4vw, 2.25rem);
-	inset-inline-start: clamp(1.25rem, 4vw, 2.5rem);
-	max-inline-size: 30rem;
-}
-
-/* This demo's state word is the biggest thing on the page; the shared rule
-   carries everything but the size. */
-.cw-viewport-demo__state {
-	font-size: clamp(3rem, 10vw, 7.5rem);
-}
-
-.cw-viewport-demo__readout {
-	position: absolute;
-	z-index: 3;
-	inset-block-start: clamp(1.25rem, 4vw, 2.25rem);
-	inset-inline-end: clamp(1.25rem, 4vw, 2.5rem);
-}
-
-.cw-viewport-demo__frame {
-	z-index: 1;
-	inset: clamp(10rem, 24vw, 12rem) clamp(1rem, 4vw, 2.5rem) 5rem;
-	border-inline: 1px solid rgb(255 255 255 / 0.1);
-}
-
-.cw-viewport-demo__edge {
-	position: absolute;
-	inset-inline: 0;
-	display: flex;
-	align-items: center;
-	gap: 0.75rem;
-	color: rgb(255 255 255 / 0.42);
-	font-family: var(--zbk-font-family-code);
-	font-size: 0.68rem;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-}
-
-.cw-viewport-demo__edge::after {
-	content: '';
-	flex: 1;
-	border-block-start: 1px dashed rgb(255 255 255 / 0.26);
-}
-
-.cw-viewport-demo__edge--top {
-	inset-block-start: 0;
-}
-
-.cw-viewport-demo__edge--bottom {
-	inset-block-end: 0;
-}
-
-.cw-viewport-demo__crosshair {
-	position: absolute;
-	inset: 50% auto auto 50%;
-	inline-size: min(44vw, 16rem);
-	aspect-ratio: 1;
-	border: 1px solid rgb(255 255 255 / 0.13);
-	border-radius: 50%;
-	transform: translate(-50%, -50%);
-}
-
-.cw-viewport-demo__crosshair::before,
-.cw-viewport-demo__crosshair::after {
-	content: '';
-	position: absolute;
-	inset: 50% auto auto 50%;
-	background: rgb(255 255 255 / 0.12);
-	transform: translate(-50%, -50%);
-}
-
-.cw-viewport-demo__crosshair::before {
-	inline-size: 140%;
-	block-size: 1px;
-}
-
-.cw-viewport-demo__crosshair::after {
-	inline-size: 1px;
-	block-size: 140%;
-}
-
-/* Appearance comes from `.cw-instrument__control`; this only places it. */
-.cw-viewport-demo__toggle {
-	position: absolute;
-	z-index: 4;
-	inset-inline-end: clamp(1.25rem, 4vw, 2.5rem);
-	inset-block-end: 1.25rem;
-}
-
-.cw-viewport-demo__beacon {
-	position: absolute;
-	z-index: 2;
-	inset-block-start: 135svh;
-	inset-inline-start: 50%;
-	display: grid;
-	place-content: center;
-	gap: 0.35rem;
-	inline-size: clamp(11rem, 32vw, 17rem);
-	aspect-ratio: 1;
-	border: 2px solid rgb(255 255 255 / 0.82);
-	border-radius: 38% 62% 55% 45% / 52% 42% 58% 48%;
-	background:
-		radial-gradient(circle at 32% 24%, white 0 5%, transparent 6%),
-		conic-gradient(from 215deg, #22d3ee, #fde047, #f472b6, #8b5cf6, #22d3ee);
-	box-shadow:
-		0 0 0 0.7rem rgb(255 255 255 / 0.07),
-		0 0 5rem 1.2rem var(--cw-instrument-accent-soft),
-		0 2.5rem 5rem -2rem rgb(0 0 0 / 0.8);
-	color: #120a2a;
-	text-align: center;
-	transform: translateX(-50%) rotate(-5deg);
-	transition:
-		box-shadow 420ms ease,
-		filter 420ms ease;
-}
-
-.cw-viewport-demo__beacon span {
-	font-family: var(--zbk-font-family-heading);
-	font-size: clamp(1.3rem, 4vw, 2rem);
-	font-weight: 800;
-	letter-spacing: -0.04em;
-}
-
-.cw-viewport-demo__beacon code {
-	font-size: clamp(0.68rem, 2vw, 0.82rem);
-}
-
-.cw-viewport-demo[data-state='within'] .cw-viewport-demo__beacon {
-	box-shadow:
-		0 0 0 0.85rem rgb(253 224 71 / 0.12),
-		0 0 7rem 2rem rgb(253 224 71 / 0.52),
-		0 2.5rem 5rem -2rem rgb(0 0 0 / 0.8);
-	filter: saturate(1.25) brightness(1.08);
-	animation: cw-viewport-pulse 1.8s ease-in-out infinite;
-}
-
-@keyframes cw-viewport-pulse {
-	50% {
-		box-shadow:
-			0 0 0 1.4rem rgb(253 224 71 / 0.04),
-			0 0 9rem 2.75rem rgb(253 224 71 / 0.64),
-			0 2.5rem 5rem -2rem rgb(0 0 0 / 0.8);
-	}
-}
-
-@media (max-width: 48rem) {
-	.cw-viewport-demo__hud {
-		inset-block-start: 4.75rem;
-		block-size: calc(100svh - 5.75rem);
-	}
-
-	.cw-viewport-demo__status {
-		inset-inline-end: 1.25rem;
-	}
-
-	.cw-viewport-demo__state {
-		font-size: clamp(3rem, 18vw, 5rem);
-	}
-
-	.cw-viewport-demo__description {
-		max-inline-size: 18rem;
-	}
-
-	.cw-viewport-demo__readout {
-		inset-block: auto 4.75rem;
-		inset-inline: 1rem;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		justify-items: stretch;
-	}
-
-	.cw-viewport-demo__readout span {
-		text-align: center;
-	}
-
-	.cw-viewport-demo__frame {
-		inset-block-start: 11.5rem;
-		inset-block-end: 8.5rem;
-	}
-
-	.cw-viewport-demo__toggle {
-		inset-inline: 1rem;
-		inline-size: calc(100% - 2rem);
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.cw-viewport-demo__hud,
-	.cw-viewport-demo__glow,
-	.cw-viewport-demo__state,
-	.cw-viewport-demo__readout span,
-	.cw-viewport-demo__toggle,
-	.cw-viewport-demo__beacon {
-		transition: none;
-	}
-
-	.cw-viewport-demo[data-state='within'] .cw-viewport-demo__beacon {
-		animation: none;
-	}
-}
-
 @media (forced-colors: active) {
-	.cw-viewport-demo__hud {
-		border: 2px solid CanvasText;
-		background: Canvas;
-		color: CanvasText;
-	}
-
-	.cw-viewport-demo__grid,
-	.cw-viewport-demo__glow {
-		display: none;
-	}
-
-	.cw-viewport-demo__state,
-	.cw-viewport-demo__readout span.active {
-		color: Highlight;
-	}
-
-	.cw-viewport-demo__beacon {
-		border-color: HighlightText;
-		background: Highlight;
-		box-shadow: none;
-		color: HighlightText;
-	}
-
-	.cw-viewport-demo__toggle {
-		border-color: ButtonText;
-		background: ButtonFace;
-		box-shadow: none;
-		color: ButtonText;
-	}
-}
-
-/* ── Docs body: sticky table of contents beside the content column ──────────── */
-
-.cw-docs {
-	display: grid;
-	gap: clamp(2rem, 5vw, 4rem);
-	align-items: start;
-}
-
-.cw-docs-body {
-	min-inline-size: 0;
-}
-
-@media (min-width: 60rem) {
-	.cw-docs {
-		grid-template-columns: 14rem minmax(0, 1fr);
-	}
-}
-
-.cw-toc {
-	display: none;
-}
-
-@media (min-width: 60rem) {
-	.cw-toc {
-		display: block;
-		position: sticky;
-		inset-block-start: 6rem;
-		max-block-size: calc(100vh - 8rem);
-		overflow-y: auto;
-	}
-}
-
-.cw-toc ul {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-.cw-toc a {
-	display: block;
-	padding-block: 0.3rem;
-	padding-inline-start: 0.75rem;
-	border-inline-start: 2px solid var(--cw-rule);
-	color: var(--zbk-app-ink-muted);
-	text-decoration: none;
-	line-height: 1.35;
-}
-
-.cw-toc a:hover {
-	color: var(--zbk-action-ink);
-	border-inline-start-color: var(--zbk-action-ink);
-}
-
-.cw-toc a[aria-current='true'] {
-	color: var(--zbk-action-ink);
-	border-inline-start-color: var(--zbk-action-ink);
-	font-weight: 600;
-}
-
-.cw-toc a:focus-visible {
-	outline: 2px solid var(--zbk-focus-color);
-	outline-offset: 2px;
-}
-
-/* Docs sections share one rhythm rather than each carrying its own margin. */
-.cw-docs-body > section + section {
-	margin-block-start: clamp(3rem, 6vw, 4.5rem);
-}
-
-/*
- * Section headings in the docs column.
- *
- * These were `<zbk-heading level="2">` until zebkit 0.28 removed the component;
- * a plain `<h2>` already picks up the h2 token scale from the base layer, so
- * this only owns the rhythm the wrapper used to provide.
- */
-.cw-docs-h2 {
-	margin-block: 0 var(--zbk-spacing-1, 1rem);
-	scroll-margin-block-start: 6rem;
-}
-
-/* ── Code blocks ────────────────────────────────────────────────────────────── */
-
-.cw-code {
-	position: relative;
-	border: 1px solid var(--cw-rule);
-	border-radius: 0.75rem;
-	overflow: hidden;
-	background: var(--zbk-app-canvas-subtle);
-}
-
-.cw-code__bar {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 1rem;
-	padding-inline: 0.9rem;
-	padding-block: 0.4rem;
-	border-block-end: 1px solid var(--cw-rule);
-	background: var(--zbk-app-canvas-muted);
-	font-size: 0.78rem;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	color: var(--zbk-app-ink-muted);
-}
-
-.cw-code pre {
-	margin: 0;
-	padding: 1rem 1.1rem;
-	overflow-x: auto;
-	font-size: 0.875rem;
-	line-height: 1.6;
-	tab-size: 2;
-}
-
-/* Shiki dual-theme output: light values inline, dark values swapped by token. */
-.shiki,
-.shiki span {
-	color: var(--shiki-light);
-	background-color: var(--shiki-light-bg);
-}
-
-[data-zbk-theme='dark'] .shiki,
-[data-zbk-theme='dark'] .shiki span {
-	color: var(--shiki-dark);
-	background-color: var(--shiki-dark-bg);
-}
-
-/* ── Reference tables ───────────────────────────────────────────────────────── */
-
-.cw-table-scroll {
-	overflow-x: auto;
-	border: 1px solid var(--cw-rule);
-	border-radius: 0.75rem;
-}
-
-.cw-table {
-	inline-size: 100%;
-	border-collapse: collapse;
-	font-size: 0.925rem;
-}
-
-.cw-table th,
-.cw-table td {
-	text-align: start;
-	padding: 0.7rem 0.9rem;
-	border-block-end: 1px solid var(--cw-rule);
-	vertical-align: top;
-}
-
-.cw-table thead th {
-	background: var(--zbk-app-canvas-muted);
-	font-size: 0.8rem;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	color: var(--zbk-app-ink-muted);
-	white-space: nowrap;
-}
-
-.cw-table tbody tr:last-child th,
-.cw-table tbody tr:last-child td {
-	border-block-end: none;
-}
-
-.cw-table code {
-	white-space: nowrap;
-}
-
-code {
-	font-family: var(--zbk-font-family-code, ui-monospace, SFMono-Regular, Menlo, monospace);
-}
-
-/*
- * Inline code inside prose.
- *
- * The chip is mixed from `currentColor` rather than set to a fixed surface
- * token, because these sections sit on canvases of wildly different lightness.
- * A fixed light chip put pale ink on a pale background inside the dark zones —
- * `IntersectionObserver` was effectively invisible on the teal section. Deriving
- * the wash from the ink means the chip is always a low-contrast tint *of the
- * text*, on any canvas, in either theme.
- */
-.cw-measure :not(pre) > code,
-.cw-measure--wide :not(pre) > code,
-.cw-table :not(pre) > code {
-	background: color-mix(in srgb, currentColor 13%, transparent);
-	border-radius: 0.3rem;
-	padding: 0.1em 0.35em;
-	font-size: 0.9em;
-}
-
-/* ── Live class readout ─────────────────────────────────────────────────────── */
-
-.cw-readout {
-	font-family: var(--zbk-font-family-code, ui-monospace, SFMono-Regular, Menlo, monospace);
-	font-size: 0.78rem;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-/* ── Demo playground ─────────────────────────────────────────────────────────
- *
- * Two columns on desktop: the stage on the left, and the controls that drive it
- * plus the explanation on the right. The controls used to sit in a full-width
- * flex row above the frame, which pushed the threshold slider and the class
- * readout ~1000px apart with nothing between them.
- */
-
-/*
- * One column, full content width, inside the shared instrument shell so it
- * reads as a sibling of the viewport demo rather than a separate artefact.
- * The stage used to sit in a narrow grid column beside its own explanation,
- * which left the scroller a small target and gave the zones no horizontal
- * room — and horizontal variation is the whole point now that the panel
- * resolves three regions independently.
- */
-.cw-demo {
-	display: grid;
-	gap: clamp(1.25rem, 3vw, 1.75rem);
-	padding: clamp(1.25rem, 4vw, 2.25rem);
-}
-
-.cw-demo__head {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 1.25rem;
-	align-items: flex-start;
-	justify-content: space-between;
-	position: relative;
-	z-index: 2;
-}
-
-/* Smaller than the viewport demo's: that one is the whole screen, this one
-   shares its row with the badges. */
-.cw-demo__state {
-	font-size: clamp(2.25rem, 6vw, 4rem);
-}
-
-.cw-demo__controls {
-	display: flex;
-	flex-wrap: wrap;
-	gap: clamp(1rem, 3vw, 2rem);
-	align-items: flex-end;
-	justify-content: space-between;
-	position: relative;
-	z-index: 2;
-}
-
-.cw-demo__control {
-	flex: 1 1 18rem;
-	min-inline-size: 0;
-}
-
-.cw-demo__label {
-	display: block;
-	color: rgb(255 255 255 / 0.86);
-	font-family: var(--zbk-font-family-code);
-	font-size: 0.78rem;
-	font-weight: 600;
-}
-
-.cw-demo__hint {
-	margin: 0.5rem 0 0;
-	color: rgb(255 255 255 / 0.62);
-	font-size: 0.78rem;
-}
-
-.cw-demo__scrollers {
-	display: flex;
-	gap: 0.5rem;
-	flex: 0 0 auto;
-}
-
-.cw-panel {
-	padding: 1.15rem 1.25rem;
-	border: 1px solid var(--cw-rule);
-	border-radius: 1rem;
-	background: var(--zbk-app-canvas-subtle);
-}
-
-/*
- * Wrapper so the proxy strips can sit outside the scroller. Inside it they
- * would be clipped and their rects would lie, which is the very problem they
- * exist to solve.
- */
-.cw-stage-wrap {
-	position: relative;
-}
-
-.cw-stage__proxies {
-	position: absolute;
-	inset: 0;
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	pointer-events: none;
-	z-index: 0;
-}
-
-/* Deliberately paints nothing. It is a rect for the watcher, not a surface. */
-.cw-stage__proxy {
-	display: block;
-}
-
-.cw-stage {
-	position: relative;
-	z-index: 1;
-	block-size: min(30rem, 62vh);
-	overflow-y: auto;
-	/* Deliberately NOT overscroll-behavior: contain — that traps the wheel on a
-	   page-embedded demo. Default chaining hands scrolling back at the edges. */
-	border: 1px solid rgb(255 255 255 / 0.16);
-	border-radius: 1rem;
-	background: rgb(3 2 18 / 0.5);
-}
-
-.cw-range {
-	accent-color: var(--cw-instrument-accent);
-}
-
-/* Zones vary on both axes, so a wide panel spans several colours at once. */
-.cw-stage__row {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.cw-stage__cell {
-	min-block-size: 11rem;
-	display: flex;
-	align-items: flex-start;
-	padding: 0.85rem 1rem;
-	font-size: 0.72rem;
-	letter-spacing: 0.02em;
-	font-family: var(--zbk-font-family-code, ui-monospace, SFMono-Regular, Menlo, monospace);
-	overflow: hidden;
-}
-
-/*
- * The floating panel. One glass surface and one shadow — both whole-panel
- * properties — with the ink split across three independently watched regions,
- * exactly as the site header does it.
- */
-.cw-stage__panel {
-	position: sticky;
-	inset-block-start: 38%;
-	z-index: 2;
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	gap: 0.5rem;
-	inline-size: min(52rem, 92%);
-	margin-inline: auto;
-	padding: 0.9rem 1rem;
-	border-radius: 0.9rem;
-	/* Width and style only — `border` shorthand would reset the tinted
-	   border-color that `.cw-watched` sets (same specificity, later in source). */
-	border-width: 1px;
-	border-style: solid;
-}
-
-/*
- * Each region is its own glass tile: `.cw-glass` needs a positioned host with
- * a radius to hang its surface on, and giving each one its own means surface
- * and ink stay a matched pair even when the three disagree.
- */
-.cw-stage__region {
-	position: relative;
-	isolation: isolate;
-	min-inline-size: 0;
-	padding: 0.6rem 0.75rem;
-	border-radius: 0.6rem;
-}
-
-.cw-stage__spacer {
-	block-size: 9rem;
-}
-
-@media (max-width: 48rem) {
-	/* Two cells per row keeps each one wide enough for a region to resolve
-	   cleanly rather than straddling everything at once. */
-	.cw-stage__row,
-	.cw-stage__proxies {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-	.cw-stage__row > :nth-child(3),
-	.cw-stage__proxies > :nth-child(3) {
-		display: none;
-	}
-	.cw-stage__panel {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-	/* Region C is hidden here, so its badge would read a permanent "none". */
-	.cw-stage__panel > :nth-child(3),
-	.cw-demo .cw-instrument__badges > :nth-child(3) {
-		display: none;
-	}
-}
-
-.cw-range {
-	inline-size: 100%;
-	accent-color: var(--zbk-action-ink);
-}
-
-/* ── Demo bands ──────────────────────────────────────────────────────────────
- *
- * Six decorative surfaces drawn from zebkit's *global* colour primitives rather
- * than from a semantic module. That is the honest source: these bands carry no
- * meaning, so borrowing `critical` (an error colour) to paint one would be a lie
- * — and it is what made the old playground read as a traffic light.
- *
- * They alternate dark (step 900) and light (step 300) so every transition flips
- * the glass card's ink as well as shifting its hue, and they span the hue wheel
- * — 243°, 48°, 320°, 158°, 16°, 190° — so no two neighbours are close.
- *
- * The names are arbitrary on purpose: `cw-band-indigo-demozone` resolves to
- * `over-cw-band-indigo` by exactly the same convention as a zebkit canvas class,
- * which is the point — canvas-watch has no opinion about your class names.
- */
-
-.cw-band-indigo {
-	background: var(--zbk-color-indigo-900);
-}
-.cw-band-butterfield {
-	background: var(--zbk-color-butterfield-300);
-}
-.cw-band-merlot {
-	background: var(--zbk-color-merlot-900);
-}
-.cw-band-mint {
-	background: var(--zbk-color-mint-300);
-}
-.cw-band-ember {
-	background: var(--zbk-color-ember-900);
-}
-.cw-band-cyan {
-	background: var(--zbk-color-cyan-300);
-}
-
-/* Band labels sit directly on the band, so they take the same measured ink the
-   glass card uses over that band. */
-.cw-band-indigo {
-	color: hsl(243 40% 86%);
-}
-.cw-band-butterfield {
-	color: hsl(48 60% 20%);
-}
-.cw-band-merlot {
-	color: hsl(320 40% 86%);
-}
-.cw-band-mint {
-	color: hsl(158 60% 20%);
-}
-.cw-band-ember {
-	color: hsl(16 40% 86%);
-}
-.cw-band-cyan {
-	color: hsl(190 60% 20%);
-}
-
-/* ── Glass ───────────────────────────────────────────────────────────────────
- *
- * Technique adapted from https://codepen.io/daftplug/pen/QwbaYGO. Two layers,
- * both on a dedicated `.cw-glass__surface` child:
- *
- *   ::before captures the backdrop (backdrop-filter promotes it to a backdrop
- *            root), blurs it, and refracts that blurred result through an SVG
- *            displacement filter.
- *   ::after  paints the contextual tint and specular edge — the inset white
- *            hairlines that read as a bevel catching light. Unfiltered, so the
- *            tint stays even while the backdrop warps beneath it.
- *
- * The surface is near-transparent, which is the whole point and also the whole
- * problem: the text is effectively sitting on the zone itself, so ink has to be
- * chosen per zone rather than fixed. See the ink map below.
- *
- * Keeping the effect on a child prevents host pseudo-elements from colliding
- * with component decoration and keeps foreground content out of the filter's
- * stacking context. `.cw-glass` expects a positioned host with a border-radius;
- * the header, demo card and hero figure all supply that.
- */
-
-.cw-glass {
-	isolation: isolate;
-}
-
-/*
- * `.cw-tint` is the adaptive-ink half, split out from `.cw-glass` so an element
- * can take a zone's ink without also painting a glass surface.
- *
- * That split is what lets the header tint per region. A single bar spanning a
- * boundary can only hold one ink, so half of it lands on the wrong background —
- * visible any time the bar straddles a light and a dark zone. Wrapping each
- * cluster of bar content in its own watched `.cw-tint` gives each one its own
- * answer, from the same shared watcher.
- *
- * This needs nothing from the library. canvas-watch resolves against elements
- * carrying a `*-trigger` class, and the bar has none — it is invisible to the
- * watcher, so a nested watched element measures against the same page zones the
- * bar does rather than against the bar itself.
- */
-.cw-tint {
-	color: var(--cw-glass-ink, var(--zbk-app-ink));
-	transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.cw-glass__surface {
-	position: absolute;
-	inset: 0;
-	z-index: -1;
-	border-radius: inherit;
-	pointer-events: none;
-}
-
-.cw-glass__surface::before,
-.cw-glass__surface::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	pointer-events: none;
-}
-
-/*
- * `saturate` is deliberately gentle. At 1.6 the filter lifted the hero canvas
- * (brand.600) by 11 points of lightness before any ink was chosen, which both
- * blew the bar out into an electric slab and dropped its text to 4.45:1. At
- * 1.25 the lift is under 5 points, every zone clears 5:1, and the surface still
- * reads as glass enriching what is behind it.
- */
-.cw-glass__surface::before {
-	backdrop-filter: blur(8px) saturate(1.25);
-	filter: url(#cw-glass-lens);
-}
-
-.cw-glass--panel .cw-glass__surface::before {
-	filter: url(#cw-glass-panel);
-}
-
-/* The tint is driven by the same `over-*` class as the ink. It deliberately
-   changes hue, not just opacity: the surface borrows the winning canvas's
-   colour while keeping the amount of pigment a property of the surface type. */
-.cw-glass__surface::after {
-	background-color: color-mix(
-		in srgb,
-		var(--cw-glass-tint, var(--zbk-app-canvas-muted))
-			var(--cw-glass-tint-strength, 14%),
-		transparent
-	);
-	box-shadow:
-		inset 2px 2px 0 -2px rgb(255 255 255 / 0.7),
-		inset 0 0 3px 1px rgb(255 255 255 / 0.7);
-	transition: background-color 400ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* The mark and the switch take their group's own answer. `--cw-glass-accent` is
-   only defined for the demo bands, so page zones fall through to the ink — which
-   is already held to 4.5:1 and so clears the 3:1 these need. */
-.cw-tint {
-	--cw-accent: var(--cw-glass-accent, var(--cw-glass-ink, var(--zbk-app-ink)));
-}
-
-/*
- * zebkit's base layer declares `color` on p and the heading tags from its own
- * tokens. A declared colour always beats an inherited one — layers do not enter
- * into it — so `color` on `.cw-tint` reached the element's own text but not any
- * paragraph inside it, leaving the card's headline on app ink over an adaptive
- * surface. `:where()` keeps this at `.cw-tint` specificity so the more specific
- * tiers below still win on source order.
- */
-.cw-tint :where(p, h1, h2, h3, h4, h5, h6, li, code) {
-	color: var(--cw-glass-ink, var(--zbk-app-ink));
-}
-
-/* Zebkit components colour themselves from tokens, not from `color`, so they
-   would ignore the adaptive ink and keep their fixed action colour on a
-   transparent bar. Point their ink at the same variable. */
-.cw-tint zbk-link:not([appearance='button']),
-.cw-tint .zbk-link {
-	--zbk-link-ink: var(--cw-glass-ink);
-	--zbk-link-ink-hover: var(--cw-glass-ink);
-	--zbk-link-ink-focus: var(--cw-glass-ink);
-	--zbk-link-ink-active: var(--cw-glass-ink);
-	--zbk-link-ink-current: var(--cw-glass-ink);
-	--zbk-link-ink-current-hover: var(--cw-glass-ink);
-	--zbk-link-ink-current-focus: var(--cw-glass-ink);
-	--zbk-link-ink-current-active: var(--cw-glass-ink);
-	--zbk-link-ink-visited: var(--cw-glass-ink);
-	--zbk-link-ink-visited-hover: var(--cw-glass-ink);
-	--zbk-link-ink-visited-focus: var(--cw-glass-ink);
-	--zbk-link-ink-visited-active: var(--cw-glass-ink);
-	--zbk-link-decoration-color: var(--cw-glass-ink);
-	--zbk-link-decoration-color-hover: var(--cw-glass-ink);
-	--zbk-link-decoration-color-visited: var(--cw-glass-ink);
-	--zbk-link-decoration-color-visited-hover: var(--cw-glass-ink);
-}
-
-/* The switch's label is the same story: `.zbk-toggle` declares
-   `color: var(--zbk-toggle-ink)`, which pinned "Dark" to a fixed near-black —
-   measured about 2:1 on the hero bar — while everything around it adapted. */
-.cw-tint zbk-toggle,
-.cw-tint .zbk-toggle {
-	--zbk-toggle-ink: var(--cw-glass-ink, var(--zbk-app-ink));
-	--zbk-toggle-canvas-checked: var(--cw-accent);
-	--zbk-toggle-canvas-checked-hover: var(--cw-accent);
-	--zbk-toggle-canvas-checked-active: var(--cw-accent);
-	--zbk-toggle-border-color-checked: var(--cw-accent);
-	--zbk-toggle-border-color-checked-hover: var(--cw-accent);
-	--zbk-toggle-border-color-checked-active: var(--cw-accent);
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.cw-tint,
-	.cw-glass__surface::after {
-		transition: none;
-	}
-}
-
-/* Neither Firefox nor older Safari will displace a backdrop through an SVG
-   filter. Without a fallback the surface would be nearly invisible there, so
-   fall back to a solid-enough frost. */
-@supports not (backdrop-filter: blur(1px)) {
-	.cw-glass__surface::before {
-		background: color-mix(in srgb, var(--zbk-app-canvas-subtle) 88%, transparent);
-	}
-}
-
-@media (forced-colors: active) {
-	.cw-glass {
-		background: Canvas;
-		border-color: CanvasText;
-	}
-
-	.cw-glass__surface {
-		display: none;
-	}
-}
-
-/* ── Adaptive ink ────────────────────────────────────────────────────────────
- *
- * With a transparent surface the effective background *is* the zone, so each
- * zone picks its own tint and ink. Every pair below was computed against the
- * real backdrop after the gentle 1.25× saturation and contextual tint — not
- * against the raw band colour. Body and label ink clear 4.5:1; the accent
- * (mark, switch, borders) clears 3:1.
- */
-
-/* Page zones. */
-.cw-glass.over-canvas-brand-emphasis,
-.cw-tint.over-canvas-brand-emphasis {
-	--cw-glass-tint: var(--zbk-brand-canvas-emphasis);
-	--cw-glass-ink: var(--zbk-brand-ink-inverse);
-}
-.cw-glass.over-canvas-brand-muted,
-.cw-tint.over-canvas-brand-muted {
-	--cw-glass-tint: var(--zbk-brand-canvas-muted);
-	--cw-glass-ink: var(--zbk-brand-ink-emphasis);
-}
-.cw-glass.over-canvas-brand-subtle,
-.cw-tint.over-canvas-brand-subtle {
-	--cw-glass-tint: var(--zbk-brand-canvas-subtle);
-	--cw-glass-ink: var(--zbk-brand-ink-emphasis);
-}
-.cw-glass.over-canvas-accent-primary,
-.cw-tint.over-canvas-accent-primary {
-	--cw-glass-tint: var(--zbk-accent-primary-canvas);
-	--cw-glass-ink: var(--zbk-accent-primary-ink-inverse);
-}
-.cw-glass.over-canvas-accent-secondary,
-.cw-tint.over-canvas-accent-secondary {
-	--cw-glass-tint: var(--zbk-accent-secondary-canvas);
-	--cw-glass-ink: var(--zbk-accent-secondary-ink-inverse);
-}
-
-/*
- * Display type as a zone of its own.
- *
- * The hero canvas is dark, so its answer is light ink — correct for the canvas,
- * wrong for the near-white display heading sitting on it, where a light bar
- * crossing the letters is light ink on light text. The heading carries
- * `cw-display-trigger`, a zone nested inside the hero's zone, and nesting wins:
- * over those letters the bar takes a deep ink that reads against them.
- *
- * Fixed rather than themed, like the demo bands: the heading is light in both
- * themes, so the ink answering it must not flip with the theme either.
- */
-.cw-glass.over-cw-display,
-.cw-tint.over-cw-display {
-	--cw-glass-tint: var(--zbk-brand-ink-inverse);
-	--cw-glass-ink: var(--zbk-brand-900);
-}
-
-/* No blanket dark rule here. A `[data-zbk-theme='dark'] .cw-glass` selector
-   ties on specificity with `.cw-tint.over-*` and, coming later, would win for
-   every zone — silently throwing away all the per-zone ink above. Only the
-   zones whose canvas actually changes in dark mode get an override. */
-[data-zbk-theme='dark'] .cw-glass.over-canvas-brand-muted,
-[data-zbk-theme='dark'] .cw-tint.over-canvas-brand-muted {
-	--cw-glass-tint: var(--zbk-brand-canvas-muted);
-	--cw-glass-ink: var(--zbk-brand-ink);
-}
-[data-zbk-theme='dark'] .cw-glass.over-canvas-brand-subtle,
-[data-zbk-theme='dark'] .cw-tint.over-canvas-brand-subtle {
-	--cw-glass-tint: var(--zbk-brand-canvas-subtle);
-	--cw-glass-ink: var(--zbk-brand-ink);
-}
-
-/*
- * Demo bands.
- *
- * These are theme-independent by construction: the band is a fixed primitive
- * that does not change between light and dark, so its ink must not either.
- * `--cw-glass-label` is the de-emphasised tier — it is a real second colour
- * rather than an opacity, because on a near-transparent surface there is no
- * headroom to spend on fading text out.
- */
-/*
- * Code blocks that sit inside a dark zone (see `isZone` in CodeBlock.svelte).
- * Unlike the bands and the beacon, this surface is theme-aware: it is painted
- * from `app.canvas-subtle`, so the pairing is expressed in the same tokens and
- * flips with the theme on its own.
- */
-.cw-glass.over-cw-code,
-.cw-tint.over-cw-code {
-	--cw-glass-tint: var(--zbk-app-canvas-subtle);
-	--cw-glass-ink: var(--zbk-app-ink);
-	--cw-glass-label: var(--zbk-app-ink-muted);
-	--cw-glass-accent: var(--zbk-action-ink);
-}
-
-/*
- * The viewport demo's beacon. It is decoration, but it is decoration the
- * floating header physically passes over — a bright conic gradient of cyan,
- * yellow, pink and violet, under which the header's light ink measured 1.2:1.
- * Theme-independent for the same reason the bands are: the beacon's own
- * colours do not change between light and dark.
- */
-.cw-glass.over-cw-beacon,
-.cw-tint.over-cw-beacon {
-	--cw-glass-tint: hsl(0 0% 100%);
-	--cw-glass-ink: hsl(245 40% 12%);
-	--cw-glass-label: hsl(245 25% 28%);
-	--cw-glass-accent: hsl(262 60% 36%);
-}
-
-.cw-glass.over-cw-band-indigo,
-.cw-tint.over-cw-band-indigo {
-	--cw-glass-tint: hsl(243 55% 6%);
-	--cw-glass-ink: hsl(243 55% 96%);
-	--cw-glass-label: hsl(243 40% 86%);
-	--cw-glass-accent: hsl(243 60% 70%);
-}
-.cw-glass.over-cw-band-butterfield,
-.cw-tint.over-cw-band-butterfield {
-	--cw-glass-tint: hsl(48 45% 94%);
-	--cw-glass-ink: hsl(48 70% 10%);
-	--cw-glass-label: hsl(48 60% 20%);
-	--cw-glass-accent: hsl(48 65% 28%);
-}
-.cw-glass.over-cw-band-merlot,
-.cw-tint.over-cw-band-merlot {
-	--cw-glass-tint: hsl(320 55% 6%);
-	--cw-glass-ink: hsl(320 55% 96%);
-	--cw-glass-label: hsl(320 40% 86%);
-	--cw-glass-accent: hsl(320 60% 70%);
-}
-.cw-glass.over-cw-band-mint,
-.cw-tint.over-cw-band-mint {
-	--cw-glass-tint: hsl(158 45% 94%);
-	--cw-glass-ink: hsl(158 70% 10%);
-	--cw-glass-label: hsl(158 60% 20%);
-	--cw-glass-accent: hsl(158 65% 28%);
-}
-.cw-glass.over-cw-band-ember,
-.cw-tint.over-cw-band-ember {
-	--cw-glass-tint: hsl(16 55% 6%);
-	--cw-glass-ink: hsl(16 55% 96%);
-	--cw-glass-label: hsl(16 40% 86%);
-	--cw-glass-accent: hsl(16 60% 70%);
-}
-.cw-glass.over-cw-band-cyan,
-.cw-tint.over-cw-band-cyan {
-	--cw-glass-tint: hsl(190 45% 94%);
-	--cw-glass-ink: hsl(190 70% 10%);
-	--cw-glass-label: hsl(190 60% 20%);
-	--cw-glass-accent: hsl(190 65% 28%);
-}
-
-/*
- * The panel variant: glass that has to stay readable *while it crosses a
- * boundary*, not just once it has settled.
- *
- * The header can afford a 14% tint because it is a thin bar over enormous zones.
- * A card drifting through six bands cannot: at the moment a new band takes the
- * majority, up to half the card is still over the old one, and with a near-
- * transparent surface that half is light ink on a light band — measured as low
- * as 2.3:1 mid-transition.
- *
- * So the panel carries more of the *winning* band's tint. Over its own band it
- * barely shifts the colour; over the band it is leaving, it imposes the new
- * band's hue and polarity, which is exactly what rescues the overlap. 74% is the
- * lowest strength at which every band clears 4.5:1 in every straddle — verified
- * against each neighbour pair, not just the settled state.
- */
-.cw-glass--panel {
-	--cw-glass-tint-strength: 74%;
-}
-
-/* The secondary tier inside any glass surface. */
-.cw-glass__label {
-	color: var(--cw-glass-label, var(--zbk-app-ink-muted));
-	transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.cw-glass__label {
-		transition: none;
-	}
-}
-
-/* The demo card is glass, so its border and shadow take the band's accent
-   rather than the page's ink — otherwise a dark border vanishes on a dark band.
-   `.cw-watched` owns the composite, so only the colour is re-pointed here. */
-.cw-stage__card.cw-glass {
-	--cw-shadow-color: var(--cw-glass-accent, var(--zbk-app-ink));
-	--cw-shadow-strength: 1.2;
-}
-
-/* The header hands the same accent to its mark and theme switch when it is over
-   a demo band. */
-.cw-watched.over-cw-band-indigo,
-.cw-watched.over-cw-band-butterfield,
-.cw-watched.over-cw-band-merlot,
-.cw-watched.over-cw-band-mint,
-.cw-watched.over-cw-band-ember,
-.cw-watched.over-cw-band-cyan {
-	--cw-shadow-color: var(--cw-glass-accent);
-	--cw-accent: var(--cw-glass-accent);
-	--cw-shadow-strength: 1.5;
-}
-
-/* ── Header ─────────────────────────────────────────────────────────────────── */
-
-/* Fixed rather than sticky so it takes no flow space: the hero starts at the
-   very top of the viewport and the bar always overlaps a zone. canvas-watch
-   cares about overlap geometry, not positioning mode — either works. */
-.cw-header {
-	position: fixed;
-	inset-block-start: 0.75rem;
-	inset-inline: 0;
-	z-index: 20;
-	inline-size: min(72rem, calc(100% - 1.5rem));
-	margin-inline: auto;
-	display: flex;
-	align-items: center;
-	gap: 0.75rem;
-	padding: 0.55rem 0.9rem;
-	border-radius: 1.1rem;
-	/* See the note on .cw-stage__card — never the `border` shorthand here. */
-	border-width: 1px;
-	border-style: solid;
-	/* No background or backdrop-filter here: `.cw-glass` owns the surface, via a
-	   blurred + refracted ::after and a tinted ::before. */
-
-}
-
-/*
- * The bar's content clusters. Each is its own watched element, so each resolves
- * its own zone and its own ink — see the note on `.cw-tint`.
- */
-/*
- * Each group resolves its own ink, and inherits nobody else's.
- *
- * The pairing rules below set `--cw-glass-ink` on `.cw-glass` as well as on
- * `.cw-tint`, because most glass surfaces are both. The header is not: it is
- * `.cw-glass` alone, and its groups are the `.cw-tint`s. So the whole-bar
- * answer was setting an ink that inherited straight into every group —
- * including groups that had resolved *no* zone of their own, which then wore
- * the bar's light ink over a white panel at 1.13:1.
- *
- * Resetting here makes `var(--cw-glass-ink, …)` fall back to the page ink for
- * a group with no answer. A group that does have one still wins: its
- * `.cw-tint.over-*` rule is two classes to this one.
- */
-.cw-header__group,
-.cw-stage__region {
-	--cw-glass-ink: initial;
-	--cw-glass-label: initial;
-}
-
-.cw-header__group {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.75rem;
-	min-inline-size: 0;
-}
-
-.cw-header__group--end {
-	justify-content: flex-end;
-
-	/* Hand this group's own zone accent to the theme switch.
-	 *
-	 * These are zebkit component tokens, declared on :root. That matters: the
-	 * `-hover` and `-active` variants are authored as `var(--zbk-toggle-canvas-checked)`
-	 * *on :root*, so they bake against the :root value and re-declaring only the
-	 * base here would leave hover reverting to the default action colour. This is
-	 * exactly the composed-token trap documented in the Gotchas section, met in
-	 * the wild — so every variant is re-declared on this element.
-	 *
-	 * Restyling a component instance is the escape hatch on zebkit's ladder, not
-	 * the first rung. It is deliberate here: the value is only knowable at
-	 * runtime, from whatever this end of the bar happens to be floating over,
-	 * which no token can express.
-	 */
-	--zbk-toggle-canvas-checked: var(--cw-accent);
-	--zbk-toggle-canvas-checked-hover: var(--cw-accent);
-	--zbk-toggle-canvas-checked-active: var(--cw-accent);
-	--zbk-toggle-border-color-checked: var(--cw-accent);
-	--zbk-toggle-border-color-checked-hover: var(--cw-accent);
-	--zbk-toggle-border-color-checked-active: var(--cw-accent);
-	--zbk-toggle-thumb-canvas: var(--cw-accent);
-	--zbk-toggle-thumb-canvas-hover: var(--cw-accent);
-}
-
-/* The mark's zones are drawn with currentColor, so this tints the icon without
-   touching the wordmark beside it — that stays app ink, where it can be held to
-   the 4.5:1 text threshold regardless of what's behind the bar.
-
-   The capsule's light half is cut from `--cw-mark-paper`: here that is the
-   winning zone's own canvas, the colour this group's ink was chosen against. So
-   the glyph re-tints with the bar, in the same frame, from the same answer. */
-.cw-mark__glyph {
-	color: var(--cw-accent);
-	--cw-mark-paper: var(--cw-glass-tint, var(--zbk-app-canvas));
-	transition: color 400ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-/* The switch needs no transition rule here: zebkit already lists background-color
-   and border-color in --zbk-toggle-transition-property, on a duration that
-   follows the runtime accessibility modifier. Styling .zbk-toggle__track
-   directly would also reach into a compiled skeleton class, which is not a
-   consumer API. */
-
-@media (prefers-reduced-motion: reduce) {
-	.cw-mark__glyph {
-		transition: none;
-	}
-}
-
-/* A sticky element can't stick if an ancestor clips overflow — keep the page
-   wrapper unclipped. (This is one of the documented gotchas.) */
-.cw-page {
-	position: relative;
-}
-
-.cw-header__spacer {
-	flex: 1 1 auto;
-	min-inline-size: 0;
-}
-
-/* The live readout is the nicest thing in the header, but on a phone the
-   controls need the room more. It is aria-hidden either way. Hiding the group
-   rather than the paragraph also takes the watched element out of play, so the
-   watcher is not resolving a zero-area box. */
-@media (max-width: 34rem) {
-	.cw-header__group:has(> .cw-readout) {
-		display: none;
-	}
-}
-
-.cw-skip-link {
-	position: absolute;
-	inset-block-start: -100%;
-	inset-inline-start: 0.75rem;
-	z-index: 40;
-	padding: 0.6rem 1rem;
-	border-radius: 0.5rem;
-	background: var(--zbk-app-canvas-subtle);
-	color: var(--zbk-action-ink);
-}
-
-.cw-skip-link:focus {
-	inset-block-start: 0.75rem;
-}
-
-/* ── Footer ─────────────────────────────────────────────────────────────────── */
-
-/* Same shape as the dynamowaves and dynamoblobs footers: the project mark beside
-   its two package links, attribution on the far end. Full-bleed and un-shelled on
-   purpose — it is the one band that doesn't ride the content rail. */
-.cw-footer {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-end;
-	justify-content: space-between;
-	gap: var(--zbk-spacing-2);
-	padding: var(--zbk-spacing-2) clamp(var(--zbk-spacing-105), 5vw, var(--zbk-spacing-card))
-		var(--zbk-spacing-1);
-	background: var(--zbk-brand-canvas-muted);
-	color: var(--zbk-brand-ink-emphasis);
-}
-
-.cw-footer p {
-	margin: 0;
-	font-size: var(--zbk-font-size-sm);
-	color: inherit;
-}
-
-.cw-footer__project {
-	display: flex;
-	align-items: flex-end;
-	gap: var(--zbk-spacing-1);
-}
-
-/* The footer's pair: the brand canvas as ink, the band it sits on as paper. The
-   mark's light half is that ink at 30%, so both halves stay legible on it. */
-.cw-footer__mark {
-	flex: none;
-	inline-size: var(--zbk-spacing-5);
-	block-size: var(--zbk-spacing-5);
-	color: var(--zbk-brand-canvas);
-	--cw-mark-paper: var(--zbk-brand-canvas-muted);
-}
-
-/* In dark the footer band is brand.800 and `brand-canvas` sits only 2.4:1 off
-   it — enough for a silhouette, not enough for the capsule crossing it. The
-   same step the header's accent takes in dark clears 3:1 against the band. */
-[data-zbk-theme='dark'] .cw-footer__mark {
-	color: var(--zbk-brand-300);
-}
-
-.cw-footer__links {
-	display: flex;
-	flex-direction: column;
-}
-
-@media (max-width: 40rem) {
-	.cw-footer,
-	.cw-footer__links {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-}
-
-/* ── Mark ───────────────────────────────────────────────────────────────────── */
-
-.cw-mark {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.5rem;
-	font-weight: 700;
-	letter-spacing: -0.01em;
-	text-decoration: none;
-	color: inherit;
-	white-space: nowrap;
-}
-
-.cw-mark__glyph {
-	flex: none;
-	inline-size: 1.375rem;
-	block-size: 1.375rem;
+	.lab-target, .lab-secondary { border: 2px solid CanvasText; background: Canvas; color: CanvasText; }
+	.live-dot { forced-color-adjust: none; background: CanvasText; }
+	.viewport-states > span.active { border: 2px solid Highlight; }
 }

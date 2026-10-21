@@ -1,0 +1,8 @@
+{
+  "bar-font-size": {
+    "$value": "{font-size.xs}"
+  },
+  "code-font-size": {
+    "$value": "{font-size.xs}"
+  }
+}

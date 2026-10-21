@@ -1,0 +1,14 @@
+{
+  "canvas-subtle": {
+    "$value": "{brand.800}"
+  },
+  "ink": {
+    "$value": "{brand.100}"
+  },
+  "ink-emphasis": {
+    "$value": "{brand.100}"
+  },
+  "border": {
+    "$value": "{brand.400}"
+  }
+}

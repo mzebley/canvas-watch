@@ -7,22 +7,22 @@
   "font-size": {
     "$value": "{font-size.lg}",
     "$type": "cssDimension",
-    "$description": "Font size for H3 elements — Carbon heading-03 (~20px)."
+    "$description": "font-size for H3 prose headings."
   },
   "font-weight": {
-    "$value": "{font-weight.normal}",
+    "$value": "{font-weight.bold}",
     "$type": "fontWeight",
-    "$description": "Font weight for H3 — Carbon heading-03 uses Regular."
+    "$description": "Shared library-site heading weight."
   },
   "line-height": {
     "$value": "{line-height.4}",
     "$type": "number",
-    "$description": "Line height for H3 elements with .prose applied directly or that are a child of a .prose container."
+    "$description": "line-height for H3 prose headings."
   },
   "letter-spacing": {
     "$value": "{letter-spacing.normal}",
     "$type": "dimension",
-    "$description": "Tracking for H3 — Carbon headings use neutral tracking."
+    "$description": "letter-spacing for H3 prose headings."
   },
   "measure": {
     "$value": "{text-measure.3}",
@@ -40,9 +40,9 @@
     "$description": "Amount of margin block end for H3 elements with .prose applied directly or that are a child of a .prose container."
   },
   "color": {
-    "$value": "{app.ink}",
+    "$value": "{brand.700}",
     "$type": "color",
-    "$description": "Color of H3 elements with .prose applied directly or that are a child of a .prose container."
+    "$description": "Brand heading ink."
   },
   "font-style": {
     "$value": "normal",

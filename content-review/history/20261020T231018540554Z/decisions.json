@@ -1,0 +1,352 @@
+{
+  "reviewId": "canvas-watch-site",
+  "revision": "a47f29b1b16acf20dc0d49898ba4dd3fb2a01e75b12180c99c80afd9999cd48e",
+  "version": 31,
+  "updatedAt": "2026-10-20T23:09:25.149167+00:00",
+  "decisions": {
+    "meta-title": {
+      "text": "canvas-watch · which background is your floating element over?",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.449945+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "meta-description": {
+      "text": "Work out which background zone a floating element is sitting over, and get that answer as a class you can style however you like. Framework-agnostic, with an optional Svelte adapter.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450363+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "meta-og-description": {
+      "text": "Tell a floating element which background it's over, and get that answer as a class. The styling is yours.",
+      "notes": "",
+      "decision": "pending",
+      "approvedText": "",
+      "approvedAt": "",
+      "updatedAt": "2026-10-20T23:09:25.132058+00:00"
+    },
+    "hero-eyebrow": {
+      "text": "(Remove the eyebrow. No replacement line above the headline.)",
+      "notes": "Remove entirely",
+      "decision": "pending",
+      "approvedText": "",
+      "approvedAt": "",
+      "updatedAt": "2026-10-20T23:09:25.133044+00:00"
+    },
+    "hero-h1": {
+      "text": "Tell a floating element which background it's over.",
+      "notes": "",
+      "updatedAt": "2026-10-20T22:57:13.022Z",
+      "approvedText": "Tell a floating element which background it's over.",
+      "approvedAt": "2026-10-20T22:57:13.022Z",
+      "decision": "approved"
+    },
+    "hero-lede": {
+      "text": "A sticky header crosses a dark hero, then a white section, then a photo. canvas-watch works out which zone it's sitting over and puts that answer on it as a class.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450369+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "hero-support": {
+      "text": "That's the whole library, and it's one class that stays in step as things move. Re-tint a shadow, flip ink from dark to light, swap a border, or invert the whole panel. The styling is yours.",
+      "notes": "Avoid em dashes",
+      "updatedAt": "2026-10-20T23:08:17.450371+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "hero-ctas": {
+      "text": "Try it\nSource on GitHub",
+      "notes": "",
+      "updatedAt": "2026-10-20T22:57:31.455Z",
+      "approvedText": "Try it\nSource on GitHub",
+      "approvedAt": "2026-10-20T22:57:31.455Z",
+      "decision": "approved"
+    },
+    "hero-figure-label": {
+      "text": "largest overlap wins",
+      "notes": "",
+      "updatedAt": "2026-10-20T22:57:43.755Z",
+      "approvedText": "largest overlap wins",
+      "approvedAt": "2026-10-20T22:57:43.755Z",
+      "decision": "approved"
+    },
+    "hero-figure-caption": {
+      "text": "The card straddles two zones. The one covering most of it wins, and its name lands on the card as a class. The bar at the top of this page is doing this for real, so scroll and read the class it's wearing.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450375+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "tryit-intro": {
+      "text": "Try it\n\nScroll inside the frame. The floating panel holds three regions, each one separately watched, and the cells behind them change colour across the row as well as down the stack. Wherever the panel spans a boundary its regions disagree, because each one takes the ink of whatever is under it.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450377+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "tryit-second": {
+      "text": "It needs nothing from the library beyond registering each region, because one watcher resolves them all in the same frame.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450379+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "demo-instrument-readout": {
+      "text": "Live overlap signal\n\nNo class / One ink / Two inks / Three inks\n\nNo zone covers enough of any region to clear the threshold.\nAll three regions resolved the same zone.\nThe panel spans a boundary, so its regions disagree and you get 2 different answers at once.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450380+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "demo-controls": {
+      "text": "threshold 0.50\nHow much of a region must sit over a cell before that cell's class applies.\n\nScroll up\nScroll down",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450382+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "demo-stage-label": {
+      "text": "Scrollable zone demo",
+      "notes": "",
+      "updatedAt": "2026-10-20T22:58:07.355Z",
+      "approvedText": "Scrollable zone demo",
+      "approvedAt": "2026-10-20T22:58:07.355Z",
+      "decision": "approved"
+    },
+    "demo-note-primary": {
+      "text": "Nothing coordinates those three regions. They're three watched elements sharing one watcher, and each one resolved against the cell under itself, in the same frame.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450385+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "demo-note-secondary": {
+      "text": "Drag the threshold to 1.00 and a region has to sit entirely within one cell before it takes anything, so any region straddling a boundary falls back to no class at all. The cells can't be page-level triggers, incidentally, because they're inside a scroller and a clipped cell still reports a full-size rect. Invisible proxy strips outside the scroller carry the trigger instead, one per column, relabelled as you scroll.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450386+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "demo-code-intro": {
+      "text": "The code running above\n\nThis demo builds its own watcher rather than joining the shared one, because threshold is set at construction and the slider changes it. Its selectors are deliberately distinct (-demozone rather than -trigger) so the page's own watcher never resolves these bands, and the header stays out of it.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450388+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "demo-disclosure": {
+      "text": "Show the markup and CSS",
+      "notes": "",
+      "updatedAt": "2026-10-20T22:58:20.688Z",
+      "approvedText": "Show the markup and CSS",
+      "approvedAt": "2026-10-20T22:58:20.688Z",
+      "decision": "approved"
+    },
+    "why-io-heading-lede": {
+      "text": "Why not just use an IntersectionObserver?\n\nBecause it can't answer this question, and because canvas-watch is already using one for the part it is good at.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450391+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "why-io-cant": {
+      "text": "What IntersectionObserver can't do\n\nAn IntersectionObserver measures a target against a root, and that root has to be an ancestor of the target, or the viewport. That's the whole model.\n\n\"Is this floating card mostly over that background band?\" involves two elements with no ancestor relationship at all. They're siblings, or cousins, or in unrelated parts of the tree. There's no root you can pass that expresses it, and no threshold array that recovers it. The answer you want is the overlap of two arbitrary rectangles, which is a different question from the one IO was built to answer.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450392+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "why-io-instead": {
+      "text": "So what does it do instead?\n\nIt compares getBoundingClientRect() on the watched element and on each candidate zone, takes the area of the intersection as a fraction of the watched element's own area, and applies the threshold and nesting rules. It's plain geometry, run once per frame.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450394+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "why-io-expensive-half": {
+      "text": "IntersectionObserver still does the expensive half\n\nRectangle math is cheap, but doing it for every element on a long page, every frame, is not. So canvas-watch keeps two IntersectionObservers whose only job is to decide what is worth measuring:\n\n[table] Observer / Watches / Effect\nElement gate — Every watched element — An element off screen is dropped from the measured set entirely. Its rect is never read and its class is cleared.\nZone gate — Every trigger zone, with a triggerRootMargin of 200px by default — Only zones near the viewport stay candidates, so a page with two hundred zones compares against the handful currently in play.\n\nThe result is that per-frame cost tracks what is on screen rather than how long the document is, and a page with nothing visible to resolve schedules no work at all. IO does what it's genuinely good at, which is cheap off-main-thread visibility signals, and the rectangle comparison only runs on what survives that filter.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450396+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "viewport-intro": {
+      "text": "Or track one reference crossing the viewport.\n\nThis is the library's second job, and it has nothing to do with overlap. Point it at an element and it reports whether that element is above the viewport, inside it, below it, or missing from the document entirely.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450398+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "viewport-instructions": {
+      "text": "Keep scrolling. The beacon starts below you, burns bright while any part of it is in view, then leaves above. Remove the reference to see missing, then restore it.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450400+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "viewport-demo-readout": {
+      "text": "Live viewport signal\n\nIn view / Above / Below / Missing / Resolving\n\nThe reference intersects the viewport now.\nIts bottom edge has crossed the viewport top.\nIts top edge has not reached the viewport bottom yet.\nThe ID is absent from the document.\nWaiting for the first client measurement.\n\nRemove the reference\nRestore the reference",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450402+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "concepts-definitions": {
+      "text": "Watched element\n\nA floating element you tag with watch-bg-canvas (or register through an adapter). It receives an over-* class describing the zone it currently sits over.\n\nTrigger zone\n\nA background element tagged with a *-trigger class. Each one maps to an over-* class by convention, so you strip the -trigger suffix and add the over- prefix.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450404+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "concepts-winner": {
+      "text": "The winner is the deepest zone, then the largest overlap\n\nOnly zones covering at least threshold of the watched element's own area are eligible, which is 50% by default. Among those the most deeply nested zone wins outright, and among zones at the same depth the largest overlap wins. If nothing clears the threshold, every over-* class is removed.\n\nNesting beats area because a zone inside another zone is the more specific answer. Otherwise a container could never be overridden, since its overlap is by definition at least its children's. Depth only reorders zones that already clear the threshold, so a nested zone that barely clips the element can't hijack it. Same-class rectangles count by their physical union, so duplicate pixels are never counted twice, and coverage stays paired with its depth so a tiny nested zone can't promote a same-class ancestor. The heading at the top of this page is a zone of its own inside the hero's, so the bar takes dark ink while it's crossing those pale letters and the hero's light ink everywhere else.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450406+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "concepts-event": {
+      "text": "Most restyling needs no JavaScript at all, so write CSS for the over-* class and you're done. When you need more, each change dispatches a canvaschange CustomEvent whose detail carries { appliedClass, previousClass }, each either a string or null. Use it to swap an icon set, re-render a chart's palette, or announce something. The Svelte adapter surfaces it as onChange.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450408+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "install-note": {
+      "text": "The Svelte adapter ships as a subpath entry point and pulls in an optional peer dependency, so install it only if you use it.\n\n[table] Import / What you get / Peer dependency\n@mzebley/canvas-watch — Framework-agnostic core (createCanvasWatcher) — none\n@mzebley/canvas-watch/svelte — Svelte adapter (watchBgCanvas action and reactive canvasWatch state) — svelte >= 5.7",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450409+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "usage-svelte": {
+      "text": "The action shares one watcher across the whole app and cleans up on destroy. class=\"watch-bg-canvas\" is optional when you use the action, since the action registers the node directly, but keeping it makes the intent obvious in markup.\n\nViewport state\n\ncanvasWatch('#hero') exposes reactive aboveViewport, inViewport, belowViewport and missing properties. The full state starts as unknown, and a missing ID becomes missing only after client resolution. Read these properties in a template or tracked effect. If you're calling imperatively, use observeViewport instead.\n\nElements that outlive a page, like a layout-level nav or player, are registered once and won't automatically see a new page's trigger zones. Re-scan after navigation:",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450412+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "usage-angular": {
+      "text": "There's no Angular entry point to install, because the core is enough. A standalone directive wraps it in about fifty lines including imports, and because it registers on getSharedWatcher() it joins the same single rAF loop as every other watched element on the page. This is code to own and adapt in your app rather than a shipped adapter, and the library's tests don't cover it.\n\nThe runOutsideAngular wrapper is the part worth keeping. The watcher's scroll listener and rAF loop would otherwise be zone-patched, and every scroll frame app-wide would trigger change detection. Re-entering the zone only when a class actually changes keeps that cost off the scroll path.\n\nElements that outlive a route, like a layout-level nav or player, are registered once and won't automatically see the next page's trigger zones. Re-scan after navigation:",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450414+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "api-create-watcher": {
+      "text": "Returns a live watcher in the browser, or a no-op during SSR, so you never need to guard typeof window. Invalid thresholds, margins, selectors and class mappings fail before any browser resources are allocated.\n\nwatchSelector — Selector for elements to watch.\ntriggerSelector — Coarse selector for trigger elements, refined in JS by triggerSuffix.\ntriggerSuffix — Suffix that marks a class as a trigger.\nappliedPrefix — Prefix for the applied class.\nclassMap — Explicit triggerClass → appliedClass overrides, which win over the convention.\nthreshold — Fraction of the watched element's own area that must overlap to count.\ntriggerRootMargin — Margin in px around the viewport for keeping a trigger zone \"active\".",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450416+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "api-watcher-methods": {
+      "text": "refresh() — Re-scan watch, trigger and declarative viewport elements.\nwatch(el) — Register one overlap owner. Returns an idempotent unwatch() function.\nobserveViewport(reference, listener) — Subscribe one owner to vertical viewport state. Returns an idempotent unsubscribe function.\nschedule() — Force a recompute on the next frame.\ndestroy() — Terminally cancel work, disconnect observers and remove owned classes.\n\nEvery registration owns an independent disposer, even when an element or callback is repeated. destroy() is terminal. A consumer listener that throws is reported through reportError without blocking healthy listeners or cleanup.\n\nShared watcher and pure helpers\n\ngetSharedWatcher() — The realm-wide singleton the Svelte adapter uses. Join it to share one rAF loop.\nrefreshCanvasWatch() — Re-scan the shared watcher. Call after client-side navigation.\nscheduleRefresh() — The same coalesced re-scan. refreshCanvasWatch() is a named alias for it.\noverlapArea(a, b) — Intersection area of two rects, or 0. Pure.\npickWinningClass(totals, area, threshold) — The winner rule itself, depth and all. Pure.\nresolveAppliedClass(triggerClass, opts) — One trigger class to its applied class, or null. Pure.\nclassifyViewportRect(rect, top, bottom) — A rect's vertical state against two bounds. Pure.\n\nValidation errors\n\nBad configuration throws immediately rather than failing quietly on the first frame.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450418+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "how-it-works": {
+      "text": "The short version of why this isn't an IntersectionObserver, plus what happens on each frame.\n\nVisibility gate. Each watched element is tracked by an IntersectionObserver, so only on-screen elements are ever measured. A second observer tracks trigger zones with a root margin, so only zones near the viewport are considered.\n\nOne rAF loop. Scroll, resize, DOM mutation, ResizeObserver and observer callbacks all funnel into one coalesced requestAnimationFrame. Overlap and viewport registrations share that loop.\n\nRead, commit, then notify. Per frame, every unique element rect is read once. Classes, ownership and observer targets are committed before consumer callbacks, so reentrant teardown can't resurrect stale work.\n\nMinimal class churn. A class is added or removed only when the winning zone actually changes, so scrolling within one zone writes to the DOM zero times. Rects are still read each frame.\n\nIdle pages skip the measuring. With no visible overlap work and no viewport registrations, a scroll frame returns before scheduling anything. The passive scroll and resize listeners stay attached, because they're what notices the page becoming busy again.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450420+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "limitation-composed-token": {
+      "text": "Say the property you're changing is a variable that references another variable (a shadow composite, a gradient, a border shorthand) and the composite is declared on :root. Overriding the inner variable from an over-* class does nothing. CSS bakes the nested var() once, where the composite is declared, and the result inherits down. Re-declare the composite on the watched element so it re-bakes against that element's value.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450422+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "limitation-clipping": {
+      "text": "getBoundingClientRect reports where an element would be, not what's visible. A trigger zone inside a scrolling container still reports a full-size rect once it has scrolled out of view, so a watched element outside that container can pick up a zone nobody can see. When your zones live in a scroller, put the trigger class on the scroller itself, whose rect is the visible box, and relabel it from script as its content scrolls.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450425+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "limitation-one-answer": {
+      "text": "Majority overlap resolves per watched element, so a wide element spanning two zones takes a single class and half of it ends up styled for the wrong background. A bar across the full content width hits this constantly. The fix isn't in the library. Watch the regions instead of the container: wrap each cluster of content in its own watched element, and each one resolves its own zone, in the same frame, from the same watcher. The header on this page does exactly that, so its left and right ends carry different classes whenever they sit over different zones. Nesting is safe because a watched element only ever resolves against elements carrying a trigger class, so the container it sits inside is invisible to it.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450426+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "limitation-refresh-schedule": {
+      "text": "Dynamic triggers need refresh()\n\nTrigger zones are indexed on refresh(), either at adapter mount or via refreshCanvasWatch(), rather than continuously observed for class changes. Adding a zone, or changing an existing zone's trigger class, needs a re-scan.\n\nUnobservable motion needs schedule()\n\nScroll, resize, relevant DOM mutations, target resizing and viewport-boundary crossings invalidate geometry. Call schedule() after motion that changes geometry without producing one of those signals.\n\nViewport state is vertical only\n\nobserveViewport and canvasWatch classify a reference against the viewport's top and bottom edges. Horizontal position is deliberately ignored, so an element parked far off to the side still reports within.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450428+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "accessibility-contrast": {
+      "text": "Contrast is your responsibility, and it matters more the more you restyle. A shadow that misses 3:1 is cosmetic, but text that lands at 2:1 because the panel behind it changed is a WCAG 1.4.3 failure. If your over-* rules touch text, border, or icon colour, check every zone. The library only tells you which one you're over, and it has no idea whether the result is legible.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450430+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "accessibility-motion-support": {
+      "text": "Reduced motion is your call. Put any transition on the properties you change behind @media (prefers-reduced-motion: reduce).\n\nUnder the hood it needs IntersectionObserver, ResizeObserver, MutationObserver, requestAnimationFrame and CustomEvent. The test suite runs in headless Chromium, and other engines aren't covered by CI. It's SSR-safe, so createCanvasWatcher returns a no-op when window and document are absent, and the Svelte adapter only runs on the client.",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450432+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "layout-chrome": {
+      "text": "Skip to content\ncanvas-watch\nover: canvas-brand-emphasis · hero: within\ncanvas-watch on GitHub\nDark\nOn this page\nConcepts / Install / Usage / API / How it works / Limitations / Accessibility\ncanvas-watch — ISC licensed, by Mark Zebley\nGitHub / npm / dynamowaves",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450435+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    },
+    "codeblock-copy": {
+      "text": "Copy\nCopied\n[visually hidden] shell to clipboard",
+      "notes": "",
+      "updatedAt": "2026-10-20T23:08:17.450437+00:00",
+      "approvedText": "",
+      "approvedAt": "",
+      "decision": "pending"
+    }
+  }
+}

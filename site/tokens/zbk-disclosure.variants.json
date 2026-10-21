@@ -1,0 +1,30 @@
+{
+  "disclosure": {
+    "navigation": {
+      "axis": "style",
+      "description": "Collapsible documentation links, matching the desktop navigation surface.",
+      "overrides": {
+        "canvas": "{info.canvas-subtle}",
+        "border-color": "{info.border}",
+        "border-radius": "{border.radius-lg}",
+        "summary-canvas": "{info.canvas-subtle}",
+        "summary-canvas-hover": "{info.canvas-subtle}",
+        "summary-canvas-expanded": "{info.canvas-subtle}",
+        "summary-canvas-expanded-hover": "{info.canvas-subtle}",
+        "summary-ink": "{info.ink}",
+        "summary-ink-hover": "{info.ink}",
+        "summary-ink-expanded-hover": "{info.ink}",
+        "summary-font-family": "{font-family.heading}",
+        "summary-font-size": "{h3.font-size}",
+        "summary-font-weight": "{font-weight.bold}",
+        "summary-flex-direction": "row-reverse",
+        "summary-justify-content": "flex-end",
+        "summary-padding-block": "{spacing.1}",
+        "summary-padding-inline": "{spacing.1}",
+        "indicator-ink": "{info.ink}",
+        "panel-padding-block": "{spacing.1}",
+        "panel-padding-inline": "{spacing.1}"
+      }
+    }
+  }
+}

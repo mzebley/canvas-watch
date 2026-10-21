@@ -1,0 +1,14 @@
+{
+  "2xs": {
+    "$value": "0.875rem"
+  },
+  "xs": {
+    "$value": "1rem"
+  },
+  "sm": {
+    "$value": "1.125rem"
+  },
+  "md": {
+    "$value": "1.25rem"
+  }
+}
